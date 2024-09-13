@@ -16,7 +16,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
-// This would typically come from an API or props
 const formData = {
   title: 'Sample Form',
   description: 'This is a sample form for demonstration purposes.',
@@ -46,10 +45,12 @@ export default function FormResponse() {
   const [answers, setAnswers] = useState<Answer>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // input
   const handleInputChange = (questionId: string, value: string | string[]) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }))
   }
 
+  // checkbox
   const handleCheckboxChange = (
     questionId: string,
     option: string,
@@ -70,11 +71,9 @@ export default function FormResponse() {
 
   const handleSubmit = async () => {
     setIsSubmitting(true)
-    // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000))
     console.log('Form submitted:', answers)
     setIsSubmitting(false)
-    // Here you would typically send the data to your backend
     alert('Form submitted successfully!')
   }
 
@@ -82,13 +81,15 @@ export default function FormResponse() {
     setAnswers({})
   }
 
+  // header
   const handleLogout = () => {
     console.log('Logging out')
-    // Here you would typically implement logout logic
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-zinc-100">
+      {/* header */}
+
       <div className="bg-white shadow">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-950">{formData.title}</h1>
@@ -116,14 +117,12 @@ export default function FormResponse() {
 
       <div className="container mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <p className="text-gray-600 mb-6">{formData.description}</p>
+          <p className="text-zinc-600 mb-6">{formData.description}</p>
 
+          {/* forms */}
           {formData.questions.map((question) => (
-            <div key={question.id} className="mb-6">
-              <Label
-                htmlFor={question.id}
-                className="text-lg font-semibold mb-2"
-              >
+            <div key={question.id} className="mb-8">
+              <Label htmlFor={question.id} className="text-lg text-zinc-900">
                 {question.title}
               </Label>
 
@@ -134,7 +133,7 @@ export default function FormResponse() {
                   onChange={(e) =>
                     handleInputChange(question.id, e.target.value)
                   }
-                  className="w-full"
+                  className="w-full mt-2"
                 />
               )}
 

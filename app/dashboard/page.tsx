@@ -4,7 +4,14 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { HelpCircle, PlusCircle, FileText, Edit, Trash2 } from 'lucide-react'
+import {
+  HelpCircle,
+  PlusCircle,
+  FileText,
+  Edit,
+  Trash2,
+  Printer,
+} from 'lucide-react'
 import {
   BarChart,
   Bar,
@@ -57,29 +64,15 @@ const demographicData = [
 const forms = [
   {
     id: 1,
-    title: 'Customer Satisfaction Survey',
-    description: 'Annual survey to gather feedback from our customers',
+    title: 'Avaliação da Secretaria',
+    description:
+      'Pesquisa de Satisfação para Avaliar o Atendimento da Secretaria',
   },
   {
     id: 2,
-    title: 'Employee Engagement Form',
-    description: 'Quarterly check-in on employee satisfaction and engagement',
-  },
-  {
-    id: 3,
-    title: 'Product Feedback',
+    title: 'Avaliação do Financeiro',
     description:
-      'Ongoing collection of user feedback on our latest product release',
-  },
-  {
-    id: 4,
-    title: 'Event Registration',
-    description: 'Sign-up form for our upcoming conference',
-  },
-  {
-    id: 5,
-    title: 'Market Research Survey',
-    description: 'Survey to understand market trends and consumer preferences',
+      'Pesquisa de Satisfação para Avaliar o Atendimento do Financeiro',
   },
 ]
 
@@ -108,20 +101,20 @@ export default function Component() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <header className="border-b">
+    <div className="flex flex-col min-h-screen bg-zinc-100">
+      <header className="fixed top-0 left-0 right-0 z-50 border-b bg-white">
         <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="space-x-4">
             <Link
               href="#"
-              className={`text-lg font-semibold ${activeTab === 'dashboard' ? 'border-b-2 border-primary' : 'text-muted-foreground'}`}
+              className={`text-lg font-semibold ${activeTab === 'dashboard' ? 'border-b-2 border-primary text-zinc-900' : 'text-muted-foreground'}`}
               onClick={() => setActiveTab('dashboard')}
             >
-              Dashboard
+              Relatório
             </Link>
             <Link
               href="#"
-              className={`text-lg font-semibold ${activeTab === 'questionarios' ? 'border-b-2 border-primary' : 'text-muted-foreground'}`}
+              className={`text-lg font-semibold ${activeTab === 'questionarios' ? 'border-b-2 border-primary text-zinc-900' : 'text-muted-foreground'}`}
               onClick={() => setActiveTab('questionarios')}
             >
               Questionários
@@ -132,46 +125,44 @@ export default function Component() {
           </Button>
         </nav>
       </header>
-      <main className="flex-grow container mx-auto px-4 py-8">
+      <main className="flex-grow container mx-auto mt-16 px-4 py-8 bg-zinc-100">
         {mountedTab === 'dashboard' ? (
           <div className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               <Card>
                 <CardHeader>
-                  <CardTitle>Total Responses</CardTitle>
+                  <CardTitle>Total de Respostas</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-4xl font-bold">{totalResponses}</p>
                   <p className="text-sm text-muted-foreground">
-                    Across all surveys
+                    Em todas as pesquisas
                   </p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader>
-                  <CardTitle>Average Monthly Responses</CardTitle>
+                  <CardTitle>Média de Respostas</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-4xl font-bold">{averageResponseRate}</p>
-                  <p className="text-sm text-muted-foreground">Per month</p>
+                  <p className="text-sm text-muted-foreground">Mensal</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader>
-                  <CardTitle>Active Surveys</CardTitle>
+                  <CardTitle>Pesquisas Ativas</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-4xl font-bold">{forms.length}</p>
-                  <p className="text-sm text-muted-foreground">
-                    Currently running
-                  </p>
+                  <p className="text-sm text-muted-foreground">Ativas</p>
                 </CardContent>
               </Card>
             </div>
             <div className="grid gap-6 md:grid-cols-2">
               <Card>
                 <CardHeader>
-                  <CardTitle>Response Trend</CardTitle>
+                  <CardTitle>Tendência das Pesquisas</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -184,7 +175,7 @@ export default function Component() {
                       <Line
                         type="monotone"
                         dataKey="responses"
-                        stroke="#8884d8"
+                        stroke="#CD5362"
                         activeDot={{ r: 8 }}
                       />
                     </LineChart>
@@ -193,7 +184,7 @@ export default function Component() {
               </Card>
               <Card>
                 <CardHeader>
-                  <CardTitle>Completion Rate</CardTitle>
+                  <CardTitle>Taxa de Envio</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -207,7 +198,7 @@ export default function Component() {
                           `${name} ${(percent * 100).toFixed(0)}%`
                         }
                         outerRadius={80}
-                        fill="#8884d8"
+                        fill="#CD5362"
                         dataKey="value"
                       />
                       <Tooltip />
@@ -217,7 +208,7 @@ export default function Component() {
               </Card>
               <Card>
                 <CardHeader>
-                  <CardTitle>Satisfaction Distribution</CardTitle>
+                  <CardTitle>Distribuição de Satisfação</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -227,14 +218,14 @@ export default function Component() {
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Bar dataKey="value" fill="#82ca9d" />
+                      <Bar dataKey="value" fill="#CD5362" />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader>
-                  <CardTitle>Demographic Breakdown</CardTitle>
+                  <CardTitle>Repartição Demográfica</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -248,15 +239,15 @@ export default function Component() {
                         type="monotone"
                         dataKey="male"
                         stackId="1"
-                        stroke="#8884d8"
-                        fill="#8884d8"
+                        stroke="#C4081F"
+                        fill="#C4081F"
                       />
                       <Area
                         type="monotone"
                         dataKey="female"
                         stackId="1"
-                        stroke="#82ca9d"
-                        fill="#82ca9d"
+                        stroke="#CD5362"
+                        fill="#CD5362"
                       />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -267,10 +258,12 @@ export default function Component() {
         ) : (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Your forms</h2>
+              <h2 className="text-2xl font-bold text-zinc-900">
+                Questionários
+              </h2>
               <Button>
                 <PlusCircle className="mr-2 h-4 w-4" />
-                Create new form
+                Novo
               </Button>
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -317,8 +310,11 @@ export default function Component() {
         )}
       </main>
       {mountedTab === 'dashboard' && (
-        <footer className="py-6 text-center">
-          <Button className="px-8">Imprimir</Button>
+        <footer className="py-6 text-center relative">
+          <Button className="fixed bottom-4 right-4 px-8 flex items-center space-x-2 bg-zinc-900 text-white">
+            <Printer className="mr-2 h-4 w-4" />
+            Imprimir
+          </Button>
         </footer>
       )}
     </div>
