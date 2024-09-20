@@ -7,34 +7,32 @@ import { Textarea } from '@/components/ui/textarea'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
-import { Send, Trash2, LogOut } from 'lucide-react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Send, Trash2 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import UserDropdown from '@/components/user-dropdown'
 
 const formData = {
-  title: 'Sample Form',
-  description: 'This is a sample form for demonstration purposes.',
+  title: 'Formulário de Satisfação Universitária',
+  description: 'Este é um formulário de satisfação para fins de demonstração.',
   questions: [
-    { id: '1', type: 'short_answer', title: 'What is your name?' },
+    { id: '1', type: 'short_answer', title: 'Qual é o seu nome?' },
     {
       id: '2',
       type: 'multiple_choice',
-      title: 'What is your favorite color?',
-      options: ['Red', 'Blue', 'Green', 'Yellow'],
+      title: 'Qual é sua cor favorita?',
+      options: ['Vermelho', 'Azul', 'Verde', 'Amarelo'],
     },
     {
       id: '3',
       type: 'checkbox',
-      title: 'Which fruits do you like?',
-      options: ['Apple', 'Banana', 'Orange', 'Mango'],
+      title: 'Quais frutas você gosta?',
+      options: ['Maçã', 'Banana', 'Laranja', 'Manga'],
     },
-    { id: '4', type: 'long_answer', title: 'Tell us about yourself.' },
+    {
+      id: '4',
+      type: 'long_answer',
+      title: 'Fale sobre sua experiência na universidade.',
+    },
   ],
 }
 
@@ -86,11 +84,6 @@ export default function FormResponse() {
     setAnswers({})
   }
 
-  // header
-  const handleLogout = () => {
-    console.log('Logging out')
-  }
-
   return (
     <div className="min-h-screen bg-zinc-100">
       {/* header */}
@@ -98,25 +91,7 @@ export default function FormResponse() {
       <div className="bg-white shadow">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-950">{formData.title}</h1>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage
-                    src="/placeholder.svg?height=32&width=32"
-                    alt="User avatar"
-                  />
-                  <AvatarFallback>U</AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <DropdownMenuItem onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Sair</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <UserDropdown />
         </div>
       </div>
 
@@ -139,7 +114,7 @@ export default function FormResponse() {
                     handleInputChange(question.id, e.target.value)
                   }
                   placeholder="Digite sua resposta"
-                  className="w-full mt-2"
+                  className="w-full mt-2 resize-none"
                 />
               )}
 
@@ -182,11 +157,11 @@ export default function FormResponse() {
               )}
 
               {question.type === 'checkbox' && (
-                <div className="space-y-4">
+                <div className="space-y-2">
                   {question.options?.map((option) => (
                     <div
                       key={option}
-                      className="flex items-center space-x-2 my-2"
+                      className="flex items-center space-x-2 mt-3"
                     >
                       <Checkbox
                         id={`${question.id}-${option}`}

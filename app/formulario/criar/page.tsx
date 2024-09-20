@@ -30,6 +30,8 @@ import {
 } from '@/components/ui/select'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
+import { useToast } from '@/hooks/use-toast'
+import UserDropdown from '@/components/user-dropdown'
 
 type FormState = {
   title: string
@@ -71,14 +73,14 @@ type HistoryState = {
 const initialState: HistoryState = {
   past: [],
   present: {
-    title: 'Untitled Form',
+    title: 'Questionário sem nome',
     description: '',
     questions: [
       {
         id: '1',
         type: 'multiple_choice',
-        title: 'Question',
-        options: ['Option 1'],
+        title: 'Questão',
+        options: ['Opção 1'],
       },
     ],
   },
@@ -105,8 +107,8 @@ function formReducer(state: HistoryState, action: Action): HistoryState {
           {
             id: String(state.present.questions.length + 1),
             type: 'multiple_choice',
-            title: 'Question',
-            options: ['Option 1'],
+            title: 'Questão',
+            options: ['Opção 1'],
           },
         ],
       })
@@ -230,6 +232,7 @@ function formReducer(state: HistoryState, action: Action): HistoryState {
 
 export default function Component() {
   const [state, dispatch] = useReducer(formReducer, initialState)
+  const { toast } = useToast()
 
   const onDragEnd = useCallback(
     (result: DropResult) => {
@@ -248,14 +251,17 @@ export default function Component() {
     console.log('Sending form:', state.present)
     // Simulating a delay for the API call
     await new Promise((resolve) => setTimeout(resolve, 1000))
-    console.log('Form sent successfully!')
+    toast({
+      title: 'Questionário criado.',
+      description: 'Questionário criado com sucesso.',
+    })
   }
 
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="bg-white shadow">
         <div className="container mx-auto px-4 py-2 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-4">
             <Button
               size="icon"
               variant="ghost"
@@ -286,6 +292,7 @@ export default function Component() {
           >
             <Send className="w-5 h-5" />
           </Button>
+          <UserDropdown />
         </div>
       </div>
 
@@ -296,8 +303,8 @@ export default function Component() {
             onChange={(e) =>
               dispatch({ type: 'SET_DESCRIPTION', payload: e.target.value })
             }
-            placeholder="Form Description"
-            className="w-full mb-4"
+            placeholder="Descrição do questionário"
+            className="w-full mb-4 resize-none"
           />
 
           <DragDropContext onDragEnd={onDragEnd}>
@@ -343,7 +350,7 @@ export default function Component() {
                               }
                             >
                               <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Question Type" />
+                                <SelectValue placeholder="Tipo Pergunta" />
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectItem value="multiple_choice">
@@ -413,8 +420,8 @@ export default function Component() {
 
                           {question.type === 'short_answer' && (
                             <Textarea
-                              placeholder="Short answer text"
-                              className="w-full mt-2"
+                              placeholder="Campo de texto"
+                              className="w-full mt-2 resize-none"
                             />
                           )}
 
