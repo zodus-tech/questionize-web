@@ -54,9 +54,9 @@ export function Header({ title }: HeaderProps) {
           <div className="flex items-center gap-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Avatar className="h-9 w-9">
+                <Avatar className="h-9 w-9 border-black/20 border">
                   <AvatarImage src="/placeholder-user.jpg" alt="@shadcn" />
-                  <AvatarFallback>{getInitials(user?.fullName)}</AvatarFallback>
+                  <AvatarFallback>{getInitials(user?.name)}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent>

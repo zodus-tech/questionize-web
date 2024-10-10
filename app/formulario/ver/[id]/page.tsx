@@ -9,7 +9,6 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Send, Trash2 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
-import UserDropdown from '@/components/user-dropdown'
 
 const formData = {
   title: 'Formulário de Satisfação Universitária',
@@ -91,7 +90,6 @@ export default function FormResponse() {
       <div className="bg-white shadow">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-950">{formData.title}</h1>
-          <UserDropdown />
         </div>
       </div>
 

@@ -1,5 +1,5 @@
-import DashboardPageWrap from './components/wrapper'
+import DashboardPage from './components/wrapper'
 
 export default function Dashboard() {
-  return <DashboardPageWrap />
+  return <DashboardPage />
 }

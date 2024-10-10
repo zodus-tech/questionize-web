@@ -31,7 +31,6 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
-import UserDropdown from '@/components/user-dropdown'
 
 type FormState = {
   title: string
@@ -260,7 +259,7 @@ export default function Component() {
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="bg-white shadow">
-        <div className="container mx-auto px-4 py-2 flex justify-between items-center">
+        <div className="container mx-auto px-4 py-2 flex justify-between items-center gap-4">
           <div className="flex items-center gap-4">
             <Button
               size="icon"
@@ -292,7 +291,6 @@ export default function Component() {
           >
             <Send className="w-5 h-5" />
           </Button>
-          <UserDropdown />
         </div>
       </div>
 
