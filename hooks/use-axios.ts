@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
-import { baseUrl } from '@/utils/Endpoints'
+import { baseUrl } from '@/utils/endpoints'
 
 axios.defaults.baseURL = baseUrl
 

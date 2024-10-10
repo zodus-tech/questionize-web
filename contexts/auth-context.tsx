@@ -10,11 +10,12 @@ import React, {
 } from 'react'
 import axios, { AxiosError } from 'axios'
 import Cookies from 'js-cookie'
-import { baseUrl } from '@/utils/Endpoints'
 import { User } from '@/interfaces/user'
 import { RegisterData, LoginData } from '@/interfaces/auth-data'
 import { ErrorResponse, AuthResponse } from '@/interfaces/auth-response'
 import { useRouter } from 'next/navigation'
+import { baseUrl } from '@/utils/endpoints'
+
 
 axios.defaults.baseURL = baseUrl
 
@@ -84,7 +85,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const { token, user } = response.data
         Cookies.set('token', token, { expires: 7 })
         setUser(user)
-        router.push('/filmes')
+        router.push('/dashboard')
         return { success: true }
       } catch (error) {
         const err = error as AxiosError<ErrorResponse>
@@ -115,7 +116,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const { token, user } = response.data
         Cookies.set('token', token, { expires: 7 })
         setUser(user)
-        router.push('/filmes')
+        router.push('/dashboard')
 
         return { success: true }
       } catch (error) {
