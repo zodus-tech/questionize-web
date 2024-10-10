@@ -72,7 +72,7 @@ export default function LoginForm() {
           description: 'Login realizado com succeso.',
         })
 
-        const callbackUrl = Cookies.get('callbackUrl') || '/filmes'
+        const callbackUrl = Cookies.get('callbackUrl') || '/dashboard'
 
         Cookies.remove('callbackUrl')
 
@@ -103,10 +103,10 @@ export default function LoginForm() {
   return (
     <div
       className="min-h-screen w-full flex items-center justify-center bg-cover bg-center bg-no-repeat"
-      style={{
+      /* style={{
         backgroundImage:
           'linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0)), url(/placeholder_banner.png)',
-      }}
+      }} */
     >
       <Card className="w-full max-w-md mx-auto">
         <CardHeader>
