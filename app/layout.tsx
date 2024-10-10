@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import './globals.css'
 import { Toaster } from '@/components/ui/toaster'
+import { AuthProvider } from '@/contexts/auth-context'
+import { Header } from '@radix-ui/react-accordion'
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -43,8 +45,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-100`}
       >
-        {children}
-        <Toaster />
+        <AuthProvider>
+          <Header title="Questionize" />
+          {children}
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   )
