@@ -3,7 +3,7 @@ import localFont from 'next/font/local'
 import './globals.css'
 import { Toaster } from '@/components/ui/toaster'
 import { AuthProvider } from '@/contexts/auth-context'
-import { Header } from '@radix-ui/react-accordion'
+import { Header } from '@/components/header'
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',

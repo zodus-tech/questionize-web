@@ -16,7 +16,6 @@ import { ErrorResponse, AuthResponse } from '@/interfaces/auth-response'
 import { useRouter } from 'next/navigation'
 import { baseUrl } from '@/utils/endpoints'
 
-
 axios.defaults.baseURL = baseUrl
 
 interface AuthContextType {
