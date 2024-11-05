@@ -55,7 +55,7 @@ export function Header({ title }: HeaderProps) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Avatar className="h-9 w-9 border-black/20 border">
-                  <AvatarImage src="/placeholder-user.jpg" alt="@shadcn" />
+                  <AvatarImage src="" alt="@shadcn" />
                   <AvatarFallback>{getInitials(user?.name)}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>

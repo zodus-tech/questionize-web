@@ -1,20 +1,19 @@
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { FileText, EyeIcon, Trash2 } from 'lucide-react'
+import { Card, CardHeader, CardTitle } from '@/components/ui/card'
+import { FileText, EyeIcon } from 'lucide-react'
+import DeleteQuestionary from '../deleteDialog'
 
 interface QuestionnaireCardProps {
   id: number
   title: string
-  description: string
   onView: (id: number) => void
   onEdit: (id: number) => void
-  onDelete: (id: number) => void
+  onDelete: () => void
 }
 
 const QuestionnaireCard: React.FC<QuestionnaireCardProps> = ({
   id,
   title,
-  description,
   onView,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onEdit,
@@ -37,15 +36,13 @@ const QuestionnaireCard: React.FC<QuestionnaireCardProps> = ({
               <Edit className="h-4 w-4" />
             </Button>
              */}
-            <Button variant="ghost" size="icon" onClick={() => onDelete(id)}>
+            {/* <Button variant="ghost" size="icon" onClick={onDelete}>
               <Trash2 className="h-4 w-4" />
-            </Button>
+            </Button> */}
+            <DeleteQuestionary handleDeleteQuestionary={onDelete} />
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-4 pt-0">
-        <p className="text-sm text-muted-foreground">{description}</p>
-      </CardContent>
     </Card>
   )
 }

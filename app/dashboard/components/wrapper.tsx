@@ -10,6 +10,7 @@ import {
   demographicData,
   forms,
 } from '@/data/mock-data'
+import Questionnaires from '@/components/questionnaires'
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -23,16 +24,20 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <main className="flex-grow container mx-auto mt-16 px-4 py-8">
-        <Dashboard
-          totalResponses={totalResponses}
-          averageResponseRate={averageResponseRate}
-          formsLength={forms.length}
-          responseData={responseData}
-          completionRateData={completionRateData}
-          satisfactionData={satisfactionData}
-          demographicData={demographicData}
-        />
+      <main className="flex-grow container mx-auto mt-2 px-4 py-8">
+        {activeTab === 'dashboard' ? (
+          <Dashboard
+            totalResponses={totalResponses}
+            averageResponseRate={averageResponseRate}
+            formsLength={forms.length}
+            responseData={responseData}
+            completionRateData={completionRateData}
+            satisfactionData={satisfactionData}
+            demographicData={demographicData}
+          />
+        ) : (
+          <Questionnaires questionnaires={forms} />
+        )}
       </main>
     </div>
   )

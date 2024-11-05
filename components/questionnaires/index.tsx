@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import { useToast } from '@/hooks/use-toast'
+import { useRouter } from 'next/navigation'
 
 interface Questionary {
   id: number
@@ -14,22 +16,17 @@ interface Questionary {
 
 interface QuestionnairesProps {
   questionnaires: Questionary[]
-  handleEditForm: (id: number) => void
-  handleViewForm: (id: number) => void
-  handleDeleteForm: (id: number) => void
 }
 
-const Questionnaires: React.FC<QuestionnairesProps> = ({
-  questionnaires,
-  handleEditForm,
-  handleViewForm,
-  handleDeleteForm,
-}) => {
+const Questionnaires: React.FC<QuestionnairesProps> = ({ questionnaires }) => {
   const [fetchedQuestionnaires, setFetchedQuestionnaires] = useState<
     Questionary[]
   >([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const { toast } = useToast()
+  const router = useRouter()
 
   useEffect(() => {
     const fetchQuestionnaires = async () => {
@@ -39,7 +36,7 @@ const Questionnaires: React.FC<QuestionnairesProps> = ({
         const token = Cookies.get('token')
 
         if (!token) {
-          throw new Error('No token found')
+          throw new Error('Token não encontrado.')
         }
 
         const response = await axios.get(`/questionary/all`, {
@@ -51,8 +48,8 @@ const Questionnaires: React.FC<QuestionnairesProps> = ({
         const { content } = response.data
         setFetchedQuestionnaires(content)
       } catch (error) {
-        console.error('Failed to fetch questionnaires', error)
-        setError('Failed to fetch questionnaires')
+        console.error('Ocorreu um erro ao encontrar os questionários.', error)
+        setError('Ocorreu um erro ao encontrar os questionários.')
       } finally {
         setLoading(false)
       }
@@ -60,6 +57,47 @@ const Questionnaires: React.FC<QuestionnairesProps> = ({
 
     fetchQuestionnaires()
   }, [])
+
+  const handleDeleteForm = async (id: number, title: string) => {
+    setLoading(true)
+
+    try {
+      const token = Cookies.get('token')
+
+      if (!token) {
+        throw new Error('Token não encontrado.')
+      }
+
+      await axios.delete(`/questionary/delete/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
+
+      toast({
+        title: 'Delete',
+        description: `Questionário ${title} deletado com sucesso`,
+      })
+
+      setFetchedQuestionnaires((prevFetchedQuestionnaires) =>
+        prevFetchedQuestionnaires.filter(
+          (fetchedQuestionnaires) => fetchedQuestionnaires.id !== id,
+        ),
+      )
+    } catch (error) {
+      console.error(
+        'Ocorreu um erro inesperado ao excluir o questionário.',
+        error,
+      )
+      toast({
+        title: 'Erro',
+        description: `Ocorreu um erro inesperado ao excluir o questionário.`,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -81,10 +119,11 @@ const Questionnaires: React.FC<QuestionnairesProps> = ({
               key={questionary.id}
               id={questionary.id}
               title={questionary.title}
-              description={questionary.description}
-              onView={handleViewForm}
-              onEdit={handleEditForm}
-              onDelete={handleDeleteForm}
+              onView={() => router.push(`/formulario/ver/${questionary.id}`)}
+              onEdit={() => {}}
+              onDelete={() =>
+                handleDeleteForm(questionary.id, questionary.title)
+              }
             />
           ))
         )}
