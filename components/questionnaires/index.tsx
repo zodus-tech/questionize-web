@@ -104,7 +104,7 @@ const Questionnaires: React.FC<QuestionnairesProps> = ({ questionnaires }) => {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-zinc-900">Questionários</h2>
         <Link href={'/formulario/criar'}>
-          <Button>
+          <Button onClick={() => router.push(`/formulario/criar`)}>
             <PlusCircle className="mr-2 h-4 w-4" />
             Novo
           </Button>
