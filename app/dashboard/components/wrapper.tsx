@@ -60,7 +60,7 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col">
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <main className="flex-grow container mx-auto mt-2 px-4 py-8 bg-red-800">
+      <main className="flex-grow container mx-auto mt-2 px-4 py-8 bg-tile-pattern bg-center bg-repeat">
         {activeTab === 'dashboard' ? (
           <Dashboard
             totalResponses={totalResponses}
