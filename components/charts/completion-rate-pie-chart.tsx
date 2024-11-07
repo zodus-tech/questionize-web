@@ -8,6 +8,16 @@ interface CompletionRatePieChartProps {
 const CompletionRatePieChart: React.FC<CompletionRatePieChartProps> = ({
   data,
 }) => {
+  const localizedData = data.map((item) => ({
+    ...item,
+    name:
+      item.name === 'Completed'
+        ? 'Concluído'
+        : item.name === 'Incomplete'
+          ? 'Incompleto'
+          : item.name,
+  }))
+
   return (
     <Card>
       <CardHeader>
@@ -17,18 +27,21 @@ const CompletionRatePieChart: React.FC<CompletionRatePieChartProps> = ({
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
-              data={data}
+              data={localizedData}
               cx="50%"
               cy="50%"
               labelLine={false}
               label={({ name, percent }) =>
-                `${name} ${(percent * 100).toFixed(0)}%`
+                `${name}: ${(percent * 100).toFixed(0)}%`
               }
               outerRadius={80}
               fill="#CD5362"
               dataKey="value"
             />
-            <Tooltip />
+            <Tooltip
+              formatter={(value: number) => `${value} itens`}
+              labelFormatter={(label: string) => `Categoria: ${label}`}
+            />
           </PieChart>
         </ResponsiveContainer>
       </CardContent>
