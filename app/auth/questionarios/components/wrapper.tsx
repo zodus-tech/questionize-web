@@ -18,7 +18,7 @@ export default function QuestionariosPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <main className="flex-grow container mx-auto mt-16 px-4 py-8">
+      <main className="flex-grow container mx-auto px-4 py-8">
         <Questionnaires
           forms={forms}
           handleEditForm={handleEditForm}
