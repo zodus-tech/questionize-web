@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Navbar from '@/components/navbar'
 import Dashboard from '@/components/dashboard'
 import {
   responseData,
@@ -9,14 +8,11 @@ import {
   satisfactionData,
   demographicData,
 } from '@/data/mock-data'
-import Questionnaires from '@/components/questionnaires'
 import { Questionary } from '@/interfaces/questionary'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
 export default function DashboardPage() {
-  const [activeTab, setActiveTab] = useState('dashboard')
-
   const totalResponses = responseData.reduce(
     (sum, item) => sum + item.responses,
     0,
@@ -59,24 +55,16 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col">
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
       <main className="flex-grow container mx-auto mt-2 px-4 py-8 bg-tile-pattern bg-center bg-repeat">
-        {activeTab === 'dashboard' ? (
-          <Dashboard
-            totalResponses={totalResponses}
-            averageResponseRate={averageResponseRate}
-            formsLength={questionnaires.length}
-            responseData={responseData}
-            completionRateData={completionRateData}
-            satisfactionData={satisfactionData}
-            demographicData={demographicData}
-          />
-        ) : (
-          <Questionnaires
-            questionnaires={questionnaires}
-            setQuestionnaires={setQuestionnaires}
-          />
-        )}
+        <Dashboard
+          totalResponses={totalResponses}
+          averageResponseRate={averageResponseRate}
+          formsLength={questionnaires.length}
+          responseData={responseData}
+          completionRateData={completionRateData}
+          satisfactionData={satisfactionData}
+          demographicData={demographicData}
+        />
         {loading && <p>Carregando Dados...</p>}
         {error && (
           <div className="text-center py-8">
