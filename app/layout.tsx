@@ -43,7 +43,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased light bg-zinc-100`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased light bg-slate-50`}
       >
         <AuthProvider>
           <Header title="Questionize" />
