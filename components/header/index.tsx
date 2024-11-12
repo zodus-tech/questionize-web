@@ -29,7 +29,7 @@ export function Header({ title }: HeaderProps) {
   }
 
   return (
-    <header className="bg-background/80 backdrop-blur-sm sticky top-0 z-50 px-4 md:px-6 h-14 flex items-center justify-between">
+    <header className="bg-slate-50 sticky top-0 z-50 px-4 md:px-6 h-14 flex items-center justify-between">
       <Link href="#" className="flex items-center gap-2" prefetch={false}>
         <span className="text-lg font-bold">{title}</span>
       </Link>
@@ -37,18 +37,18 @@ export function Header({ title }: HeaderProps) {
         <>
           <nav className="hidden lg:flex items-center gap-6">
             <Link
-              href="/filmes"
+              href="/dashboard"
               className="text-sm font-medium hover:underline underline-offset-4"
               prefetch={false}
             >
-              Filmes
+              Dashboard
             </Link>
             <Link
-              href="/favoritos"
+              href="/questionnaires"
               className="text-sm font-medium hover:underline underline-offset-4"
               prefetch={false}
             >
-              Favoritos
+              Questionários
             </Link>
           </nav>
           <div className="flex items-center gap-4">
