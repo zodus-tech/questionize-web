@@ -72,6 +72,8 @@ module.exports = {
       },
       backgroundImage: {
         'tile-pattern': "url('/tile-pattern.png')",
+        unisagrado: "url('/unisagrado.png')",
+        coordenadoriaExtensao: "url('/unisagrado_coordenadoria_extensao.png')",
       },
     },
   },
