@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Send, Trash2 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
@@ -65,24 +64,6 @@ export default function QuestionaryResponsePage({
     setAnswers((prev) => ({ ...prev, [questionId]: value }))
   }
 
-  const handleCheckboxChange = (
-    questionId: string,
-    option: string,
-    checked: boolean,
-  ) => {
-    setAnswers((prev) => {
-      const currentAnswers = (prev[questionId] as string[]) || []
-      if (checked) {
-        return { ...prev, [questionId]: [...currentAnswers, option] }
-      } else {
-        return {
-          ...prev,
-          [questionId]: currentAnswers.filter((item) => item !== option),
-        }
-      }
-    })
-  }
-
   const handleSubmit = async () => {
     setLoading(true)
 
@@ -93,10 +74,15 @@ export default function QuestionaryResponsePage({
       }
 
       const requestBody = {
-        answers: Object.entries(answers).map(([questionId, answer]) => ({
-          questionId,
-          answer,
-        })),
+        answers: Object.entries(answers).flatMap(([questionId, answer]) => {
+          if (Array.isArray(answer)) {
+            return answer.map((option) => ({
+              questionId,
+              answer: option,
+            }))
+          }
+          return { questionId, answer }
+        }),
       }
 
       await axios.post(`/questionary/${id}/submit`, requestBody, {
@@ -112,6 +98,7 @@ export default function QuestionaryResponsePage({
       })
 
       setAnswers({})
+
       fetchQuestionnaire()
     } catch (error) {
       console.error('Erro ao enviar o formulário', error)
@@ -132,7 +119,7 @@ export default function QuestionaryResponsePage({
 
   const handleClearAnswers = () => {
     setAnswers({})
-    setCurrentQuestionary({ ...currentQuestionary })
+    setCurrentQuestionary((prev) => (prev ? { ...prev } : null))
   }
 
   return (
@@ -169,20 +156,44 @@ export default function QuestionaryResponsePage({
                   />
                 )}
                 {question.type === QuestionType.MULTIPLE_CHOICE && (
-                  <RadioGroup
-                    onValueChange={(value) =>
-                      handleInputChange(question.id.toString(), value)
-                    }
-                    value={answers[question.id.toString()] as string}
-                  >
+                  <div>
                     {question.options?.map((option) => (
                       <div
                         key={option}
                         className="flex items-center space-x-2 mt-3"
                       >
-                        <RadioGroupItem
-                          value={option}
+                        <input
+                          type="checkbox"
                           id={`question-${question.id}-${option}`}
+                          checked={
+                            (
+                              answers[question.id.toString()] as string[]
+                            )?.includes(option) || false
+                          }
+                          onChange={(e) => {
+                            const isChecked = e.target.checked
+                            setAnswers((prev) => {
+                              const currentAnswers =
+                                (prev[question.id.toString()] as string[]) || []
+                              if (isChecked) {
+                                return {
+                                  ...prev,
+                                  [question.id.toString()]: [
+                                    ...currentAnswers,
+                                    option,
+                                  ],
+                                }
+                              } else {
+                                return {
+                                  ...prev,
+                                  [question.id.toString()]:
+                                    currentAnswers.filter(
+                                      (item) => item !== option,
+                                    ),
+                                }
+                              }
+                            })
+                          }}
                         />
                         <Label
                           htmlFor={`question-${question.id}-${option}`}
@@ -192,30 +203,40 @@ export default function QuestionaryResponsePage({
                         </Label>
                       </div>
                     ))}
-                  </RadioGroup>
+                  </div>
                 )}
                 {question.type === QuestionType.BOOLEAN && (
-                  <div className="space-y-2">
-                    <Checkbox
-                      id={`question-${question.id}`}
-                      checked={(
-                        answers[question.id.toString()] as string[]
-                      )?.includes('Sim')}
-                      onCheckedChange={(checked) =>
-                        handleCheckboxChange(
-                          question.id.toString(),
-                          'Sim',
-                          checked as boolean,
-                        )
-                      }
-                    />
-                    <Label
-                      htmlFor={`question-${question.id}`}
-                      className="text-zinc-700"
-                    >
-                      Sim
-                    </Label>
-                  </div>
+                  <RadioGroup
+                    onValueChange={(value) =>
+                      handleInputChange(question.id.toString(), value)
+                    }
+                    value={(answers[question.id.toString()] as string) || ''}
+                  >
+                    <div className="flex items-center space-x-2 mt-3">
+                      <RadioGroupItem
+                        value="true"
+                        id={`question-${question.id}-true`}
+                      />
+                      <Label
+                        htmlFor={`question-${question.id}-true`}
+                        className="text-zinc-700"
+                      >
+                        Sim
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2 mt-3">
+                      <RadioGroupItem
+                        value="false"
+                        id={`question-${question.id}-false`}
+                      />
+                      <Label
+                        htmlFor={`question-${question.id}-false`}
+                        className="text-zinc-700"
+                      >
+                        Não
+                      </Label>
+                    </div>
+                  </RadioGroup>
                 )}
               </div>
             ))}
