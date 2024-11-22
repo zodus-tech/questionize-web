@@ -67,7 +67,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         .catch(() => {
           Cookies.remove('token')
           setUser(null)
-          router.push('/auth/login')
+          router.push('/admin/auth/login')
         })
     }
   }, [router])
@@ -84,7 +84,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const { token, user } = response.data
         Cookies.set('token', token, { expires: 7 })
         setUser(user)
-        router.push('/dashboard')
+        router.push('/admin/dashboard')
         return { success: true }
       } catch (error) {
         const err = error as AxiosError<ErrorResponse>
@@ -100,7 +100,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = useCallback((): void => {
     Cookies.remove('token')
     setUser(null)
-    router.push('/auth/login')
+    router.push('/admin/auth/login')
   }, [router])
 
   const register = useCallback(
@@ -115,7 +115,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const { token, user } = response.data
         Cookies.set('token', token, { expires: 7 })
         setUser(user)
-        router.push('/dashboard')
+        router.push('/admin/dashboard')
 
         return { success: true }
       } catch (error) {

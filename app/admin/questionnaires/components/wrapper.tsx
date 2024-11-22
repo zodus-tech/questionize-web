@@ -98,7 +98,7 @@ export default function QuestionnairesPage() {
         <main className="container sticky top-[56px] z-10 mt-4 px-4 py-4 bg-tile-pattern bg-center bg-repeat rounded-lg w-full max-w-screen-xl">
           <div className="flex justify-between items-center p-2">
             <h2 className="text-2xl font-bold text-white">Questionários</h2>
-            <Link href={'/questionary/create'}>
+            <Link href={'/admin/questionary/create'}>
               <Button>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Novo
@@ -124,7 +124,7 @@ export default function QuestionnairesPage() {
                   id={questionary.id}
                   title={questionary.title}
                   onView={() =>
-                    router.push(`/questionary/response/${questionary.id}`)
+                    router.push(`/admin/questionary/response/${questionary.id}`)
                   }
                   onEdit={() => {}}
                   onDelete={() =>

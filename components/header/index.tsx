@@ -35,10 +35,10 @@ export function Header({ title }: HeaderProps) {
       {user && (
         <>
           <nav className="hidden lg:flex items-center gap-6">
-            <Link href="/dashboard" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
+            <Link href="/admin/dashboard" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
               Dashboard
             </Link>
-            <Link href="/questionnaires" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
+            <Link href="/admin/questionnaires" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
               Questionários
             </Link>
           </nav>
@@ -52,7 +52,7 @@ export function Header({ title }: HeaderProps) {
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => router.push("/configuracoes")}>Configurações</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => router.push("/admin/configuracoes")}>Configurações</DropdownMenuItem>
                   <DialogTrigger asChild>
                     <DropdownMenuItem>Créditos</DropdownMenuItem>
                   </DialogTrigger>
