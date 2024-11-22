@@ -1,4 +1,4 @@
-import QuestionnairesPage from './components/wrapper'
+import QuestionnairesPage from '../../home/questionarios/components/wrapper'
 
 export default function Questionnaires() {
   return <QuestionnairesPage />
