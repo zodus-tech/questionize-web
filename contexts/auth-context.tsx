@@ -78,13 +78,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     ): Promise<{ success: boolean; error?: string }> => {
       try {
         const response = await axios.post<AuthResponse>(
-          '/admin/auth/login',
+          '/auth/login',
           loginData,
         )
         const { token, user } = response.data
         Cookies.set('token', token, { expires: 7 })
         setUser(user)
-        router.push('/dashboard')
+        router.push('/admin/dashboard')
         return { success: true }
       } catch (error) {
         const err = error as AxiosError<ErrorResponse>
@@ -115,7 +115,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const { token, user } = response.data
         Cookies.set('token', token, { expires: 7 })
         setUser(user)
-        router.push('/dashboard')
+        router.push('/admin/dashboard')
 
         return { success: true }
       } catch (error) {

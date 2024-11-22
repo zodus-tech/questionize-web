@@ -64,7 +64,7 @@ export default function LoginForm() {
           description: 'Login realizado com succeso.',
         })
 
-        const callbackUrl = Cookies.get('callbackUrl') || '/dashboard'
+        const callbackUrl = Cookies.get('callbackUrl') || '/admin/dashboard'
 
         Cookies.remove('callbackUrl')
 

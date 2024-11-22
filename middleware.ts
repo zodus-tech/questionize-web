@@ -27,9 +27,16 @@ export function middleware(req: NextRequest) {
       })
     }
 
+
+
     return response
   }
+  if (pathname === '/' || pathname === '/home') {
+    const response = NextResponse.redirect(new URL('/home/questionarios', req.url))
 
+    return response
+
+  }
   return NextResponse.next()
 }
 
