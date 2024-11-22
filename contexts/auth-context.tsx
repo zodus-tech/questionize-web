@@ -67,7 +67,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         .catch(() => {
           Cookies.remove('token')
           setUser(null)
-          router.push('/auth/login')
+          router.push('/admin/auth/login')
         })
     }
   }, [router])
@@ -78,7 +78,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     ): Promise<{ success: boolean; error?: string }> => {
       try {
         const response = await axios.post<AuthResponse>(
-          '/auth/login',
+          '/admin/auth/login',
           loginData,
         )
         const { token, user } = response.data
@@ -100,7 +100,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = useCallback((): void => {
     Cookies.remove('token')
     setUser(null)
-    router.push('/auth/login')
+    router.push('/admin/auth/login')
   }, [router])
 
   const register = useCallback(

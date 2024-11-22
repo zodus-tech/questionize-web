@@ -8,15 +8,15 @@ export function middleware(req: NextRequest) {
     pathname.startsWith('/_next') ||
     pathname.startsWith('/static') ||
     pathname === '/favicon.ico' ||
-    pathname.startsWith('/auth')
+    pathname.startsWith('/admin/auth')
   ) {
     return NextResponse.next()
   }
 
   const token = req.cookies.get('token')?.value
 
-  if (!token) {
-    const response = NextResponse.redirect(new URL('/auth/login', req.url))
+  if (!token && pathname.startsWith('/admin')) {
+    const response = NextResponse.redirect(new URL('/admin/auth/login', req.url))
 
     if (!pathname.endsWith('.png')) {
       response.cookies.set('callbackUrl', pathname, {
@@ -34,5 +34,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: '/((?!_next/static|_next/image|favicon.ico|auth).*)',
+  matcher: '/((?!_next/static|_next/image|favicon.ico|admin/auth).*)',
 }
