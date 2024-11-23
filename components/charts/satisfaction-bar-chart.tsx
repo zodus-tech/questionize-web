@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { styleDefinition } from '@/utils/style-def'
 import {
   BarChart,
   Bar,
@@ -27,7 +28,9 @@ export const CustomTooltip = ({
     return (
       <div className="bg-white p-2 border border-1 border-black/20">
         <p>{`${payload[0].payload.name}`}</p>
-        <p className="text-[#CD5362]">{`Votos: ${payload[0].value}`}</p>
+        <p
+          className={`text-[${styleDefinition.graphColor}]`}
+        >{`Votos: ${payload[0].value}`}</p>
       </div>
     )
   }
@@ -75,7 +78,7 @@ const SatisfactionBarChart: React.FC<SatisfactionBarChartProps> = ({
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend formatter={() => `Votos`} />
-            <Bar dataKey="value" fill="#CD5362" />
+            <Bar dataKey="value" fill={styleDefinition.graphColor} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

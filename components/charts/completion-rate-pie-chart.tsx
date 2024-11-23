@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { styleDefinition } from '@/utils/style-def'
 import { PieChart, Pie, Tooltip, ResponsiveContainer } from 'recharts'
 
 interface CompletionRatePieChartProps {
@@ -35,7 +36,7 @@ const CompletionRatePieChart: React.FC<CompletionRatePieChartProps> = ({
                 `${name}: ${(percent * 100).toFixed(0)}%`
               }
               outerRadius={80}
-              fill="#CD5362"
+              fill={styleDefinition.graphColor}
               dataKey="value"
             />
             <Tooltip

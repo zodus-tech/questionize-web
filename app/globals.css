@@ -15,7 +15,10 @@
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased; /* Smoothens font rendering in WebKit browsers */
+  -moz-osx-font-smoothing: grayscale; /* Smoothens font rendering in macOS */
+  text-rendering: optimizeLegibility; /* Improves readability for text */
 }
 
 @layer utilities {
@@ -26,6 +29,7 @@ body {
 
 @layer base {
   :root {
+    --font-rubik: 'Rubik', sans-serif;
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
