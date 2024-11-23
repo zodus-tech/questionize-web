@@ -11,6 +11,8 @@ import {
 import { Questionary } from '@/interfaces/questionary'
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import { addDays } from 'date-fns'
+import { DateRange } from 'react-day-picker'
 
 export default function DashboardPage() {
   const totalResponses = responseData.reduce(
@@ -22,6 +24,12 @@ export default function DashboardPage() {
   const [questionnaires, setQuestionnaires] = useState<Questionary[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const currentDate: Date = new Date()
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: currentDate,
+    to: addDays(currentDate, 7),
+  })
 
   useEffect(() => {
     const fetchQuestionnaires = async () => {
@@ -55,7 +63,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col">
-      <main className="flex-grow container mx-auto mt-2 px-4 py-8 bg-tile-pattern bg-center bg-repeat">
+      <main className="flex-grow container mx-auto mt-2 px-4 py-4">
         <Dashboard
           totalResponses={totalResponses}
           averageResponseRate={averageResponseRate}
@@ -64,6 +72,8 @@ export default function DashboardPage() {
           completionRateData={completionRateData}
           satisfactionData={satisfactionData}
           demographicData={demographicData}
+          date={date}
+          setDate={setDate}
         />
         {loading && <p>Carregando Dados...</p>}
         {error && (

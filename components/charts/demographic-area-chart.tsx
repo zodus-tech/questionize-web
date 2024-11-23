@@ -1,5 +1,6 @@
 // components/charts/demographic-area-chart.tsx
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { styleDefinition } from '@/utils/style-def'
 import {
   AreaChart,
   Area,
@@ -28,7 +29,9 @@ const CustomTooltip = ({
     return (
       <div className="bg-white p-2 border border-1 border-black/20">
         <p>{`${payload[0].payload.age}`}</p>
-        <p className="text-[#CD5362]">{`${payload[0].name === 'male' ? 'Homens' : 'Mulheres'}: ${payload[0].value}`}</p>
+        <p
+          className={`text-[${styleDefinition.graphColor}]`}
+        >{`${payload[0].name === 'male' ? 'Homens' : 'Mulheres'}: ${payload[0].value}`}</p>
       </div>
     )
   }
@@ -75,8 +78,8 @@ const DemographicAreaChart: React.FC<DemographicAreaChartProps> = ({
               dataKey="female"
               name="Mulheres"
               stackId="1"
-              stroke="#CD5362"
-              fill="#CD5362"
+              stroke={styleDefinition.strokeColor}
+              fill={styleDefinition.graphColor}
             />
           </AreaChart>
         </ResponsiveContainer>

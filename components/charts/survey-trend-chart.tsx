@@ -1,4 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { styleDefinition } from '@/utils/style-def'
+
 import {
   LineChart,
   Line,
@@ -39,7 +41,7 @@ const SurveyTrendChart: React.FC<SurveyTrendChartProps> = ({ data }) => {
             <Line
               type="monotone"
               dataKey="responses"
-              stroke="#CD5362"
+              stroke={styleDefinition.graphColor}
               activeDot={{ r: 8 }}
               name="Respostas"
             />
