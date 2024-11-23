@@ -1,10 +1,10 @@
 export const responseData = [
-  { name: 'Jan', responses: 400 },
-  { name: 'Feb', responses: 300 },
-  { name: 'Mar', responses: 500 },
-  { name: 'Apr', responses: 280 },
-  { name: 'May', responses: 590 },
-  { name: 'Jun', responses: 800 },
+  { name: 'Janeiro', responses: 400 },
+  { name: 'Fevereiro', responses: 300 },
+  { name: 'Março', responses: 500 },
+  { name: 'Abril', responses: 280 },
+  { name: 'Maio', responses: 590 },
+  { name: 'Junho', responses: 800 },
 ]
 
 export const completionRateData = [
@@ -13,11 +13,11 @@ export const completionRateData = [
 ]
 
 export const satisfactionData = [
-  { name: 'Very Satisfied', value: 30 },
-  { name: 'Satisfied', value: 45 },
-  { name: 'Neutral', value: 15 },
-  { name: 'Dissatisfied', value: 8 },
   { name: 'Very Dissatisfied', value: 2 },
+  { name: 'Dissatisfied', value: 8 },
+  { name: 'Neutral', value: 15 },
+  { name: 'Satisfied', value: 45 },
+  { name: 'Very Satisfied', value: 30 },
 ]
 
 export const demographicData = [
