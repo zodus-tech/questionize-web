@@ -255,7 +255,7 @@ export default function Component() {
         description: 'Formulário criado com sucesso',
       })
 
-      router.push('/questionnaires')
+      router.push('/admin/questionnaires')
     } catch (error) {
       console.error('Ocorreu um erro inesperado ao criar o questionário', error)
       toast({
