@@ -16,7 +16,9 @@ export function middleware(req: NextRequest) {
   const token = req.cookies.get('token')?.value
 
   if (!token && pathname.startsWith('/admin')) {
-    const response = NextResponse.redirect(new URL('/admin/auth/login', req.url))
+    const response = NextResponse.redirect(
+      new URL('/admin/auth/login', req.url),
+    )
 
     if (!pathname.endsWith('.png')) {
       response.cookies.set('callbackUrl', pathname, {
@@ -27,15 +29,14 @@ export function middleware(req: NextRequest) {
       })
     }
 
-
-
     return response
   }
   if (pathname === '/' || pathname === '/home') {
-    const response = NextResponse.redirect(new URL('/home/questionarios', req.url))
+    const response = NextResponse.redirect(
+      new URL('/home/questionnaires', req.url),
+    )
 
     return response
-
   }
   return NextResponse.next()
 }
