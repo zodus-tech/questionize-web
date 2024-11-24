@@ -67,6 +67,14 @@ export function Header({ title }: HeaderProps) {
             >
               Questionários
             </Link>
+            <Link
+              href="/admin/departments"
+              className="text-sm font-medium hover:bg-black/5 data-[active=true]:bg-black/5 p-2 px-4 rounded-md"
+              prefetch={false}
+              data-active={pathname.includes('departments')}
+            >
+              Departamentos
+            </Link>
           </nav>
           <div className="flex items-center gap-4">
             <Dialog open={open} onOpenChange={setOpen}>
