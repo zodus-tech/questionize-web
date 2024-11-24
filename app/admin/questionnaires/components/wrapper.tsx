@@ -9,8 +9,8 @@ import Cookies from 'js-cookie'
 import { useToast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
 import { Questionary } from '@/interfaces/questionary'
-import QuestionnaireCard from './card'
 import LoadingSpinner from '@/components/loadingSpinner'
+import Card from '@/components/card'
 
 export default function QuestionnairesPage() {
   const [questionnaires, setQuestionnaires] = useState<Questionary[]>([])
@@ -119,7 +119,7 @@ export default function QuestionnairesPage() {
               </div>
             ) : (
               questionnaires.map((questionary) => (
-                <QuestionnaireCard
+                <Card
                   key={questionary.id}
                   id={questionary.id}
                   title={questionary.title}
