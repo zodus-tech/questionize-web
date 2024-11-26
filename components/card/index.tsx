@@ -9,6 +9,7 @@ interface SimpleCardProps {
   onView: (id: number) => void
   onEdit: (id: number) => void
   onDelete: () => void
+  element: string
 }
 
 const SimpleCard: React.FC<SimpleCardProps> = ({
@@ -17,6 +18,7 @@ const SimpleCard: React.FC<SimpleCardProps> = ({
   onView,
   /* onEdit, */
   onDelete,
+  element,
 }) => {
   return (
     <Card
@@ -40,7 +42,7 @@ const SimpleCard: React.FC<SimpleCardProps> = ({
               <Edit className="h-4 w-4" />
             </Button> 
             */}
-            <DeleteDialog handleDelete={onDelete} element="ques" />
+            <DeleteDialog handleDelete={onDelete} element={element} />
           </div>
         </div>
       </CardHeader>
