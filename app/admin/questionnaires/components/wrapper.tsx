@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
 import { Questionary } from '@/interfaces/questionary'
 import LoadingSpinner from '@/components/loadingSpinner'
-import Card from '@/components/card'
+import Card from '@/components/card-admin'
 import { Input } from '@/components/ui/input'
 
 export default function QuestionnairesPage() {
