@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
 import LoadingSpinner from '@/components/loadingSpinner'
 import { Department } from '@/interfaces/department'
-import Card from '@/components/card'
+import Card from '@/components/card-admin'
 import {
   Dialog,
   DialogTrigger,
