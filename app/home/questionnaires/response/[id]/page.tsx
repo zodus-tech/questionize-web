@@ -116,145 +116,155 @@ export default function QuestionaryResponsePage({
   return (
     <>
       <LoadingSpinner isLoading={loading} />
-      <div className="min-h-screen bg-zinc-100">
-        <div className="bg-white shadow">
-          <div className="container mx-auto px-4 py-4 flex  items-center">
-            <Button
-              onClick={() => router.back()}
-              variant="outline"
-              className="border-red-500 cursor-pointer hover:bg-red-100"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2 text-red-700 cursor-pointer" />
-              <Label className="text-red-700 cursor-pointer">Voltar</Label>
-            </Button>
-            <h1 className="text-2xl font-bold text-gray-950 ml-4">
-              {currentQuestionary.title}
-            </h1>
-          </div>
-        </div>
-
-        <div className="container mx-auto px-4 py-8">
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            {currentQuestionary.questions.map((question: Question) => (
-              <div key={question.id} className="mb-8">
-                <Label
-                  htmlFor={`question-${question.id}`}
-                  className="text-lg text-zinc-900"
+      <div className="relative min-h-screen bg-tile-pattern bg-repeat bg-center">
+        <div className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"></div>
+        <div className="relative min-h-screen">
+          <div className="bg-white shadow sticky top-0 z-50">
+            <div className="container mx-auto px-4 py-4 flex items-center relative">
+              <div className="z-10">
+                <Button
+                  onClick={() => router.back()}
+                  variant="outline"
+                  className="border-red-500 cursor-pointer hover:bg-red-100"
                 >
-                  {question.text}
-                </Label>
-                {question.type === QuestionType.TEXT && (
-                  <Input
-                    id={`question-${question.id}`}
-                    value={(answers[question.id.toString()] as string) || ''}
-                    onChange={(e) =>
-                      handleInputChange(question.id.toString(), e.target.value)
-                    }
-                    placeholder="Digite sua resposta"
-                    className="w-full mt-2 resize-none"
-                  />
-                )}
-                {question.type === QuestionType.MULTIPLE_CHOICE && (
-                  <div>
-                    {question.options?.map((option) => (
-                      <div
-                        key={option}
-                        className="flex items-center space-x-2 mt-3"
-                      >
-                        <input
-                          type="checkbox"
-                          id={`question-${question.id}-${option}`}
-                          checked={
-                            (
-                              answers[question.id.toString()] as string[]
-                            )?.includes(option) || false
-                          }
-                          onChange={(e) => {
-                            const isChecked = e.target.checked
-                            setAnswers((prev) => {
-                              const currentAnswers =
-                                (prev[question.id.toString()] as string[]) || []
-                              if (isChecked) {
-                                return {
-                                  ...prev,
-                                  [question.id.toString()]: [
-                                    ...currentAnswers,
-                                    option,
-                                  ],
+                  <ArrowLeft className="w-4 h-4 mr-2 text-red-700 cursor-pointer" />
+                  <Label className="text-red-700 cursor-pointer">Voltar</Label>
+                </Button>
+              </div>
+              <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
+                <h1 className="text-2xl font-bold text-gray-950">
+                  {currentQuestionary.title}
+                </h1>
+              </div>
+            </div>
+          </div>
+          <div className="container mx-auto px-4 py-8">
+            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+              {currentQuestionary.questions.map((question: Question) => (
+                <div key={question.id} className="mb-8">
+                  <Label
+                    htmlFor={`question-${question.id}`}
+                    className="text-lg text-zinc-900"
+                  >
+                    {question.text}
+                  </Label>
+                  {question.type === QuestionType.TEXT && (
+                    <Input
+                      id={`question-${question.id}`}
+                      value={(answers[question.id.toString()] as string) || ''}
+                      onChange={(e) =>
+                        handleInputChange(
+                          question.id.toString(),
+                          e.target.value,
+                        )
+                      }
+                      placeholder="Digite sua resposta"
+                      className="w-full mt-2 resize-none"
+                    />
+                  )}
+                  {question.type === QuestionType.MULTIPLE_CHOICE && (
+                    <div>
+                      {question.options?.map((option) => (
+                        <div
+                          key={option}
+                          className="flex items-center space-x-2 mt-3"
+                        >
+                          <input
+                            type="checkbox"
+                            id={`question-${question.id}-${option}`}
+                            checked={
+                              (
+                                answers[question.id.toString()] as string[]
+                              )?.includes(option) || false
+                            }
+                            onChange={(e) => {
+                              const isChecked = e.target.checked
+                              setAnswers((prev) => {
+                                const currentAnswers =
+                                  (prev[question.id.toString()] as string[]) ||
+                                  []
+                                if (isChecked) {
+                                  return {
+                                    ...prev,
+                                    [question.id.toString()]: [
+                                      ...currentAnswers,
+                                      option,
+                                    ],
+                                  }
+                                } else {
+                                  return {
+                                    ...prev,
+                                    [question.id.toString()]:
+                                      currentAnswers.filter(
+                                        (item) => item !== option,
+                                      ),
+                                  }
                                 }
-                              } else {
-                                return {
-                                  ...prev,
-                                  [question.id.toString()]:
-                                    currentAnswers.filter(
-                                      (item) => item !== option,
-                                    ),
-                                }
-                              }
-                            })
-                          }}
+                              })
+                            }}
+                          />
+                          <Label
+                            htmlFor={`question-${question.id}-${option}`}
+                            className="text-zinc-700"
+                          >
+                            {option}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {question.type === QuestionType.BOOLEAN && (
+                    <RadioGroup
+                      onValueChange={(value) =>
+                        handleInputChange(question.id.toString(), value)
+                      }
+                      value={(answers[question.id.toString()] as string) || ''}
+                    >
+                      <div className="flex items-center space-x-2 mt-3">
+                        <RadioGroupItem
+                          value="true"
+                          id={`question-${question.id}-true`}
                         />
                         <Label
-                          htmlFor={`question-${question.id}-${option}`}
+                          htmlFor={`question-${question.id}-true`}
                           className="text-zinc-700"
                         >
-                          {option}
+                          Sim
                         </Label>
                       </div>
-                    ))}
-                  </div>
-                )}
-                {question.type === QuestionType.BOOLEAN && (
-                  <RadioGroup
-                    onValueChange={(value) =>
-                      handleInputChange(question.id.toString(), value)
-                    }
-                    value={(answers[question.id.toString()] as string) || ''}
-                  >
-                    <div className="flex items-center space-x-2 mt-3">
-                      <RadioGroupItem
-                        value="true"
-                        id={`question-${question.id}-true`}
-                      />
-                      <Label
-                        htmlFor={`question-${question.id}-true`}
-                        className="text-zinc-700"
-                      >
-                        Sim
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2 mt-3">
-                      <RadioGroupItem
-                        value="false"
-                        id={`question-${question.id}-false`}
-                      />
-                      <Label
-                        htmlFor={`question-${question.id}-false`}
-                        className="text-zinc-700"
-                      >
-                        Não
-                      </Label>
-                    </div>
-                  </RadioGroup>
-                )}
+                      <div className="flex items-center space-x-2 mt-3">
+                        <RadioGroupItem
+                          value="false"
+                          id={`question-${question.id}-false`}
+                        />
+                        <Label
+                          htmlFor={`question-${question.id}-false`}
+                          className="text-zinc-700"
+                        >
+                          Não
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  )}
+                </div>
+              ))}
+              <div className="flex space-x-4">
+                <Button
+                  onClick={handleClearAnswers}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  <Trash2 className="w-4 h-4 mr-2 text-zinc-700" />
+                  <Label className="text-zinc-700">Recomeçar</Label>
+                </Button>
+                <Button
+                  onClick={handleSubmit}
+                  className="flex-1 bg-green-500 hover:bg-green-600 text-white"
+                >
+                  <Send className="w-4 h-4 mr-2" />
+                  Enviar
+                </Button>
               </div>
-            ))}
-            <div className="flex space-x-4">
-              <Button
-                onClick={handleClearAnswers}
-                variant="outline"
-                className="flex-1"
-              >
-                <Trash2 className="w-4 h-4 mr-2 text-zinc-700" />
-                <Label className="text-zinc-700">Recomeçar</Label>
-              </Button>
-              <Button
-                onClick={handleSubmit}
-                className="flex-1 bg-green-500 hover:bg-green-600 text-white"
-              >
-                <Send className="w-4 h-4 mr-2" />
-                Enviar
-              </Button>
             </div>
           </div>
         </div>
