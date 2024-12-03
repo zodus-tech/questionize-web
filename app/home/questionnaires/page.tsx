@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation'
 import { Questionary } from '@/interfaces/questionary'
 import LoadingSpinner from '@/components/loadingSpinner'
 import { baseUrl } from '@/utils/endpoints'
-import Card from '@/components/card'
+import Card from '@/components/card-anonymous'
+import Watermark from '@/components/footer-watermark'
 
 axios.defaults.baseURL = baseUrl
 
@@ -44,7 +45,7 @@ export default function QuestionnairesPage() {
   return (
     <>
       <LoadingSpinner isLoading={loading} />
-      <div className="flex flex-col mx-16 bg-slate-50">
+      <div className="relative flex flex-col mx-16 bg-slate-50 min-h-screen">
         <main className="container sticky top-[56px] z-10 mt-16 px-4 py-4 bg-tile-pattern bg-center bg-repeat rounded-lg w-full max-w-screen-xl">
           <div className="flex justify-between items-center p-2">
             <h2 className="text-2xl font-bold text-white">Questionários</h2>
@@ -64,18 +65,12 @@ export default function QuestionnairesPage() {
             ) : (
               questionnaires.map((questionary) => (
                 <Card
-                  onEdit={() =>
-                    console.log('Não é possível editar o questionário')
-                  }
-                  onDelete={() =>
-                    console.log('Não é possível deletar o questionário')
-                  }
                   key={questionary.id}
                   id={questionary.id}
                   title={questionary.title}
-                  onView={() =>
+                  onRespond={() =>
                     router.push(
-                      `/home/questionarios/responder/${questionary.id}`,
+                      `/home/questionnaires/response/${questionary.id}`,
                     )
                   }
                 />
@@ -83,6 +78,7 @@ export default function QuestionnairesPage() {
             )}
           </div>
         </div>
+        <Watermark />
       </div>
     </>
   )
