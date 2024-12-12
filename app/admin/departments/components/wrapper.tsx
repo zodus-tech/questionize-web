@@ -2,13 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { PlusCircle, Search } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import Cookies from 'js-cookie'
-import { useToast } from '@/hooks/use-toast'
-import { useRouter } from 'next/navigation'
 import LoadingSpinner from '@/components/loadingSpinner'
-import { Department } from '@/interfaces/department'
 import Card from '@/components/card-admin'
 import {
   Dialog,
@@ -19,115 +13,25 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+
+import { Department } from '@/interfaces/department'
+
 import { useForm } from 'react-hook-form'
+import { useDepartments } from '@/hooks/use-department'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function DepartmentsPage() {
-  const [departments, setDepartments] = useState<Department[]>([])
   const [searchTerm, setSearchTerm] = useState('')
-  const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
+  const { departments, loading, createDepartment, deleteDepartment } =
+    useDepartments()
   const router = useRouter()
-
   const { register, handleSubmit, reset } = useForm<{ name: string }>()
 
-  useEffect(() => {
-    const fetchDepartments = async () => {
-      setLoading(true)
-
-      try {
-        const token = Cookies.get('token')
-
-        if (!token) {
-          throw new Error('Token não encontrado')
-        }
-
-        const response = await axios.get(`/department/all`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Access-Control-Allow-Origin': '*',
-          },
-        })
-        const { content } = response.data
-        setDepartments(content)
-      } catch (error) {
-        console.error('Ocorreu um erro ao buscar os departamentos', error)
-        toast({
-          title: 'Erro',
-          description: 'Não foi possível carregar os departamentos.',
-        })
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchDepartments()
-  }, [])
-
   const handleCreateDepartment = async (data: { name: string }) => {
-    try {
-      const token = Cookies.get('token')
-
-      if (!token) throw new Error('Token não encontrado')
-
-      const response = await axios.post(
-        `/department/create`,
-        { name: data.name },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Access-Control-Allow-Origin': '*',
-          },
-        },
-      )
-
-      toast({
-        title: 'Sucesso',
-        description: `Departamento ${data.name} criado com sucesso.`,
-      })
-      setDepartments((prev) => [...prev, response.data])
+    const success = await createDepartment(data.name)
+    if (success) {
       reset()
-    } catch (error) {
-      console.error('Erro ao criar departamento', error)
-      toast({
-        title: 'Erro',
-        description: 'Não foi possível criar o departamento.',
-      })
-    }
-  }
-
-  const handleDeleteDepartment = async (id: number, name: string) => {
-    setLoading(true)
-
-    try {
-      const token = Cookies.get('token')
-
-      if (!token) {
-        throw new Error('Token não encontrado')
-      }
-
-      await axios.delete(`/department/delete/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Access-Control-Allow-Origin': '*',
-        },
-      })
-
-      toast({
-        title: 'Sucesso',
-        description: `Departamento ${name} deletado com sucesso.`,
-      })
-
-      setDepartments((prevDepartments: Department[]) =>
-        prevDepartments.filter((department) => department.id !== id),
-      )
-    } catch (error) {
-      console.error('Erro ao excluir departamento', error)
-      toast({
-        title: 'Erro',
-        description: 'Não foi possível excluir o departamento.',
-      })
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -175,7 +79,7 @@ export default function DepartmentsPage() {
         </div>
         <div className="flex-1 overflow-auto mt-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 w-full max-w-screen-xl mx-auto">
-            {departments.filter((dep) =>
+            {departments.filter((dep: Department) =>
               dep.name.toLowerCase().includes(searchTerm.toLowerCase()),
             ).length === 0 ? (
               <div className="w-full max-w-md absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
@@ -188,7 +92,7 @@ export default function DepartmentsPage() {
               </div>
             ) : (
               departments
-                .filter((dep) =>
+                .filter((dep: Department) =>
                   dep.name.toLowerCase().includes(searchTerm.toLowerCase()),
                 )
                 .map((department) => (
@@ -201,7 +105,7 @@ export default function DepartmentsPage() {
                     }
                     onEdit={() => {}}
                     onDelete={() =>
-                      handleDeleteDepartment(department.id, department.name)
+                      deleteDepartment(department.id, department.name)
                     }
                     element={department.name}
                   />

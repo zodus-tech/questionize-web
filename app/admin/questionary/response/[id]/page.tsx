@@ -9,8 +9,9 @@ import { Send, Trash2 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { Question, Questionary, QuestionType } from '@/interfaces/questionary'
 import Cookies from 'js-cookie'
-import axios from 'axios'
 import LoadingSpinner from '@/components/loadingSpinner'
+import { questionaryService } from '@/services/questionary-service'
+import { ToastAction } from '@/components/ui/toast'
 
 export default function QuestionaryResponsePage({
   params,
@@ -22,7 +23,6 @@ export default function QuestionaryResponsePage({
   const [answers, setAnswers] = useState<{ [key: string]: string | string[] }>(
     {},
   )
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
@@ -32,20 +32,8 @@ export default function QuestionaryResponsePage({
   const fetchQuestionnaire = useCallback(async () => {
     setLoading(true)
     try {
-      const token = Cookies.get('token')
-
-      if (!token) {
-        throw new Error('Token não encontrado')
-      }
-
-      const response = await axios.get(`/questionary/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Access-Control-Allow-Origin': '*',
-        },
-      })
-
-      setCurrentQuestionary(response.data || null)
+      const data = await questionaryService.getQuestionnaireById(id)
+      setCurrentQuestionary(data)
       setAnswers({})
     } catch (error) {
       console.error('Ocorreu um erro ao encontrar os questionários', error)
@@ -85,21 +73,35 @@ export default function QuestionaryResponsePage({
         }),
       }
 
-      await axios.post(`/questionary/${id}/submit`, requestBody, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Access-Control-Allow-Origin': '*',
-        },
-      })
+      const success = await questionaryService.answerQuestionnaire(
+        id,
+        requestBody,
+      )
+      if (success) {
+        toast({
+          title: 'Success',
+          description: 'Formulário enviado com sucesso!',
+        })
 
-      toast({
-        title: 'Success',
-        description: 'Formulário enviado com sucesso!',
-      })
-
-      setAnswers({})
-
-      fetchQuestionnaire()
+        setAnswers({})
+        fetchQuestionnaire()
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Falha',
+          description: `Não foi possível enviar sua resposta, tente novamente mais tarde`,
+          action: (
+            <ToastAction
+              altText="Tentar novamente"
+              onClick={() => {
+                handleSubmit()
+              }}
+            >
+              Tentar novamente
+            </ToastAction>
+          ),
+        })
+      }
     } catch (error) {
       console.error('Erro ao enviar o formulário', error)
       toast({
