@@ -1,48 +1,32 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import LoadingSpinner from '@/components/loadingSpinner'
-import Image from 'next/image'
-import { Search } from 'lucide-react'
-import { Member } from '@/interfaces/member'
-import { useDepartmentMembers } from '@/hooks/use-department-members'
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import LoadingSpinner from "@/components/loadingSpinner";
+import Image from "next/image";
+import { Search } from "lucide-react";
+import { Member } from "@/interfaces/member";
+import { useDepartmentMembers } from "@/hooks/use-department-members";
+import MemberItem from "../components/member-item";
 
-export default function DepartmentDetailsPage({
-  params,
-}: {
-  params: { id: string }
-}) {
-  const { department, loading, addMember, deleteMember } = useDepartmentMembers(
-    params.id,
-  )
-  const [searchTerm, setSearchTerm] = useState('')
+export default function DepartmentDetailsPage({ params }: { params: { id: string } }) {
+  const { department, loading, addMember, deleteMember } = useDepartmentMembers(params.id);
+  const [searchTerm, setSearchTerm] = useState("");
   const { register, handleSubmit, reset } = useForm<{
     name: string;
     role?: string;
     imageFile?: File;
   }>();
 
-  const handleAddMember = async (data: {
-    name: string
-    role?: string
-    imageFile?: File
-  }) => {
-    const success = await addMember(data)
+  const handleAddMember = async (data: { name: string; role?: string; imageFile?: File }) => {
+    const success = await addMember(data);
     if (success) {
-      reset()
+      reset();
     }
-  }
+  };
 
   /*
     formData.append("imageFile", new Blob([imageBytes], { type: "image/png" }));
@@ -63,9 +47,7 @@ export default function DepartmentDetailsPage({
         data.pictureId = imageResponse.data.id;
   */
 
-  const filteredMembers = department?.members?.filter((member: Member) =>
-    member.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  const filteredMembers = department?.members?.filter((member: Member) => member.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
     <div className="flex flex-col mx-16 bg-slate-50">
@@ -101,10 +83,8 @@ export default function DepartmentDetailsPage({
       <div className="flex-1 overflow-auto mt-1">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 w-full max-w-screen-xl mx-auto">
           {filteredMembers && filteredMembers.length > 0 ? (
-            filteredMembers.map((member) => (
-                <MemberItem member={member} />
-              )
-            ) : (
+            filteredMembers.map((member) => <MemberItem member={member} />)
+          ) : (
             <div className="w-full max-w-md absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
               <p className="text-center font-bold">Nenhum membro foi encontrado 😔</p>
               <p className="text-center text-gray-400 text-sm">Tente adicionar um novo...</p>
