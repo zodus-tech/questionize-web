@@ -8,31 +8,27 @@ import LoadingSpinner from '@/components/loadingSpinner'
 import { baseUrl } from '@/utils/endpoints'
 import Card from '@/components/card-anonymous'
 import Watermark from '@/components/footer-watermark'
+import { questionaryService } from '@/services/questionary-service'
 
 axios.defaults.baseURL = baseUrl
 
 export default function QuestionnairesPage() {
   const [questionnaires, setQuestionnaires] = useState<Questionary[]>([])
   const [loading, setLoading] = useState(false)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [error, setError] = useState<string | null>(null)
+  const [, setError] = useState<string | null>(null)
 
   const router = useRouter()
 
   useEffect(() => {
     const fetchQuestionnaires = async () => {
       setLoading(true)
+      setError(null)
 
       try {
-        const response = await axios.get(`/questionary/all`, {
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-          },
-        })
-        const { content } = response.data
-        setQuestionnaires(content)
-      } catch (error) {
-        console.error('Ocorreu um erro ao encontrar os questionários', error)
+        const data = await questionaryService.getAllQuestionnaires()
+        setQuestionnaires(data)
+      } catch (err) {
+        console.error('Ocorreu um erro ao encontrar os questionários', err)
         setError('Ocorreu um erro ao encontrar os questionários')
       } finally {
         setLoading(false)

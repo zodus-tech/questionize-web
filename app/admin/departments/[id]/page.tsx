@@ -1,9 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import axios from 'axios'
-import Cookies from 'js-cookie'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -14,155 +12,39 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { useToast } from '@/hooks/use-toast'
 import LoadingSpinner from '@/components/loadingSpinner'
 import Image from 'next/image'
-import { Department } from '@/interfaces/department'
 import { Search } from 'lucide-react'
+import { Member } from '@/interfaces/member'
+import { useDepartmentMembers } from '@/hooks/use-department-members'
 
 export default function DepartmentDetailsPage({
   params,
 }: {
   params: { id: string }
 }) {
-  const { id: departmentId } = params
-  const [department, setDepartment] = useState<Department | null>(null)
+  const { department, loading, addMember, deleteMember } = useDepartmentMembers(
+    params.id,
+  )
   const [searchTerm, setSearchTerm] = useState('')
-  const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
-
   const { register, handleSubmit, reset } = useForm<{
     name: string
     role?: string
     imageFile?: File
   }>()
 
-  useEffect(() => {
-    const fetchDepartment = async () => {
-      setLoading(true)
-      try {
-        const token = Cookies.get('token')
-
-        if (!token) {
-          throw new Error('Token não encontrado')
-        }
-
-        const response = await axios.get(
-          `/members/department/${departmentId}/all`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Access-Control-Allow-Origin': '*',
-            },
-          },
-        )
-
-        const departmentData = {
-          id: Number(departmentId),
-          name: response.data.departmentName || 'Sem nome',
-          members: response.data.members || [],
-        }
-
-        setDepartment(departmentData)
-      } catch (error) {
-        console.error('Erro ao buscar dados do departamento', error)
-        toast({
-          title: 'Erro',
-          description: 'Não foi possível carregar o departamento.',
-        })
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchDepartment()
-  }, [departmentId])
-
   const handleAddMember = async (data: {
     name: string
     role?: string
     imageFile?: File
-    pictureId?: string | number
   }) => {
-    try {
-      const token = Cookies.get('token')
-      if (!token) throw new Error('Token não encontrado')
-
-      const formData = new FormData()
-      if (data.imageFile) {
-        formData.append('imageFile', data.imageFile)
-        formData.append(
-          'request',
-          JSON.stringify({ name: 'foto', memberId: '', questionaryId: null }),
-        )
-
-        const imageResponse = await axios.post('/images/save', formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data',
-            'Access-Control-Allow-Origin': '*',
-          },
-        })
-
-        data.pictureId = imageResponse.data.id
-      }
-
-      const response = await axios.post(
-        '/members/create',
-        { ...data, departmentId },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Access-Control-Allow-Origin': '*',
-          },
-        },
-      )
-
-      setDepartment((prev) =>
-        prev ? { ...prev, members: [...prev.members, response.data] } : null,
-      )
+    const success = await addMember(data)
+    if (success) {
       reset()
-      toast({ title: 'Sucesso', description: 'Membro adicionado com sucesso.' })
-    } catch (error) {
-      console.error('Erro ao adicionar membro', error)
-      toast({
-        title: 'Erro',
-        description: 'Não foi possível adicionar o membro.',
-      })
     }
   }
 
-  const handleDeleteMember = async (memberId: number) => {
-    try {
-      const token = Cookies.get('token')
-      if (!token) throw new Error('Token não encontrado')
-
-      await axios.delete(`/members/delete/${memberId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Access-Control-Allow-Origin': '*',
-        },
-      })
-
-      setDepartment((prev) =>
-        prev
-          ? {
-              ...prev,
-              members: prev.members?.filter((member) => member.id !== memberId),
-            }
-          : null,
-      )
-      toast({ title: 'Sucesso', description: 'Membro excluído com sucesso.' })
-    } catch (error) {
-      console.error('Erro ao excluir membro', error)
-      toast({
-        title: 'Erro',
-        description: 'Não foi possível excluir o membro.',
-      })
-    }
-  }
-
-  const filteredMembers = department?.members?.filter((member) =>
+  const filteredMembers = department?.members?.filter((member: Member) =>
     member.name.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
@@ -219,7 +101,7 @@ export default function DepartmentDetailsPage({
       <div className="flex-1 overflow-auto mt-1">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 w-full max-w-screen-xl mx-auto">
           {filteredMembers && filteredMembers.length > 0 ? (
-            filteredMembers.map((member) => (
+            filteredMembers.map((member: Member) => (
               <div
                 key={member.id}
                 className="flex items-center justify-between gap-4 border-b py-2"
@@ -243,7 +125,7 @@ export default function DepartmentDetailsPage({
                   <Button variant="outline">Editar</Button>
                   <Button
                     variant="destructive"
-                    onClick={() => handleDeleteMember(member.id)}
+                    onClick={() => deleteMember(member.id)}
                   >
                     Excluir
                   </Button>

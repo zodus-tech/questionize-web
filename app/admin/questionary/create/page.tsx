@@ -32,9 +32,10 @@ import { useToast } from '@/hooks/use-toast'
 import { Question, Questionary, QuestionType } from '@/interfaces/questionary'
 import { FormAction, HistoryState } from '@/interfaces/question'
 import Cookies from 'js-cookie'
-import axios from 'axios'
 import LoadingSpinner from '@/components/loadingSpinner'
 import { useRouter } from 'next/navigation'
+import { questionaryService } from '@/services/questionary-service'
+import { ToastAction } from '@/components/ui/toast'
 
 const initialState: HistoryState = {
   past: [],
@@ -243,19 +244,31 @@ export default function Component() {
         })),
       }
 
-      await axios.post('/questionary/create', requestBody, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Access-Control-Allow-Origin': '*',
-        },
-      })
+      const success = await questionaryService.createQuestionnaire(requestBody)
+      if (success) {
+        toast({
+          title: 'Success',
+          description: 'Questionário criado com sucesso',
+        })
 
-      toast({
-        title: 'Success',
-        description: 'Formulário criado com sucesso',
-      })
-
-      router.push('/admin/questionnaires')
+        router.push('/admin/questionnaires')
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Falha',
+          description: `Não foi possível criar o questionário, tente novamente mais tarde`,
+          action: (
+            <ToastAction
+              altText="Tentar novamente"
+              onClick={() => {
+                handleCreateForm()
+              }}
+            >
+              Tentar novamente
+            </ToastAction>
+          ),
+        })
+      }
     } catch (error) {
       console.error('Ocorreu um erro inesperado ao criar o questionário', error)
       toast({
