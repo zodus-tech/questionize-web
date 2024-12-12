@@ -34,9 +34,10 @@ export function useStatistics(dateRange?: DateRange) {
 
       if (statsData) {
         const monthsBetween = calculateMonthsBetween(startDate, endDate)
-        const averageRate = (
-          statsData.totalSubmissions / Number(monthsBetween)
-        ).toFixed(2)
+        const averageRate =
+          Number(monthsBetween) <= 0
+            ? '0.00'
+            : (statsData.totalSubmissions / Number(monthsBetween)).toFixed(2)
 
         setStats({
           totalQuestionnairesActive: statsData.totalQuestionnairesActive,
