@@ -50,7 +50,7 @@ export default function DepartmentDetailsPage({
         }
 
         const response = await axios.get(
-          `/members/department/${departmentId}/all`,
+          `/department/id/${departmentId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -66,6 +66,9 @@ export default function DepartmentDetailsPage({
         }
 
         setDepartment(departmentData)
+
+        console.log(response)
+        console.log(departmentData)
       } catch (error) {
         console.error('Erro ao buscar dados do departamento', error)
         toast({
@@ -173,7 +176,7 @@ export default function DepartmentDetailsPage({
   }
 
   const filteredMembers = department?.members?.filter((member) =>
-    member.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    true,
   )
 
   return (
