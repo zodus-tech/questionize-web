@@ -13,18 +13,18 @@ import { addDays } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 
 export default function DashboardPage() {
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: new Date(),
+    to: addDays(new Date(), 7),
+  })
+
   const {
     totalResponses,
     totalQuestionnairesActive,
     averageResponseRate,
     loading,
     error,
-  } = useStatistics()
-
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 7),
-  })
+  } = useStatistics(date)
 
   return (
     <div className="flex flex-col">

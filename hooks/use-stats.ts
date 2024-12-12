@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { questionaryService } from '@/services/questionary-service'
-import { getYearRange, calculateMonthsBetween } from '@/utils/dates'
+import { calculateMonthsBetween } from '@/utils/dates'
 import { Questionary } from '@/interfaces/questionary'
+import { DateRange } from 'react-day-picker'
+import { format } from 'date-fns'
 
-export function useStatistics() {
+export function useStatistics(dateRange?: DateRange) {
   const [questionnaires, setQuestionnaires] = useState<Questionary[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -14,21 +16,24 @@ export function useStatistics() {
   })
 
   const fetchData = async () => {
+    if (!dateRange?.from || !dateRange?.to) return
+
     setLoading(true)
     setError(null)
 
     try {
-      const [start, end] = getYearRange()
+      const startDate = format(dateRange.from, 'yyyy-MM-dd')
+      const endDate = format(dateRange.to, 'yyyy-MM-dd')
 
       const [questionnairesData, statsData] = await Promise.all([
         questionaryService.getAllQuestionnaires(),
-        questionaryService.getGeneralStatistics(start, end),
+        questionaryService.getGeneralStatistics(startDate, endDate),
       ])
 
       setQuestionnaires(questionnairesData)
 
       if (statsData) {
-        const monthsBetween = calculateMonthsBetween(start, end)
+        const monthsBetween = calculateMonthsBetween(startDate, endDate)
         const averageRate = (
           statsData.totalSubmissions / Number(monthsBetween)
         ).toFixed(2)
