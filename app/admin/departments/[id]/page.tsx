@@ -19,6 +19,8 @@ import LoadingSpinner from '@/components/loadingSpinner'
 import Image from 'next/image'
 import { Department } from '@/interfaces/department'
 import { Search } from 'lucide-react'
+import { headers } from 'next/headers'
+import fs from 'fs'
 
 export default function DepartmentDetailsPage({
   params,
@@ -81,31 +83,12 @@ export default function DepartmentDetailsPage({
   const handleAddMember = async (data: {
     name: string
     role?: string
-    imageFile?: File
+    imageFile?: FileList
     pictureId?: string | number
   }) => {
     try {
       const token = Cookies.get('token')
       if (!token) throw new Error('Token não encontrado')
-
-      const formData = new FormData()
-      if (data.imageFile) {
-        formData.append('imageFile', data.imageFile)
-        formData.append(
-          'request',
-          JSON.stringify({ name: 'foto', memberId: '', questionaryId: null }),
-        )
-
-        const imageResponse = await axios.post('/images/save', formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data',
-            'Access-Control-Allow-Origin': '*',
-          },
-        })
-
-        data.pictureId = imageResponse.data.id
-      }
 
       const response = await axios.post(
         '/members/create',
@@ -117,6 +100,33 @@ export default function DepartmentDetailsPage({
           },
         },
       )
+      const formData = new FormData()
+      const item = data.imageFile?.item(0);
+
+      if (item) {
+        const imageBytes = await item.arrayBuffer()
+
+        console.log(item)
+
+        formData.append('imageFile', new Blob([imageBytes], {type: "image/png"}))
+        formData.append(
+          'request',
+          new Blob([JSON.stringify({ name: response.data.name, memberId: response.data.id, questionaryId: null })], {type: "application/json"})
+        )
+
+        const imageResponse = await axios.post('/images/save', formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+            'Access-Control-Allow-Origin': '*',
+          },
+          maxBodyLength: Infinity
+        })
+
+        data.pictureId = imageResponse.data.id
+      }
+
+      
 
       setDepartment((prev) =>
         prev ? { ...prev, members: [...prev.members, response.data] } : null,
