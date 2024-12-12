@@ -5,10 +5,14 @@ const deleteToken = () => {
   const response = NextResponse.next()
   response.cookies.delete('token')
   console.log(
-    '[Middleware] Clearing token, user tried to leave admin page while logged in.',
+    '[Middleware] (1) Clearing token, user tried to leave admin page while logged in.',
   )
 
   return response
+}
+
+const isAdminPath = (pathname: string): boolean => {
+  return pathname.startsWith('/admin') && !pathname.startsWith('/admin/auth')
 }
 
 const redirectToAdminAuth = (url: string, pathname: string) => {
@@ -37,13 +41,14 @@ export function middleware(req: NextRequest) {
     pathname.startsWith('/_next') ||
     pathname.startsWith('/static') ||
     pathname === '/favicon.ico' ||
-    pathname.startsWith('/admin/auth')
+    /\.(png|jpg|jpeg|gif|svg|ico|css|js)$/.test(pathname)
   ) {
     return NextResponse.next()
   }
 
   const token = req.cookies.get('token')?.value
-  if (token && !pathname.includes('admin')) {
+  if (token && !isAdminPath(pathname)) {
+    console.log(`[Middleware] (2) Page accessed: ${pathname}`)
     return deleteToken()
   }
 
