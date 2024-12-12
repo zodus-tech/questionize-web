@@ -54,7 +54,7 @@ export function useStatistics(dateRange?: DateRange) {
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [dateRange?.from, dateRange?.to])
 
   return { ...stats, questionnaires, loading, error, refetch: fetchData }
 }

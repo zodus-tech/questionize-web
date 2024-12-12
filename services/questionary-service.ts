@@ -10,7 +10,7 @@ export const questionaryService = {
     const { data } = await api.get(
       `/statistics/general?period=P1Y&from=${start}&to=${end}`,
     )
-    return data.content
+    return data
   },
 
   async getQuestionnaireById(id: string | number) {
