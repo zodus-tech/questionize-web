@@ -15,8 +15,6 @@ export const questionaryService = {
 
   async getQuestionnaireById(id: string | number) {
     const { data } = await api.get(`/questionary/${id}`)
-    console.log(data)
-
     return data
   },
 
