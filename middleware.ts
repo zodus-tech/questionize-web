@@ -1,6 +1,35 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+const deleteToken = () => {
+  const response = NextResponse.next()
+  response.cookies.delete('token')
+  console.log(
+    '[Middleware] Clearing token, user tried to leave admin page while logged in.',
+  )
+
+  return response
+}
+
+const redirectToAdminAuth = (url: string, pathname: string) => {
+  const response = NextResponse.redirect(new URL('/admin/auth/login', url))
+
+  if (!pathname.endsWith('.png')) {
+    response.cookies.set('callbackUrl', pathname, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+    })
+  }
+
+  return response
+}
+
+const redirectToQuestionnaires = (url: string) => {
+  return NextResponse.redirect(new URL('/home/questionnaires', url))
+}
+
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
@@ -14,30 +43,18 @@ export function middleware(req: NextRequest) {
   }
 
   const token = req.cookies.get('token')?.value
+  if (token && !pathname.includes('admin')) {
+    return deleteToken()
+  }
 
   if (!token && pathname.startsWith('/admin')) {
-    const response = NextResponse.redirect(
-      new URL('/admin/auth/login', req.url),
-    )
-
-    if (!pathname.endsWith('.png')) {
-      response.cookies.set('callbackUrl', pathname, {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-      })
-    }
-
-    return response
+    return redirectToAdminAuth(req.url, pathname)
   }
+
   if (pathname === '/' || pathname === '/home') {
-    const response = NextResponse.redirect(
-      new URL('/home/questionnaires', req.url),
-    )
-
-    return response
+    return redirectToQuestionnaires(req.url)
   }
+
   return NextResponse.next()
 }
 
