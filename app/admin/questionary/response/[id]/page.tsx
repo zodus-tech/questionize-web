@@ -107,6 +107,7 @@ export default function QuestionaryResponsePage({
       toast({
         title: 'Erro',
         description: 'Ocorreu um erro ao enviar o formulário',
+        variant: 'destructive',
       })
     }
   }

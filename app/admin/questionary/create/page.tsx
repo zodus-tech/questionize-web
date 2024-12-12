@@ -274,6 +274,7 @@ export default function Component() {
       toast({
         title: 'Erro',
         description: 'Ocorreu um erro inesperado ao criar o questionário',
+        variant: 'destructive',
       })
     } finally {
       setLoading(false)

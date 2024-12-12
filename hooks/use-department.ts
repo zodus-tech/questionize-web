@@ -18,6 +18,7 @@ export function useDepartments() {
       toast({
         title: 'Erro',
         description: 'Não foi possível carregar os departamentos.',
+        variant: 'destructive',
       })
     } finally {
       setLoading(false)
@@ -38,6 +39,7 @@ export function useDepartments() {
       toast({
         title: 'Erro',
         description: 'Não foi possível criar o departamento.',
+        variant: 'destructive',
       })
       return false
     }
@@ -58,6 +60,7 @@ export function useDepartments() {
       toast({
         title: 'Erro',
         description: 'Não foi possível excluir o departamento.',
+        variant: 'destructive',
       })
       return false
     } finally {

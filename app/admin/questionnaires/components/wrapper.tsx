@@ -32,6 +32,7 @@ export default function QuestionnairesPage() {
         toast({
           title: 'Erro',
           description: 'Não foi possível carregar os questionários.',
+          variant: 'destructive',
         })
       } finally {
         setLoading(false)
@@ -80,6 +81,7 @@ export default function QuestionnairesPage() {
       toast({
         title: 'Erro',
         description: 'Ocorreu um erro inesperado ao excluir o questionário',
+        variant: 'destructive',
       })
     } finally {
       setLoading(false)

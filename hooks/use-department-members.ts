@@ -22,6 +22,7 @@ export function useDepartmentMembers(departmentId: string) {
       toast({
         title: 'Erro',
         description: 'Não foi possível carregar o departamento.',
+        variant: 'destructive',
       })
     } finally {
       setLoading(false)
@@ -60,6 +61,7 @@ export function useDepartmentMembers(departmentId: string) {
       toast({
         title: 'Erro',
         description: 'Não foi possível adicionar o membro.',
+        variant: 'destructive',
       })
       return false
     }
@@ -88,6 +90,7 @@ export function useDepartmentMembers(departmentId: string) {
       toast({
         title: 'Erro',
         description: 'Não foi possível excluir o membro.',
+        variant: 'destructive',
       })
       return false
     }
