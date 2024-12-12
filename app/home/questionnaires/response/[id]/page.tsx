@@ -38,6 +38,7 @@ export default function QuestionaryResponsePage({
     setLoading(true)
     try {
       const data = await questionaryService.getQuestionnaireById(id)
+      console.log(data)
       setCurrentQuestionary(data)
       setAnswers({})
     } catch (error) {

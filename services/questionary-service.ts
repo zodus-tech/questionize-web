@@ -15,7 +15,9 @@ export const questionaryService = {
 
   async getQuestionnaireById(id: string | number) {
     const { data } = await api.get(`/questionary/${id}`)
-    return data.content
+    console.log(data)
+
+    return data
   },
 
   async deleteQuestionnaire(id: string | number): Promise<boolean> {
