@@ -1,16 +1,17 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { PlusCircle, Search } from 'lucide-react' // Importa o ícone de lupa
+import { PlusCircle, Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
-import Cookies from 'js-cookie'
 import { useToast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
 import { Questionary } from '@/interfaces/questionary'
 import LoadingSpinner from '@/components/loadingSpinner'
 import Card from '@/components/card-admin'
 import { Input } from '@/components/ui/input'
+import { questionaryService } from '@/services/questionary-service'
+import Link from 'next/link'
+import { ToastAction } from '@/components/ui/toast'
 
 export default function QuestionnairesPage() {
   const [questionnaires, setQuestionnaires] = useState<Questionary[]>([])
@@ -24,25 +25,14 @@ export default function QuestionnairesPage() {
       setLoading(true)
 
       try {
-        const token = Cookies.get('token')
-
-        if (!token) {
-          throw new Error('Token não encontrado')
-        }
-
-        const response = await axios.get(`/questionary/all`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Access-Control-Allow-Origin': '*',
-          },
-        })
-        const { content } = response.data
-        setQuestionnaires(content)
-      } catch (error) {
-        console.error('Ocorreu um erro ao encontrar os questionários', error)
+        const data = await questionaryService.getAllQuestionnaires()
+        setQuestionnaires(data)
+      } catch (err) {
+        console.error('Ocorreu um erro ao encontrar os questionários', err)
         toast({
           title: 'Erro',
           description: 'Não foi possível carregar os questionários.',
+          variant: 'destructive',
         })
       } finally {
         setLoading(false)
@@ -50,33 +40,39 @@ export default function QuestionnairesPage() {
     }
 
     fetchQuestionnaires()
-  }, [])
+  }, [toast])
 
   const handleDeleteForm = async (id: number, title: string) => {
     setLoading(true)
 
     try {
-      const token = Cookies.get('token')
+      const success = await questionaryService.deleteQuestionnaire(id)
+      if (success) {
+        toast({
+          title: 'Deletado',
+          description: `Questionário ${title} deletado com sucesso`,
+        })
 
-      if (!token) {
-        throw new Error('Token não encontrado')
+        setQuestionnaires((prevQuestionnaires: Questionary[]) =>
+          prevQuestionnaires.filter((questionary) => questionary.id !== id),
+        )
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Falha',
+          description: `Não foi possível deletar o questionário ${title}, tente novamente mais tarde`,
+          action: (
+            <ToastAction
+              altText="Tentar novamente"
+              onClick={() => {
+                handleDeleteForm(id, title)
+              }}
+            >
+              Tentar novamente
+            </ToastAction>
+          ),
+        })
       }
-
-      await axios.delete(`/questionary/delete/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Access-Control-Allow-Origin': '*',
-        },
-      })
-
-      toast({
-        title: 'Delete',
-        description: `Questionário ${title} deletado com sucesso`,
-      })
-
-      setQuestionnaires((prevQuestionnaires: Questionary[]) =>
-        prevQuestionnaires.filter((questionary) => questionary.id !== id),
-      )
     } catch (error) {
       console.error(
         'Ocorreu um erro inesperado ao excluir o questionário',
@@ -85,6 +81,7 @@ export default function QuestionnairesPage() {
       toast({
         title: 'Erro',
         description: 'Ocorreu um erro inesperado ao excluir o questionário',
+        variant: 'destructive',
       })
     } finally {
       setLoading(false)
@@ -98,10 +95,12 @@ export default function QuestionnairesPage() {
         <main className="container sticky top-[56px] z-10 mt-4 px-4 py-4 bg-tile-pattern bg-center bg-repeat rounded-lg w-full max-w-screen-xl">
           <div className="flex justify-between items-center p-2">
             <h2 className="text-2xl font-bold text-white">Questionários</h2>
-            <Button>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Novo
-            </Button>
+            <Link href={'/admin/questionary/create'}>
+              <Button>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Novo
+              </Button>
+            </Link>
           </div>
         </main>
         <div className="mt-4 w-full max-w-screen-xl mx-auto relative">

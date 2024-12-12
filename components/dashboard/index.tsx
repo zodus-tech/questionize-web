@@ -8,8 +8,6 @@ import SurveyTrendChart from '../charts/survey-trend-chart'
 import TotalResponsesChart from '../charts/total-responses-chart'
 import { DatePickerWithRange } from '../date-picker-with-range'
 import { DateRange } from 'react-day-picker'
-import { Link, PlusCircle } from 'lucide-react'
-import { Button } from '../ui/button'
 
 interface ResponseData {
   name: string
