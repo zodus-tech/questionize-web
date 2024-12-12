@@ -32,7 +32,7 @@ export function useDepartmentMembers(departmentId: string) {
   const addMember = async (data: {
     name: string
     role?: string
-    imageFile?: File
+    imageFile?: FileList
   }) => {
     try {
       let pictureId
@@ -55,6 +55,7 @@ export function useDepartmentMembers(departmentId: string) {
         title: 'Sucesso',
         description: 'Membro adicionado com sucesso.',
       })
+
       return true
     } catch (error) {
       console.error('Erro ao adicionar membro', error)
@@ -74,9 +75,9 @@ export function useDepartmentMembers(departmentId: string) {
       setDepartment((prev) =>
         prev
           ? {
-              ...prev,
-              members: prev.members?.filter((member) => member.id !== memberId),
-            }
+            ...prev,
+            members: prev.members?.filter((member) => member.id !== memberId),
+          }
           : null,
       )
 
