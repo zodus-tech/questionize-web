@@ -35,21 +35,18 @@ export function useDepartmentMembers(departmentId: string) {
     imageFile?: FileList
   }) => {
     try {
-      let pictureId
-      if (data.imageFile) {
-        const imageResponse = await memberService.uploadImage(data.imageFile)
-        pictureId = imageResponse.id
-      }
-
       const newMember = await memberService.createMember({
         ...data,
-        pictureId,
         departmentId,
       })
 
-      setDepartment((prev) =>
-        prev ? { ...prev, members: [...prev.members, newMember] } : null,
-      )
+      let pictureId
+      if (data.imageFile) {
+        const imageResponse = await memberService.uploadImage(data.imageFile, newMember.id)
+        pictureId = imageResponse.id
+      }
+
+      fetchDepartment()
 
       toast({
         title: 'Sucesso',
@@ -75,9 +72,9 @@ export function useDepartmentMembers(departmentId: string) {
       setDepartment((prev) =>
         prev
           ? {
-              ...prev,
-              members: prev.members?.filter((member) => member.id !== memberId),
-            }
+            ...prev,
+            members: prev.members?.filter((member) => member.id !== memberId),
+          }
           : null,
       )
 

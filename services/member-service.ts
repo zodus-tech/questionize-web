@@ -12,7 +12,6 @@ export const memberService = {
   async createMember({
     name,
     role,
-    pictureId,
     departmentId,
   }: {
     name: string
@@ -23,7 +22,6 @@ export const memberService = {
     const { data } = await api.post('/members/create', {
       name,
       role,
-      pictureId,
       departmentId,
     })
     return data
@@ -33,7 +31,7 @@ export const memberService = {
     await api.delete(`/members/delete/${memberId}`)
   },
 
-  async uploadImage(imageFileList: FileList, memberId: string = '') {
+  async uploadImage(imageFileList: FileList, memberId: string) {
     const formData = new FormData()
     // formData.append('imageFile', imageFile)
     // formData.append(
