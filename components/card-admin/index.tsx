@@ -1,6 +1,6 @@
 import DeleteDialog from '@/components/deleteDialog'
 import { Button } from '@/components/ui/button'
-import { FileText, EyeIcon } from 'lucide-react'
+import { FileText, EyeIcon, ChartLineIcon } from 'lucide-react'
 import { CardHeader, CardTitle, Card } from '../ui/card'
 
 interface SimpleCardProps {
@@ -8,6 +8,7 @@ interface SimpleCardProps {
   title: string
   onView: (id: number) => void
   onEdit: (id: number) => void
+  onAnalytics: (id: number) => void
   onDelete: () => void
   element: string
 }
@@ -18,6 +19,7 @@ const SimpleCard: React.FC<SimpleCardProps> = ({
   onView,
   /* onEdit, */
   onDelete,
+  onAnalytics,
   element,
 }) => {
   return (
@@ -36,6 +38,9 @@ const SimpleCard: React.FC<SimpleCardProps> = ({
           <div className="flex-shrink-0 flex space-x-1 ml-2">
             <Button variant="ghost" size="icon" onClick={() => onView(id)}>
               <EyeIcon className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="icon" onClick={() => onAnalytics(id)}>
+              <ChartLineIcon className="h-4 w-4" />
             </Button>
             {/* 
             <Button variant="ghost" size="icon" onClick={() => onEdit(id)}>

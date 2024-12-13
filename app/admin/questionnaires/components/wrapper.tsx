@@ -130,6 +130,11 @@ export default function QuestionnairesPage() {
                   onView={() =>
                     router.push(`/admin/questionary/response/${questionary.id}`)
                   }
+                  onAnalytics={() =>
+                    router.push(
+                      `/admin/questionary/analytics/${questionary.id}`,
+                    )
+                  }
                   onEdit={() => {}}
                   onDelete={() =>
                     handleDeleteForm(questionary.id, questionary.title)
