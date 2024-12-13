@@ -4,6 +4,9 @@ import { calculateMonthsBetween } from '@/utils/dates'
 import { Questionary } from '@/interfaces/questionary'
 import { DateRange } from 'react-day-picker'
 import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+import { ResponseData } from '@/interfaces/stats'
+import { capitalizeFirst } from '@/utils/text'
 
 export function useStatistics(dateRange?: DateRange) {
   const [questionnaires, setQuestionnaires] = useState<Questionary[]>([])
@@ -14,6 +17,7 @@ export function useStatistics(dateRange?: DateRange) {
     totalResponses: 0,
     averageResponseRate: '0.00',
   })
+  const [responseData, setResponseData] = useState<ResponseData[]>([])
 
   const fetchData = async () => {
     if (!dateRange?.from || !dateRange?.to) return
@@ -30,6 +34,19 @@ export function useStatistics(dateRange?: DateRange) {
         questionaryService.getGeneralStatistics(startDate, endDate),
       ])
 
+      const responseData = Object.entries(
+        statsData.totalSubmissionsPerPeriod,
+      ).map(([period, count]) => {
+        const [startStr] = period.split(' - ')
+        const monthDate = new Date(startStr)
+        const formattedName = format(monthDate, 'MMMM', { locale: ptBR })
+        return {
+          name: capitalizeFirst(formattedName.toUpperCase()),
+          responses: count,
+        }
+      })
+
+      setResponseData(responseData as ResponseData[])
       setQuestionnaires(questionnairesData)
 
       if (statsData) {
@@ -57,5 +74,12 @@ export function useStatistics(dateRange?: DateRange) {
     fetchData()
   }, [dateRange?.from, dateRange?.to])
 
-  return { ...stats, questionnaires, loading, error, refetch: fetchData }
+  return {
+    ...stats,
+    questionnaires,
+    loading,
+    error,
+    refetch: fetchData,
+    responseData,
+  }
 }
