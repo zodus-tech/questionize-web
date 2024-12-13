@@ -53,4 +53,9 @@ export const questionaryService = {
       return false
     }
   },
+
+  async getQuestionnaireSubmissions(id: string | number) {
+    const { data } = await api.get(`/questionary/${id}/submissions`)
+    return data
+  },
 }
