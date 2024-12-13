@@ -2,7 +2,6 @@ import React, { useRef } from 'react'
 import ActiveSurveysChart from '../charts/active-surveys-chart'
 import AverageResponseRateChart from '../charts/average-response-rate-chart'
 import CompletionRatePieChart from '../charts/completion-rate-pie-chart'
-import DemographicAreaChart from '../charts/demographic-area-chart'
 import SatisfactionBarChart from '../charts/satisfaction-bar-chart'
 import SurveyTrendChart from '../charts/survey-trend-chart'
 import TotalResponsesChart from '../charts/total-responses-chart'
@@ -13,27 +12,12 @@ import jsPDF from 'jspdf'
 import { FileDown } from 'lucide-react'
 import { Button } from '../ui/button'
 import { format } from 'date-fns'
-
-interface ResponseData {
-  name: string
-  responses: number
-}
-
-interface CompletionRateData {
-  name: string
-  value: number
-}
-
-interface SatisfactionData {
-  name: string
-  value: number
-}
-
-interface DemographicData {
-  age: string
-  male: number
-  female: number
-}
+import {
+  CompletionRateData,
+  DemographicData,
+  ResponseData,
+  SatisfactionData,
+} from '@/interfaces/stats'
 
 interface DashboardProps {
   totalResponses: number
@@ -54,7 +38,6 @@ const Dashboard: React.FC<DashboardProps> = ({
   responseData,
   completionRateData,
   satisfactionData,
-  demographicData,
   date,
   setDate,
 }) => {
@@ -133,8 +116,9 @@ const Dashboard: React.FC<DashboardProps> = ({
         <div className="grid gap-6 md:grid-cols-2">
           <SurveyTrendChart data={responseData} />
           <CompletionRatePieChart data={completionRateData} />
+        </div>
+        <div className="grid gap-6">
           <SatisfactionBarChart data={satisfactionData} />
-          <DemographicAreaChart data={demographicData} />
         </div>
       </div>
     </div>

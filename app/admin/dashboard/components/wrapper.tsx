@@ -4,7 +4,6 @@ import { useState } from 'react'
 import Dashboard from '@/components/dashboard'
 import { useStatistics } from '@/hooks/use-stats'
 import {
-  responseData,
   completionRateData,
   satisfactionData,
   demographicData,
@@ -24,6 +23,7 @@ export default function DashboardPage() {
     averageResponseRate,
     loading,
     error,
+    responseData,
   } = useStatistics(date)
 
   return (
