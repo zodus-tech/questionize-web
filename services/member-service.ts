@@ -4,7 +4,7 @@ export const memberService = {
   async getDepartmentMembers(departmentId: string | number) {
     const { data } = await api.get(`/department/id/${departmentId}`);
     return {
-      departmentName: data.departmentName,
+      departmentName: data.name,
       members: data.members,
     };
   },
