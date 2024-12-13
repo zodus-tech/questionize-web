@@ -293,7 +293,11 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
                                 {answer.question}
                               </h4>
                               <p className="mt-1 text-gray-600">
-                                {answer.answer}
+                                {answer.answer === 'true'
+                                  ? 'Sim'
+                                  : answer.answer === 'false'
+                                    ? 'Não'
+                                    : answer.answer}
                               </p>
                             </div>
                           ))}
