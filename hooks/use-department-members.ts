@@ -42,7 +42,11 @@ export function useDepartmentMembers(departmentId: string) {
 
       let pictureId
       if (data.imageFile) {
-        const imageResponse = await memberService.uploadImage(data.imageFile, newMember.id)
+        const imageResponse = await memberService.uploadImage(
+          data.imageFile,
+          newMember.id,
+        )
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         pictureId = imageResponse.id
       }
 
@@ -72,9 +76,9 @@ export function useDepartmentMembers(departmentId: string) {
       setDepartment((prev) =>
         prev
           ? {
-            ...prev,
-            members: prev.members?.filter((member) => member.id !== memberId),
-          }
+              ...prev,
+              members: prev.members?.filter((member) => member.id !== memberId),
+            }
           : null,
       )
 
