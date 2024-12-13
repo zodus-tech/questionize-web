@@ -14,7 +14,7 @@ export function useDepartmentMembers(departmentId: string) {
       const data = await memberService.getDepartmentMembers(departmentId)
       setDepartment({
         id: Number(departmentId),
-        name: data.departmentName || 'Sem nome',
+        name: data.name || 'Sem nome',
         members: data.members || [],
       })
     } catch (error) {
@@ -75,9 +75,9 @@ export function useDepartmentMembers(departmentId: string) {
       setDepartment((prev) =>
         prev
           ? {
-            ...prev,
-            members: prev.members?.filter((member) => member.id !== memberId),
-          }
+              ...prev,
+              members: prev.members?.filter((member) => member.id !== memberId),
+            }
           : null,
       )
 
