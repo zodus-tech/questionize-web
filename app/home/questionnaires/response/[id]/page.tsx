@@ -38,7 +38,6 @@ export default function QuestionaryResponsePage({
     setLoading(true)
     try {
       const data = await questionaryService.getQuestionnaireById(id)
-      console.log(data)
       setCurrentQuestionary(data)
       setAnswers({})
     } catch (error) {
@@ -77,6 +76,7 @@ export default function QuestionaryResponsePage({
       const success = await questionaryService.answerQuestionnaire(
         id,
         requestBody,
+        currentQuestionary?.submissionToken,
       )
       if (success) {
         toast({
@@ -258,6 +258,48 @@ export default function QuestionaryResponsePage({
                         </Label>
                       </div>
                     </RadioGroup>
+                  )}
+                  {question.type === QuestionType.RATING && (
+                    <div>
+                      {[
+                        'VERY_DISSATISFIED',
+                        'DISSATISFIED',
+                        'NEUTRAL',
+                        'SATISFACTORY',
+                        'VERY_SATISFACTORY',
+                      ].map((option) => (
+                        <div
+                          key={option}
+                          className="flex items-center space-x-2 mt-3"
+                        >
+                          <input
+                            type="radio"
+                            id={`question-${question.id}-${option}`}
+                            checked={
+                              (answers[question.id.toString()] as string) ===
+                              option
+                            }
+                            onChange={() =>
+                              handleInputChange(question.id.toString(), option)
+                            }
+                          />
+                          <Label
+                            htmlFor={`question-${question.id}-${option}`}
+                            className="text-zinc-700"
+                          >
+                            {option === 'VERY_DISSATISFIED'
+                              ? 'Muito Insatisfeito'
+                              : option === 'DISSATISFIED'
+                                ? 'Insatisfeito'
+                                : option === 'NEUTRAL'
+                                  ? 'Neutro'
+                                  : option === 'SATISFACTORY'
+                                    ? 'Satisfeito'
+                                    : 'Muito Satisfeito'}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
               ))}

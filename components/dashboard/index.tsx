@@ -14,7 +14,6 @@ import { Button } from '../ui/button'
 import { format } from 'date-fns'
 import {
   CompletionRateData,
-  DemographicData,
   ResponseData,
   SatisfactionData,
 } from '@/interfaces/stats'
@@ -26,7 +25,6 @@ interface DashboardProps {
   responseData: ResponseData[]
   completionRateData: CompletionRateData[]
   satisfactionData: SatisfactionData[]
-  demographicData: DemographicData[]
   date: DateRange | undefined
   setDate: React.Dispatch<React.SetStateAction<DateRange | undefined>>
 }

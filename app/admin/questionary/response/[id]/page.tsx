@@ -158,6 +158,41 @@ export default function QuestionaryResponsePage({
                     className="w-full mt-2 resize-none"
                   />
                 )}
+                {question.type === QuestionType.RATING && (
+                  <RadioGroup
+                    onValueChange={(value) =>
+                      handleInputChange(question.id.toString(), value)
+                    }
+                    value={(answers[question.id.toString()] as string) || ''}
+                  >
+                    {[
+                      {
+                        value: 'VERY_DISSATISFIED',
+                        label: 'Muito Insatisfeito',
+                      },
+                      { value: 'DISSATISFIED', label: 'Insatisfeito' },
+                      { value: 'NEUTRAL', label: 'Neutro' },
+                      { value: 'SATISFACTORY', label: 'Satisfeito' },
+                      { value: 'VERY_SATISFACTORY', label: 'Muito Satisfeito' },
+                    ].map((option) => (
+                      <div
+                        key={option.value}
+                        className="flex items-center space-x-2 mt-3"
+                      >
+                        <RadioGroupItem
+                          value={option.value}
+                          id={`question-${question.id}-${option.value}`}
+                        />
+                        <Label
+                          htmlFor={`question-${question.id}-${option.value}`}
+                          className="text-zinc-700"
+                        >
+                          {option.label}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                )}
                 {question.type === QuestionType.MULTIPLE_CHOICE && (
                   <div>
                     {question.options?.map((option) => (

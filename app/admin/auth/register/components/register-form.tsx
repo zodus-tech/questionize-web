@@ -76,10 +76,7 @@ export default function RegisterForm() {
     setSuccessMessage('')
     try {
       const result = await register(data)
-      console.log(result.success)
       if (result.success) {
-        console.log('pass, but reset.')
-
         toast({
           title: 'Cadastro',
           description: 'Cadastro realizado com succeso.',

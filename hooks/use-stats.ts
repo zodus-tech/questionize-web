@@ -18,6 +18,17 @@ export function useStatistics(dateRange?: DateRange) {
     averageResponseRate: '0.00',
   })
   const [responseData, setResponseData] = useState<ResponseData[]>([])
+  const [completionRateData, setCompletionRateData] = useState([
+    { name: 'Completed', value: 0 },
+    { name: 'Incomplete', value: 0 },
+  ])
+  const [satisfactionData, setSatisfactionData] = useState([
+    { name: 'Very Dissatisfied', value: 0 },
+    { name: 'Dissatisfied', value: 0 },
+    { name: 'Neutral', value: 0 },
+    { name: 'Satisfied', value: 0 },
+    { name: 'Very Satisfied', value: 0 },
+  ])
 
   const fetchData = async () => {
     if (!dateRange?.from || !dateRange?.to) return
@@ -46,8 +57,55 @@ export function useStatistics(dateRange?: DateRange) {
         }
       })
 
+      const completedResponses = statsData.totalSubmissions || 0
+      const incompleteResponses = statsData.unfinishedSubmissions || 0
+      const totalCompletions = completedResponses + incompleteResponses
+
+      const completionRateData = [
+        {
+          name: 'Completed',
+          value:
+            totalCompletions > 0
+              ? Math.round((completedResponses / totalCompletions) * 100)
+              : 0,
+        },
+        {
+          name: 'Incomplete',
+          value:
+            totalCompletions > 0
+              ? Math.round((incompleteResponses / totalCompletions) * 100)
+              : 0,
+        },
+      ]
+
+      const satisfactionDistribution = statsData.satisfactionDistribution || {}
+      const satisfactionData = [
+        {
+          name: 'Very Dissatisfied',
+          value: satisfactionDistribution.VERY_DISSATISFIED || 0,
+        },
+        {
+          name: 'Dissatisfied',
+          value: satisfactionDistribution.DISSATISFIED || 0,
+        },
+        {
+          name: 'Neutral',
+          value: satisfactionDistribution.NEUTRAL || 0,
+        },
+        {
+          name: 'Satisfied',
+          value: satisfactionDistribution.SATISFACTORY || 0,
+        },
+        {
+          name: 'Very Satisfied',
+          value: satisfactionDistribution.VERY_SATISFACTORY || 0,
+        },
+      ]
+
       setResponseData(responseData as ResponseData[])
       setQuestionnaires(questionnairesData)
+      setCompletionRateData(completionRateData)
+      setSatisfactionData(satisfactionData)
 
       if (statsData) {
         const monthsBetween = calculateMonthsBetween(startDate, endDate)
@@ -81,5 +139,7 @@ export function useStatistics(dateRange?: DateRange) {
     error,
     refetch: fetchData,
     responseData,
+    completionRateData,
+    satisfactionData,
   }
 }

@@ -1,4 +1,5 @@
 import { api } from './api'
+import Cookies from 'js-cookie'
 
 export const questionaryService = {
   async getAllQuestionnaires() {
@@ -14,7 +15,10 @@ export const questionaryService = {
   },
 
   async getQuestionnaireById(id: string | number) {
-    const { data } = await api.get(`/questionary/${id}`)
+    const isAdmin = Cookies.get('token')
+    const { data } = await api.get(
+      `/questionary/${isAdmin ? 'admin/' : ''}${id}`,
+    )
     return data
   },
 
@@ -41,9 +45,13 @@ export const questionaryService = {
   async answerQuestionnaire(
     id: string | number,
     requestBody: unknown,
+    submissionToken?: string,
   ): Promise<boolean> {
     try {
-      await api.post(`/questionary/${id}/submit`, requestBody)
+      await api.post(
+        `/questionary/${id}/submit${submissionToken ? '?submissionToken=' + submissionToken : ''}`,
+        requestBody,
+      )
       return true
     } catch (error) {
       console.error(
