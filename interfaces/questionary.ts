@@ -2,6 +2,7 @@ export enum QuestionType {
   MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
   BOOLEAN = 'BOOLEAN',
   TEXT = 'TEXT',
+  RATING = 'RATING',
 }
 
 export interface Question {
@@ -25,6 +26,7 @@ export interface Questionary {
   createdAt?: Date
   options: Options
   questions: Question[]
+  submissionToken?: string
 }
 
 export interface QuestionnairesProps {

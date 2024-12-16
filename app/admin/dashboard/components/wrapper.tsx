@@ -3,11 +3,6 @@
 import { useState } from 'react'
 import Dashboard from '@/components/dashboard'
 import { useStatistics } from '@/hooks/use-stats'
-import {
-  completionRateData,
-  satisfactionData,
-  demographicData,
-} from '@/data/mock-data'
 import { addDays } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 
@@ -24,6 +19,8 @@ export default function DashboardPage() {
     loading,
     error,
     responseData,
+    completionRateData,
+    satisfactionData,
   } = useStatistics(date)
 
   return (
@@ -36,7 +33,6 @@ export default function DashboardPage() {
           responseData={responseData}
           completionRateData={completionRateData}
           satisfactionData={satisfactionData}
-          demographicData={demographicData}
           date={date}
           setDate={setDate}
         />

@@ -2,6 +2,7 @@ export enum QuestionType {
   TEXT = 'TEXT',
   MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
   BOOLEAN = 'BOOLEAN',
+  RATING = 'RATING',
 }
 
 export interface QuestionnaireOptions {
@@ -63,6 +64,11 @@ export interface TextResponseDataPoint {
 export interface BooleanDataPoint {
   name: string
   value: number
+}
+
+export interface RatingDataPoint {
+  name: string
+  count: number
 }
 
 // Props interfaces

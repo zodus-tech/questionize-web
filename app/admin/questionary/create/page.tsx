@@ -96,14 +96,26 @@ function formReducer(state: HistoryState, action: FormAction): HistoryState {
         ...state.present,
         questions: state.present.questions.map((q) => {
           if (q.id === action.payload.id) {
+            let updatedOptions: string[] | undefined
+            if (action.payload.questionType === QuestionType.MULTIPLE_CHOICE) {
+              updatedOptions = []
+            } else if (action.payload.questionType === QuestionType.RATING) {
+              updatedOptions = [
+                'VERY_DISSATISFIED',
+                'DISSATISFIED',
+                'NEUTRAL',
+                'SATISFACTORY',
+                'VERY_SATISFACTORY',
+              ]
+            } else {
+              updatedOptions = undefined
+            }
+
             return {
               ...q,
               type: action.payload.questionType,
               statistics: {},
-              options:
-                action.payload.questionType === QuestionType.MULTIPLE_CHOICE
-                  ? q.options || []
-                  : undefined,
+              options: updatedOptions,
             }
           }
           return q
@@ -234,6 +246,7 @@ export default function Component() {
           endDate: state.present.options.endDate,
           answersLimit: state.present.options.answersLimit,
           anonymous: state.present.options.anonymous || true,
+          membersIds: [],
         },
         questions: state.present.questions.map((q) => ({
           id: q.id,
@@ -376,6 +389,7 @@ export default function Component() {
                         </SelectItem>
                         <SelectItem value="TEXT">Texto</SelectItem>
                         <SelectItem value="BOOLEAN">Sim e Não</SelectItem>
+                        <SelectItem value="RATING">Avaliação</SelectItem>
                       </SelectContent>
                     </Select>
                     <Button
@@ -427,6 +441,39 @@ export default function Component() {
                         />
                       </div>
                     ))}
+
+                  {question.type === QuestionType.RATING && (
+                    <RadioGroup className="mt-2">
+                      <div className="flex items-center">
+                        <div className="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
+                        <Label htmlFor={`${question.id}-very_dissatisfied`}>
+                          Muito Insatisfeito
+                        </Label>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
+                        <Label htmlFor={`${question.id}-dissatisfied`}>
+                          Insatisfeito
+                        </Label>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
+                        <Label htmlFor={`${question.id}-neutral`}>Neutro</Label>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
+                        <Label htmlFor={`${question.id}-satisfactory`}>
+                          Satisfatório
+                        </Label>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
+                        <Label htmlFor={`${question.id}-very_satisfactory`}>
+                          Muito Satisfatório
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  )}
 
                   {question.type === QuestionType.TEXT && (
                     <Textarea
