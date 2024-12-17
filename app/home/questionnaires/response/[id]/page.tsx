@@ -14,6 +14,9 @@ import { baseUrl } from '@/utils/endpoints'
 import { useRouter } from 'next/navigation'
 import { questionaryService } from '@/services/questionary-service'
 import { ToastAction } from '@radix-ui/react-toast'
+import { MemberSelector } from './components/member-selector'
+import { Member } from '@/interfaces/member'
+import { memberService } from '@/services/member-service'
 
 axios.defaults.baseURL = baseUrl
 
@@ -29,6 +32,9 @@ export default function QuestionaryResponsePage({
   )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null)
+  const [members, setMembers] = useState<Member[] | undefined>()
+
   const { toast } = useToast()
   const router = useRouter()
 
@@ -40,6 +46,18 @@ export default function QuestionaryResponsePage({
       const data = await questionaryService.getQuestionnaireById(id)
       setCurrentQuestionary(data)
       setAnswers({})
+
+      const memberIds = data?.options?.membersIds || []
+      if (memberIds.length > 0) {
+        const resolvedMembers = await Promise.all(
+          memberIds.map((memberId: string) =>
+            memberService.getMemberById(memberId),
+          ),
+        )
+        setMembers(resolvedMembers)
+      } else {
+        setMembers(undefined)
+      }
     } catch (error) {
       console.error('Ocorreu um erro ao encontrar os questionários', error)
       setError('Ocorreu um erro ao encontrar os questionários')
@@ -62,15 +80,11 @@ export default function QuestionaryResponsePage({
 
     try {
       const requestBody = {
-        answers: Object.entries(answers).flatMap(([questionId, answer]) => {
-          if (Array.isArray(answer)) {
-            return answer.map((option) => ({
-              questionId,
-              answer: option,
-            }))
-          }
-          return { questionId, answer }
-        }),
+        answers: Object.entries(answers).map(([questionId, answer]) => ({
+          questionId,
+          answer: Array.isArray(answer) ? answer.join(', ') : answer,
+        })),
+        memberId: selectedMemberId,
       }
 
       const success = await questionaryService.answerQuestionnaire(
@@ -153,156 +167,180 @@ export default function QuestionaryResponsePage({
           </div>
           <div className="container mx-auto px-4 py-8">
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-              {currentQuestionary.questions.map((question: Question) => (
-                <div key={question.id} className="mb-8">
-                  <Label
-                    htmlFor={`question-${question.id}`}
-                    className="text-lg text-zinc-900"
-                  >
-                    {question.text}
-                  </Label>
-                  {question.type === QuestionType.TEXT && (
-                    <Input
-                      id={`question-${question.id}`}
-                      value={(answers[question.id.toString()] as string) || ''}
-                      onChange={(e) =>
-                        handleInputChange(
-                          question.id.toString(),
-                          e.target.value,
-                        )
-                      }
-                      placeholder="Digite sua resposta"
-                      className="w-full mt-2 resize-none"
-                    />
-                  )}
-                  {question.type === QuestionType.MULTIPLE_CHOICE && (
-                    <div>
-                      {question.options?.map((option) => (
-                        <div
-                          key={option}
-                          className="flex items-center space-x-2 mt-3"
-                        >
-                          <input
-                            type="checkbox"
-                            id={`question-${question.id}-${option}`}
-                            checked={
-                              (
-                                answers[question.id.toString()] as string[]
-                              )?.includes(option) || false
-                            }
-                            onChange={(e) => {
-                              const isChecked = e.target.checked
-                              setAnswers((prev) => {
-                                const currentAnswers =
-                                  (prev[question.id.toString()] as string[]) ||
-                                  []
-                                if (isChecked) {
-                                  return {
-                                    ...prev,
-                                    [question.id.toString()]: [
-                                      ...currentAnswers,
-                                      option,
-                                    ],
-                                  }
-                                } else {
-                                  return {
-                                    ...prev,
-                                    [question.id.toString()]:
-                                      currentAnswers.filter(
-                                        (item) => item !== option,
-                                      ),
-                                  }
+              <div className="mb-8">
+                <Label className="text-lg text-zinc-900 mb-2 block">
+                  Selecione o membro que você deseja avaliar:
+                </Label>
+                <MemberSelector
+                  members={members}
+                  onSelect={setSelectedMemberId}
+                  selectedMemberId={selectedMemberId}
+                />
+              </div>
+              {selectedMemberId && (
+                <>
+                  {currentQuestionary.questions.map((question: Question) => (
+                    <div key={question.id} className="mb-8">
+                      <Label
+                        htmlFor={`question-${question.id}`}
+                        className="text-lg text-zinc-900"
+                      >
+                        {question.text}
+                      </Label>
+                      {question.type === QuestionType.TEXT && (
+                        <Input
+                          id={`question-${question.id}`}
+                          value={
+                            (answers[question.id.toString()] as string) || ''
+                          }
+                          onChange={(e) =>
+                            handleInputChange(
+                              question.id.toString(),
+                              e.target.value,
+                            )
+                          }
+                          placeholder="Digite sua resposta"
+                          className="w-full mt-2 resize-none"
+                        />
+                      )}
+                      {question.type === QuestionType.MULTIPLE_CHOICE && (
+                        <div>
+                          {question.options?.map((option) => (
+                            <div
+                              key={option}
+                              className="flex items-center space-x-2 mt-3"
+                            >
+                              <input
+                                type="checkbox"
+                                id={`question-${question.id}-${option}`}
+                                checked={
+                                  (
+                                    answers[question.id.toString()] as string[]
+                                  )?.includes(option) || false
                                 }
-                              })
-                            }}
-                          />
-                          <Label
-                            htmlFor={`question-${question.id}-${option}`}
-                            className="text-zinc-700"
-                          >
-                            {option}
-                          </Label>
+                                onChange={(e) => {
+                                  const isChecked = e.target.checked
+                                  setAnswers((prev) => {
+                                    const currentAnswers =
+                                      (prev[
+                                        question.id.toString()
+                                      ] as string[]) || []
+                                    if (isChecked) {
+                                      return {
+                                        ...prev,
+                                        [question.id.toString()]: [
+                                          ...currentAnswers,
+                                          option,
+                                        ],
+                                      }
+                                    } else {
+                                      return {
+                                        ...prev,
+                                        [question.id.toString()]:
+                                          currentAnswers.filter(
+                                            (item) => item !== option,
+                                          ),
+                                      }
+                                    }
+                                  })
+                                }}
+                              />
+                              <Label
+                                htmlFor={`question-${question.id}-${option}`}
+                                className="text-zinc-700"
+                              >
+                                {option}
+                              </Label>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  )}
-                  {question.type === QuestionType.BOOLEAN && (
-                    <RadioGroup
-                      onValueChange={(value) =>
-                        handleInputChange(question.id.toString(), value)
-                      }
-                      value={(answers[question.id.toString()] as string) || ''}
-                    >
-                      <div className="flex items-center space-x-2 mt-3">
-                        <RadioGroupItem
-                          value="true"
-                          id={`question-${question.id}-true`}
-                        />
-                        <Label
-                          htmlFor={`question-${question.id}-true`}
-                          className="text-zinc-700"
+                      )}
+                      {question.type === QuestionType.BOOLEAN && (
+                        <RadioGroup
+                          onValueChange={(value) =>
+                            handleInputChange(question.id.toString(), value)
+                          }
+                          value={
+                            (answers[question.id.toString()] as string) || ''
+                          }
                         >
-                          Sim
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2 mt-3">
-                        <RadioGroupItem
-                          value="false"
-                          id={`question-${question.id}-false`}
-                        />
-                        <Label
-                          htmlFor={`question-${question.id}-false`}
-                          className="text-zinc-700"
-                        >
-                          Não
-                        </Label>
-                      </div>
-                    </RadioGroup>
-                  )}
-                  {question.type === QuestionType.RATING && (
-                    <div>
-                      {[
-                        'VERY_DISSATISFIED',
-                        'DISSATISFIED',
-                        'NEUTRAL',
-                        'SATISFACTORY',
-                        'VERY_SATISFACTORY',
-                      ].map((option) => (
-                        <div
-                          key={option}
-                          className="flex items-center space-x-2 mt-3"
-                        >
-                          <input
-                            type="radio"
-                            id={`question-${question.id}-${option}`}
-                            checked={
-                              (answers[question.id.toString()] as string) ===
-                              option
-                            }
-                            onChange={() =>
-                              handleInputChange(question.id.toString(), option)
-                            }
-                          />
-                          <Label
-                            htmlFor={`question-${question.id}-${option}`}
-                            className="text-zinc-700"
-                          >
-                            {option === 'VERY_DISSATISFIED'
-                              ? 'Muito Insatisfeito'
-                              : option === 'DISSATISFIED'
-                                ? 'Insatisfeito'
-                                : option === 'NEUTRAL'
-                                  ? 'Neutro'
-                                  : option === 'SATISFACTORY'
-                                    ? 'Satisfeito'
-                                    : 'Muito Satisfeito'}
-                          </Label>
+                          <div className="flex items-center space-x-2 mt-3">
+                            <RadioGroupItem
+                              value="true"
+                              id={`question-${question.id}-true`}
+                            />
+                            <Label
+                              htmlFor={`question-${question.id}-true`}
+                              className="text-zinc-700"
+                            >
+                              Sim
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2 mt-3">
+                            <RadioGroupItem
+                              value="false"
+                              id={`question-${question.id}-false`}
+                            />
+                            <Label
+                              htmlFor={`question-${question.id}-false`}
+                              className="text-zinc-700"
+                            >
+                              Não
+                            </Label>
+                          </div>
+                        </RadioGroup>
+                      )}
+                      {question.type === QuestionType.RATING && (
+                        <div>
+                          {[
+                            'VERY_DISSATISFIED',
+                            'DISSATISFIED',
+                            'NEUTRAL',
+                            'SATISFACTORY',
+                            'VERY_SATISFACTORY',
+                          ].map((option) => (
+                            <div
+                              key={option}
+                              className="flex items-center space-x-2 mt-3"
+                            >
+                              <input
+                                type="radio"
+                                id={`question-${question.id}-${option}`}
+                                checked={
+                                  (answers[
+                                    question.id.toString()
+                                  ] as string) === option
+                                }
+                                onChange={() =>
+                                  handleInputChange(
+                                    question.id.toString(),
+                                    option,
+                                  )
+                                }
+                              />
+                              <Label
+                                htmlFor={`question-${question.id}-${option}`}
+                                className="text-zinc-700"
+                              >
+                                {option === 'VERY_DISSATISFIED'
+                                  ? 'Muito Insatisfeito'
+                                  : option === 'DISSATISFIED'
+                                    ? 'Insatisfeito'
+                                    : option === 'NEUTRAL'
+                                      ? 'Neutro'
+                                      : option === 'SATISFACTORY'
+                                        ? 'Satisfeito'
+                                        : 'Muito Satisfeito'}
+                              </Label>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      )}
                     </div>
-                  )}
-                </div>
-              ))}
+                  ))}
+                </>
+              )}
+
               <div className="flex space-x-4">
                 <Button
                   onClick={handleClearAnswers}

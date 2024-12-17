@@ -1,9 +1,9 @@
 import { Member } from '@/interfaces/member'
-import axios from 'axios'
 import Cookies from 'js-cookie'
 import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
+import { memberService } from '@/services/member-service'
 
 export default function MemberItem(member: { member: Member }) {
   const { toast } = useToast()
@@ -11,33 +11,21 @@ export default function MemberItem(member: { member: Member }) {
 
   useEffect(() => {
     const fetchMemberImage = async () => {
-      const token = Cookies.get('token')
-      if (!token) throw new Error('Token não encontrado')
-
-      const response = await axios.get(`/images/${member.member.pictureId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Access-Control-Allow-Origin': '*',
-        },
-      })
-
-      setImage(`data:image/png;base64,${response.data.imageBytes}`)
+      if (member.member.pictureId) {
+        const data = await memberService.getImage(member.member.pictureId)
+        setImage(`data:image/png;base64,${data.imageBytes}`)
+      }
     }
 
     if (member.member.pictureId) fetchMemberImage()
   }, [member.member.pictureId])
 
-  const handleDeleteMember = async (memberId: number) => {
+  const handleDeleteMember = async (memberId: string) => {
     try {
       const token = Cookies.get('token')
       if (!token) throw new Error('Token não encontrado')
 
-      await axios.delete(`/members/delete/${memberId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Access-Control-Allow-Origin': '*',
-        },
-      })
+      await memberService.deleteMember(memberId)
 
       toast({ title: 'Sucesso', description: 'Membro excluído com sucesso.' })
     } catch (error) {
