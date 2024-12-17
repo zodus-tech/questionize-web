@@ -80,6 +80,35 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
     }))
   }
 
+  const processRatingData = (
+    question: Question,
+    answers: Answer[],
+  ): MultipleChoiceDataPoint[] => {
+    const optionCounts = _.countBy(answers.map((a) => a.answer))
+    return (question.options || []).map((option) => ({
+      name: [
+        {
+          value: 'VERY_DISSATISFIED',
+          label: 'Muito Insatisfeito',
+        },
+        {
+          value: 'DISSATISFIED',
+          label: 'Insatisfeito',
+        },
+        { value: 'NEUTRAL', label: 'Neutro' },
+        {
+          value: 'SATISFACTORY',
+          label: 'Satisfeito',
+        },
+        {
+          value: 'VERY_SATISFACTORY',
+          label: 'Muito Satisfeito',
+        },
+      ].filter((v) => v.value === option)[0].label,
+      count: optionCounts[option] || 0,
+    }))
+  }
+
   const processTextResponses = (answers: Answer[]): TextResponseDataPoint[] => {
     const responseCount = answers.length
     const averageLength = Math.round(
@@ -214,6 +243,22 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
                                 'Contagem',
                               ]}
                               labelFormatter={(label) => `Opção: ${label}`}
+                            />
+                            <Legend formatter={() => `Contagem`} />
+                            <Bar dataKey="count" fill="#4299E1" />
+                          </BarChart>
+                        ) : question.type === QuestionType.RATING ? (
+                          <BarChart
+                            data={processRatingData(question, questionAnswers)}
+                          >
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip
+                              formatter={(value: number) => [
+                                `${value}`,
+                                'Contagem',
+                              ]}
+                              labelFormatter={(value) => `Opção: ${value}`}
                             />
                             <Legend formatter={() => `Contagem`} />
                             <Bar dataKey="count" fill="#4299E1" />
