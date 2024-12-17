@@ -1,14 +1,14 @@
 import DeleteDialog from '@/components/deleteDialog'
 import { Button } from '@/components/ui/button'
-import { FileText, EyeIcon, ChartLineIcon } from 'lucide-react'
+import { FileText, EyeIcon, ChartLineIcon, Edit } from 'lucide-react'
 import { CardHeader, CardTitle, Card } from '../ui/card'
 
 interface SimpleCardProps {
   id: number
   title: string
   onView: (id: number) => void
-  onEdit: (id: number) => void
-  onAnalytics: (id: number) => void
+  onEdit?: (id: number) => void
+  onAnalytics?: (id: number) => void
   onDelete: () => void
   element: string
 }
@@ -17,7 +17,7 @@ const SimpleCard: React.FC<SimpleCardProps> = ({
   id,
   title,
   onView,
-  /* onEdit, */
+  onEdit,
   onDelete,
   onAnalytics,
   element,
@@ -39,14 +39,22 @@ const SimpleCard: React.FC<SimpleCardProps> = ({
             <Button variant="ghost" size="icon" onClick={() => onView(id)}>
               <EyeIcon className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => onAnalytics(id)}>
-              <ChartLineIcon className="h-4 w-4" />
-            </Button>
-            {/* 
-            <Button variant="ghost" size="icon" onClick={() => onEdit(id)}>
-              <Edit className="h-4 w-4" />
-            </Button> 
-            */}
+            {onAnalytics && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => onAnalytics(id)}
+              >
+                <ChartLineIcon className="h-4 w-4" />
+              </Button>
+            )}
+
+            {onEdit && (
+              <Button variant="ghost" size="icon" onClick={() => onEdit(id)}>
+                <Edit className="h-4 w-4" />
+              </Button>
+            )}
+
             <DeleteDialog handleDelete={onDelete} element={element} />
           </div>
         </div>
