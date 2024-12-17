@@ -29,7 +29,7 @@ const SimpleCard: React.FC<SimpleCardProps> = ({
     >
       <CardHeader className="p-4">
         <div className="flex items-start justify-between">
-          <div className="flex-1 min-w-0 flex items-center space-x-2">
+          <div className="flex-1 min-w-0 flex items-center space-x-2 my-auto">
             <FileText className="h-5 w-5 text-primary flex-shrink-0" />
             <CardTitle className="break-words whitespace-normal overflow-hidden text-ellipsis">
               {title}

@@ -15,8 +15,8 @@ const SimpleCard: React.FC<SimpleCardProps> = ({ id, title, onRespond }) => {
       className="shadow-[0_1px_1px_rgba(0,0,0,0.04)] hover:shadow-sm transition-shadow"
     >
       <CardHeader className="p-4">
-        <div className="flex items-start justify-between">
-          <div className="flex-1 min-w-0 flex items-center space-x-2 align-middle">
+        <div className="flex items-start justify-between h-fit">
+          <div className="flex-1 flex items-center space-x-2 align-middle my-auto">
             <FileText className="h-5 w-5 text-primary flex-shrink-0" />
             <CardTitle className="break-words whitespace-normal overflow-hidden text-ellipsis mb-1">
               {title}
