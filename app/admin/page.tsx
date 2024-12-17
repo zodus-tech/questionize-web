@@ -1,7 +1,18 @@
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <p>Em desenvolvimento...</p>
+    <div className="flex flex-col items-center justify-center min-h-screen text-center px-4">
+      <h1 className="text-6xl font-bold text-black mb-4">Em desenvolvimento</h1>
+      <p className="text-lg text-gray-500 mb-8">
+        Oops! Ainda estamos trabalhando por aqui...
+      </p>
+      <Link href="/">
+        <Button variant="default" className="px-6 py-3 text-sm">
+          Voltar para a Página Inicial
+        </Button>
+      </Link>
     </div>
   )
 }
