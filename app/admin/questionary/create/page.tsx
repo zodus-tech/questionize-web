@@ -14,6 +14,7 @@ import {
   Plus,
   Copy,
   Trash2,
+  InfoIcon,
   /* GripVertical */
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -36,6 +37,14 @@ import LoadingSpinner from '@/components/loadingSpinner'
 import { useRouter } from 'next/navigation'
 import { questionaryService } from '@/services/questionary-service'
 import { ToastAction } from '@/components/ui/toast'
+import { Member } from '@/interfaces/member'
+import { MemberSelect } from './components/member-select'
+import {
+  TooltipProvider,
+  TooltipTrigger,
+  TooltipContent,
+  Tooltip,
+} from '@/components/ui/tooltip'
 
 const initialState: HistoryState = {
   past: [],
@@ -211,6 +220,7 @@ export default function Component() {
   const [state, dispatch] = useReducer(formReducer, initialState)
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
+  const [selectedMembers, setSelectedMembers] = useState<Member[]>([])
 
   const router = useRouter()
 
@@ -230,6 +240,16 @@ export default function Component() {
   const handleCreateForm = async () => {
     setLoading(true)
 
+    if (selectedMembers.length === 0) {
+      toast({
+        title: 'Membros Insuficiente',
+        description: 'Selecione pelo menos um membro para continuar.',
+        variant: 'destructive',
+      })
+      setLoading(false)
+      return
+    }
+
     try {
       const token = Cookies.get('token')
 
@@ -246,7 +266,7 @@ export default function Component() {
           endDate: state.present.options.endDate,
           answersLimit: state.present.options.answersLimit,
           anonymous: state.present.options.anonymous || true,
-          membersIds: [],
+          membersIds: selectedMembers.map((member) => member.id),
         },
         questions: state.present.questions.map((q) => ({
           id: q.id,
@@ -336,6 +356,27 @@ export default function Component() {
 
         <div className="container mx-auto px-4 py-8">
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div className="w-full h-fit flex flex-start items-center gap-2 mb-3">
+              <h2 className="text-xl font-semibold">Membros Avaliados</h2>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <InfoIcon className="text-black/50 w-4 h-4" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      Escolha os membros a serem avaliados na hora de preencher
+                      o questionário
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <MemberSelect onMembersChange={setSelectedMembers} />{' '}
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            {/* Added MemberSelect component with prop */}
             {/*             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId="questions">
                 {(provided) => (

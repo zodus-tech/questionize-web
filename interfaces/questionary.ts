@@ -18,6 +18,7 @@ interface Options {
   endDate: Date
   answersLimit: number
   anonymous: boolean
+  membersIds?: string[]
 }
 
 export interface Questionary {

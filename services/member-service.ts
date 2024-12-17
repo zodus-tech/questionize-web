@@ -27,8 +27,17 @@ export const memberService = {
     return data
   },
 
-  async deleteMember(memberId: number) {
+  async getMemberById(memberId: string) {
+    return await api.get(`/members/${memberId}`)
+  },
+
+  async deleteMember(memberId: string) {
     await api.delete(`/members/delete/${memberId}`)
+  },
+
+  async getImage(pictureId: string) {
+    const { data } = await api.get(`/images/${pictureId}`)
+    return data
   },
 
   async uploadImage(imageFileList: FileList, memberId: string) {
@@ -58,7 +67,7 @@ export const memberService = {
         [
           JSON.stringify({
             name: imageFile.name,
-            memberId: memberId,
+            memberId,
             questionaryId: null,
           }),
         ],
