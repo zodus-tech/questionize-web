@@ -1,17 +1,12 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
-import { Send, Trash2 } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
 import { Question, Questionary, QuestionType } from '@/interfaces/questionary'
-import Cookies from 'js-cookie'
 import LoadingSpinner from '@/components/loadingSpinner'
 import { questionaryService } from '@/services/questionary-service'
-import { ToastAction } from '@/components/ui/toast'
 
 export default function QuestionaryResponsePage({
   params,
@@ -25,7 +20,6 @@ export default function QuestionaryResponsePage({
   )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { toast } = useToast()
 
   const { id } = params
 
@@ -52,77 +46,12 @@ export default function QuestionaryResponsePage({
     setAnswers((prev) => ({ ...prev, [questionId]: value }))
   }
 
-  const handleSubmit = async () => {
-    setLoading(true)
-
-    try {
-      const token = Cookies.get('token')
-      if (!token) {
-        throw new Error('Token não encontrado')
-      }
-
-      const requestBody = {
-        answers: Object.entries(answers).flatMap(([questionId, answer]) => {
-          if (Array.isArray(answer)) {
-            return answer.map((option) => ({
-              questionId,
-              answer: option,
-            }))
-          }
-          return { questionId, answer }
-        }),
-      }
-
-      const success = await questionaryService.answerQuestionnaire(
-        id,
-        requestBody,
-      )
-      if (success) {
-        toast({
-          title: 'Success',
-          description: 'Formulário enviado com sucesso!',
-        })
-
-        setAnswers({})
-        fetchQuestionnaire()
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Falha',
-          description: `Não foi possível enviar sua resposta, tente novamente mais tarde`,
-          action: (
-            <ToastAction
-              altText="Tentar novamente"
-              onClick={() => {
-                handleSubmit()
-              }}
-            >
-              Tentar novamente
-            </ToastAction>
-          ),
-        })
-      }
-    } catch (error) {
-      console.error('Erro ao enviar o formulário', error)
-      toast({
-        title: 'Erro',
-        description: 'Ocorreu um erro ao enviar o formulário',
-        variant: 'destructive',
-      })
-    }
-  }
-
   if (error) {
     return <div>{error}</div>
   }
 
   if (!currentQuestionary) {
     return <div>Questionário não encontrado.</div>
-  }
-
-  const handleClearAnswers = () => {
-    setAnswers({})
-    setCurrentQuestionary((prev) => (prev ? { ...prev } : null))
   }
 
   return (
@@ -278,23 +207,6 @@ export default function QuestionaryResponsePage({
                 )}
               </div>
             ))}
-            <div className="flex space-x-4">
-              <Button
-                onClick={handleClearAnswers}
-                variant="outline"
-                className="flex-1"
-              >
-                <Trash2 className="w-4 h-4 mr-2 text-zinc-700" />
-                <Label className="text-zinc-700">Recomeçar</Label>
-              </Button>
-              <Button
-                onClick={handleSubmit}
-                className="flex-1 bg-green-500 hover:bg-green-600 text-white"
-              >
-                <Send className="w-4 h-4 mr-2" />
-                Enviar
-              </Button>
-            </div>
           </div>
         </div>
       </div>
