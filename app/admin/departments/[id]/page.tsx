@@ -23,7 +23,9 @@ export default function DepartmentDetailsPage({
 }: {
   params: { id: string }
 }) {
-  const { department, loading, addMember } = useDepartmentMembers(params.id)
+  const { department, loading, addMember, refetch } = useDepartmentMembers(
+    params.id,
+  )
   const [searchTerm, setSearchTerm] = useState('')
   const { register, handleSubmit, reset } = useForm<{
     name: string
@@ -100,7 +102,7 @@ export default function DepartmentDetailsPage({
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 w-full max-w-screen-xl mx-auto">
           {filteredMembers && filteredMembers.length > 0 ? (
             filteredMembers.map((member) => (
-              <MemberItem key={member.id} member={member} />
+              <MemberItem key={member.id} member={member} refetch={refetch} />
             ))
           ) : (
             <div className="w-full max-w-md absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">

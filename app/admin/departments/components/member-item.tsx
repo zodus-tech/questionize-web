@@ -1,11 +1,13 @@
 import { Member } from '@/interfaces/member'
-import Cookies from 'js-cookie'
 import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
 import { memberService } from '@/services/member-service'
 
-export default function MemberItem(member: { member: Member }) {
+export default function MemberItem(member: {
+  member: Member
+  refetch: () => Promise<void>
+}) {
   const { toast } = useToast()
   const [image, setImage] = useState('')
 
@@ -22,12 +24,10 @@ export default function MemberItem(member: { member: Member }) {
 
   const handleDeleteMember = async (memberId: string) => {
     try {
-      const token = Cookies.get('token')
-      if (!token) throw new Error('Token não encontrado')
-
       await memberService.deleteMember(memberId)
 
       toast({ title: 'Sucesso', description: 'Membro excluído com sucesso.' })
+      await member.refetch()
     } catch (error) {
       console.error('Erro ao excluir membro', error)
       toast({
@@ -44,6 +44,7 @@ export default function MemberItem(member: { member: Member }) {
     >
       <div className="flex items-center gap-4">
         {image && (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={image}
             alt={member.member.name}
