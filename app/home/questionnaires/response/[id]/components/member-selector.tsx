@@ -14,25 +14,25 @@ import MemberAvatar from './member-avatar'
 
 interface MemberSelectorProps {
   members: Member[] | undefined
-  onSelect: (memberId: string) => void
-  selectedMemberId: string | null
+  onSelect: (member: Member) => void
+  selectedMember: Member | undefined
 }
 
 export function MemberSelector({
   members,
   onSelect,
-  selectedMemberId,
+  selectedMember,
 }: MemberSelectorProps) {
   const [open, setOpen] = useState(false)
 
-  const handleSelect = (memberId: string) => {
-    onSelect(memberId)
+  const handleSelect = (member: Member) => {
+    onSelect(member)
     setOpen(false)
   }
 
-  const selectedMember = members?.find(
-    (member) => member.id === selectedMemberId,
-  )
+  // const selectedMember = members?.find(
+  //   (member) => member.id === selectedMember?.id,
+  // )
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -67,11 +67,9 @@ export function MemberSelector({
                     key={member.id}
                     variant="outline"
                     className={`flex flex-col items-center p-4 h-auto ${
-                      selectedMemberId === member.id
-                        ? 'ring-2 ring-primary'
-                        : ''
+                      selectedMember === member ? 'ring-2 ring-primary' : ''
                     }`}
-                    onClick={() => handleSelect(member.id)}
+                    onClick={() => handleSelect(member)}
                   >
                     <MemberAvatar member={member} />
                   </Button>

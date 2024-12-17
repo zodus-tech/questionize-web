@@ -16,7 +16,6 @@ import { questionaryService } from '@/services/questionary-service'
 import { ToastAction } from '@radix-ui/react-toast'
 import { MemberSelector } from './components/member-selector'
 import { Member } from '@/interfaces/member'
-import { memberService } from '@/services/member-service'
 
 axios.defaults.baseURL = baseUrl
 
@@ -32,7 +31,7 @@ export default function QuestionaryResponsePage({
   )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null)
+  const [selectedMember, setSelectedMember] = useState<Member | undefined>()
   const [members, setMembers] = useState<Member[] | undefined>()
 
   const { toast } = useToast()
@@ -47,14 +46,9 @@ export default function QuestionaryResponsePage({
       setCurrentQuestionary(data)
       setAnswers({})
 
-      const memberIds = data?.options?.membersIds || []
-      if (memberIds.length > 0) {
-        const resolvedMembers = await Promise.all(
-          memberIds.map((memberId: string) =>
-            memberService.getMemberById(memberId),
-          ),
-        )
-        setMembers(resolvedMembers)
+      const members = data?.options?.members || []
+      if (members.length > 0) {
+        setMembers(members)
       } else {
         setMembers(undefined)
       }
@@ -84,7 +78,7 @@ export default function QuestionaryResponsePage({
           questionId,
           answer: Array.isArray(answer) ? answer.join(', ') : answer,
         })),
-        memberId: selectedMemberId,
+        memberId: selectedMember?.id,
       }
 
       const success = await questionaryService.answerQuestionnaire(
@@ -174,12 +168,12 @@ export default function QuestionaryResponsePage({
                   </Label>
                   <MemberSelector
                     members={members}
-                    onSelect={setSelectedMemberId}
-                    selectedMemberId={selectedMemberId}
+                    onSelect={setSelectedMember}
+                    selectedMember={selectedMember}
                   />
                 </div>
               )}
-              {(!members || members.length === 0 || selectedMemberId) && (
+              {(!members || members.length === 0 || selectedMember) && (
                 <>
                   {currentQuestionary.questions.map((question: Question) => (
                     <div key={question.id} className="mb-8">
