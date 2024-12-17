@@ -167,17 +167,19 @@ export default function QuestionaryResponsePage({
           </div>
           <div className="container mx-auto px-4 py-8">
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-              <div className="mb-8">
-                <Label className="text-lg text-zinc-900 mb-2 block">
-                  Selecione o membro que você deseja avaliar:
-                </Label>
-                <MemberSelector
-                  members={members}
-                  onSelect={setSelectedMemberId}
-                  selectedMemberId={selectedMemberId}
-                />
-              </div>
-              {selectedMemberId && (
+              {members && members.length > 0 && (
+                <div className="mb-8">
+                  <Label className="text-lg text-zinc-900 mb-2 block">
+                    Selecione o membro que você deseja avaliar:
+                  </Label>
+                  <MemberSelector
+                    members={members}
+                    onSelect={setSelectedMemberId}
+                    selectedMemberId={selectedMemberId}
+                  />
+                </div>
+              )}
+              {(!members || members.length === 0 || selectedMemberId) && (
                 <>
                   {currentQuestionary.questions.map((question: Question) => (
                     <div key={question.id} className="mb-8">
