@@ -36,13 +36,14 @@ export const questionaryService = {
   async createQuestionnaire(requestBody: any): Promise<boolean> {
     try {
       const today = new Date()
+      const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000)
       const oneYearLater = new Date(today.getTime() + 365 * 24 * 60 * 60 * 1000)
 
-      const todayFormatted = today.toISOString()
+      const yesterdayFormatted = yesterday.toISOString()
       const oneYearLaterFormatted = oneYearLater.toISOString()
 
       if (requestBody) {
-        requestBody.options.startDate = todayFormatted
+        requestBody.options.startDate = yesterdayFormatted
         requestBody.options.endDate = oneYearLaterFormatted
       }
       await api.post(`/questionary/create`, requestBody)
