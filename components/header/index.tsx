@@ -133,8 +133,7 @@ export function Header({ title }: HeaderProps) {
                   <DropdownMenuItem onClick={logout}>Sair</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-
-              <DialogContent>
+              <DialogContent className="bg-white">
                 <DialogHeader>
                   <DialogTitle className="font-bold">
                     Projeto de Extensão

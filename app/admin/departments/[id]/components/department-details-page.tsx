@@ -115,12 +115,12 @@ export default function DepartmentDetailsPage({
               />
             ))
           ) : (
-            <div className="w-full max-w-md absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <div className="w-[100vw] h-[100vh] absolute top-0 left-0 flex justify-center items-center flex-col">
               <p className="text-center font-bold">
                 Nenhum membro foi encontrado 😔
               </p>
               <p className="text-center text-gray-400 text-sm">
-                Tente adicionar um novo...
+                Tente criar um novo...
               </p>
             </div>
           )}

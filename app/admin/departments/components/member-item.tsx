@@ -1,9 +1,9 @@
 import { Member } from '@/interfaces/member'
 import { useToast } from '@/hooks/use-toast'
-import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
 import { memberService } from '@/services/member-service'
 import UpdateDialog from '@/components/updateDialog'
+import DeleteDialog from '@/components/deleteDialog'
 
 export default function MemberItem(member: {
   member: Member
@@ -81,12 +81,10 @@ export default function MemberItem(member: {
           currentValue={newName}
           element={member.element}
         />
-        <Button
-          variant="destructive"
-          onClick={() => handleDeleteMember(member.member.id)}
-        >
-          Excluir
-        </Button>
+        <DeleteDialog
+          handleDelete={() => handleDeleteMember(member.member.id)}
+          element={member.member.name}
+        />
       </div>
     </div>
   )

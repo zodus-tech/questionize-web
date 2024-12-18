@@ -47,7 +47,7 @@ export function useDepartmentMembers(departmentId: string) {
           newMember.id,
         )
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        pictureId = imageResponse.id
+        pictureId = imageResponse?.id
       }
 
       fetchDepartment()
