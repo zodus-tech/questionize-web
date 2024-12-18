@@ -6,7 +6,7 @@ export enum QuestionType {
 }
 
 export interface Question {
-  id: number
+  id: string
   text: string
   type: QuestionType
   statistics: unknown
@@ -22,7 +22,7 @@ interface Options {
 }
 
 export interface Questionary {
-  id: number
+  id: string
   title: string
   createdAt?: Date
   options: Options

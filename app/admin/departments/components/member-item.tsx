@@ -3,13 +3,28 @@ import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
 import { memberService } from '@/services/member-service'
+import UpdateDialog from '@/components/updateDialog'
 
 export default function MemberItem(member: {
   member: Member
   refetch: () => Promise<void>
+  onUpdate?: (id: string, newName: string) => void
+  element: string
 }) {
   const { toast } = useToast()
   const [image, setImage] = useState('')
+
+  const [newName, setNewName] = useState(member.member.name)
+
+  const handleInputChange = (value: string) => {
+    setNewName(value)
+  }
+
+  const handleUpdate = () => {
+    if (member.onUpdate) {
+      member.onUpdate(member.member.id, newName)
+    }
+  }
 
   useEffect(() => {
     const fetchMemberImage = async () => {
@@ -27,7 +42,8 @@ export default function MemberItem(member: {
       await memberService.deleteMember(memberId)
 
       toast({ title: 'Sucesso', description: 'Membro excluído com sucesso.' })
-      await member.refetch()
+
+      member.refetch()
     } catch (error) {
       console.error('Erro ao excluir membro', error)
       toast({
@@ -59,7 +75,12 @@ export default function MemberItem(member: {
         </div>
       </div>
       <div className="flex gap-2">
-        <Button variant="outline">Editar</Button>
+        <UpdateDialog
+          handleUpdate={handleUpdate}
+          handleInputChange={handleInputChange}
+          currentValue={newName}
+          element={member.element}
+        />
         <Button
           variant="destructive"
           onClick={() => handleDeleteMember(member.member.id)}

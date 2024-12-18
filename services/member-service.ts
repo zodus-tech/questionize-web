@@ -40,6 +40,10 @@ export const memberService = {
     return data
   },
 
+  async updateMember(memberId: string, name: string) {
+    await api.patch(`/members/update/${memberId}`, { name })
+  },
+
   async uploadImage(imageFileList: FileList, memberId: string) {
     const formData = new FormData()
     // formData.append('imageFile', imageFile)
