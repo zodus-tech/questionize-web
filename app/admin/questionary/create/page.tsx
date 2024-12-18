@@ -322,7 +322,7 @@ export default function Component() {
     <>
       <LoadingSpinner isLoading={loading} />
       <div className="min-h-screen bg-gray-100">
-        <div className="bg-white shadow">
+        <div className="bg-white shadow fixed w-screen z-20">
           <div className="container mx-auto px-4 py-2 flex justify-between items-center gap-4">
             <div className="flex items-center gap-4">
               <Button
@@ -359,7 +359,7 @@ export default function Component() {
         </div>
 
         <div className="container mx-auto px-4 py-8">
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6 mt-10">
             <div className="w-full h-fit flex flex-start items-center gap-2 mb-3">
               <h2 className="text-xl font-semibold">Membros Avaliados</h2>
               <TooltipProvider>
