@@ -3,13 +3,13 @@
 import { useState } from 'react'
 import Dashboard from '@/components/dashboard'
 import { useStatistics } from '@/hooks/use-stats'
-import { addDays } from 'date-fns'
+import { addDays, subDays } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 
 export default function DashboardPage() {
   const [date, setDate] = useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 7),
+    from: subDays(new Date(), 100),
+    to: addDays(new Date(), 40),
   })
 
   const {
