@@ -60,6 +60,7 @@ export default function MemberItem(member: {
     >
       <div className="flex items-center gap-4">
         {image && (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={image}
             alt={member.member.name}

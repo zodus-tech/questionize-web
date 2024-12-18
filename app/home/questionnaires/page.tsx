@@ -41,7 +41,7 @@ export default function QuestionnairesPage() {
   return (
     <>
       <LoadingSpinner isLoading={loading} />
-      <div className="relative flex flex-col mx-16 bg-slate-50 min-h-screen">
+      <div className="relative flex flex-col mx-4 md:mx-16 bg-slate-50 min-h-screen">
         <main className="container sticky top-[56px] z-10 mt-16 px-4 py-4 bg-tile-pattern bg-center bg-repeat rounded-lg w-full max-w-screen-xl">
           <div className="flex justify-between items-center p-2">
             <h2 className="text-2xl font-bold text-white">Questionários</h2>

@@ -86,9 +86,9 @@ const Dashboard: React.FC<DashboardProps> = ({
   return (
     <div className="space-y-6">
       <main className="z-10 px-4 py-4 bg-tile-pattern bg-center bg-repeat rounded-lg w-full">
-        <div className="flex justify-between items-center p-2">
+        <div className="flex justify-between items-center p-2 flex-col gap-2 md:gap-0 md:flex-row">
           <h2 className="text-2xl font-bold text-white">Dashboard</h2>
-          <div className="w-fit h-full gap-2 flex justify-center flex-row">
+          <div className="w-fit h-full gap-2 flex justify-center flex-col md:flex-row">
             <DatePickerWithRange
               date={date}
               setDate={setDate}

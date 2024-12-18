@@ -34,6 +34,12 @@ const redirectToQuestionnaires = (url: string) => {
   return NextResponse.redirect(new URL('/home/questionnaires', url))
 }
 
+const redirectDictionary: Record<string, string> = {
+  '/home': '/home/questionnaire',
+  '': '/home/questionnaire',
+  '/admin': '/admin/auth/login',
+}
+
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
@@ -44,6 +50,12 @@ export function middleware(req: NextRequest) {
     /\.(png|jpg|jpeg|gif|svg|ico|css|js)$/.test(pathname)
   ) {
     return NextResponse.next()
+  }
+
+  if (redirectDictionary[pathname]) {
+    const redirectUrl = redirectDictionary[pathname]
+    console.log(`[Middleware] Redirecting ${pathname} to ${redirectUrl}`)
+    return NextResponse.redirect(new URL(redirectUrl, req.url))
   }
 
   const token = req.cookies.get('token')?.value
