@@ -115,7 +115,7 @@ export default function DepartmentsPage() {
                       router.push(`/admin/departments/${department.id}`)
                     }
                     onUpdate={handleUpdateDepartment}
-                    onDelete={() =>
+                    onDelete={() => {
                       deleteDepartment(department.id, department.name)
                       refetch()
                     }}
