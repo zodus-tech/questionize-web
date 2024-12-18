@@ -1,9 +1,13 @@
 import { api } from './api'
+import { Department } from '@/interfaces/department'
 
 export const departmentService = {
   async getAllDepartments() {
     const { data } = await api.get('/department/all')
-    return data.content
+    const filteredDepartments = data.content.filter(
+      (department: Department) => department.name.toLowerCase() !== 'admin',
+    )
+    return filteredDepartments
   },
 
   async createDepartment(name: string) {

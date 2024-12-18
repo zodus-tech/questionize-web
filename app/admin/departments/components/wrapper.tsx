@@ -90,7 +90,7 @@ export default function DepartmentsPage() {
         </div>
         <div className="flex-1 overflow-auto mt-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 w-full max-w-screen-xl mx-auto">
-            {departments.filter((dep: Department) =>
+            {departments?.filter((dep: Department) =>
               dep.name.toLowerCase().includes(searchTerm.toLowerCase()),
             ).length === 0 ? (
               <div className="w-[100vw] h-[100vh] absolute top-0 left-0 flex justify-center items-center flex-col">

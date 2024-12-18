@@ -3,9 +3,9 @@ import { FileText, Send } from 'lucide-react'
 import { CardHeader, CardTitle, Card } from '../ui/card'
 
 interface SimpleCardProps {
-  id: number
+  id: string
   title: string
-  onRespond: (id: number) => void
+  onRespond: (id: string) => void
 }
 
 const SimpleCard: React.FC<SimpleCardProps> = ({ id, title, onRespond }) => {

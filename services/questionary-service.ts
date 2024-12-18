@@ -9,7 +9,7 @@ export const questionaryService = {
 
   async getGeneralStatistics(start: string, end: string) {
     const { data } = await api.get(
-      `/statistics/general?period=P1Y&from=${start}&to=${end}`,
+      `/statistics/general?period=P1M&from=${start}&to=${end}`,
     )
     return data
   },
@@ -32,8 +32,19 @@ export const questionaryService = {
     }
   },
 
-  async createQuestionnaire(requestBody: unknown): Promise<boolean> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async createQuestionnaire(requestBody: any): Promise<boolean> {
     try {
+      const today = new Date()
+      const oneYearLater = new Date(today.getTime() + 365 * 24 * 60 * 60 * 1000)
+
+      const todayFormatted = today.toISOString()
+      const oneYearLaterFormatted = oneYearLater.toISOString()
+
+      if (requestBody) {
+        requestBody.options.startDate = todayFormatted
+        requestBody.options.endDate = oneYearLaterFormatted
+      }
       await api.post(`/questionary/create`, requestBody)
       return true
     } catch (error) {

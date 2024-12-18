@@ -49,7 +49,8 @@ import {
 const initialState: HistoryState = {
   past: [],
   present: {
-    id: Date.now(),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    id: Date.now() as any,
     title: 'Questionário sem nome',
     options: {
       startDate: new Date(),
@@ -59,7 +60,8 @@ const initialState: HistoryState = {
     },
     questions: [
       {
-        id: 1,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        id: 1 as any,
         text: 'Questão',
         type: QuestionType.MULTIPLE_CHOICE,
         statistics: {},
@@ -85,7 +87,8 @@ function formReducer(state: HistoryState, action: FormAction): HistoryState {
         questions: [
           ...state.present.questions,
           {
-            id: state.present.questions.length + 1,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            id: (state.present.questions.length + 1) as any,
             text: 'Nova Questão',
             type: QuestionType.MULTIPLE_CHOICE,
             statistics: {},
@@ -178,7 +181,8 @@ function formReducer(state: HistoryState, action: FormAction): HistoryState {
           if (q.id === action.payload) {
             const newQuestion: Question = {
               ...q,
-              id: state.present.questions.length + 1,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              id: (state.present.questions.length + 1) as any,
               text: `Cópia de ${q.text}`,
               options: q.options ? [...q.options] : undefined,
             }

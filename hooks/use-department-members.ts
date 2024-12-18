@@ -69,7 +69,7 @@ export function useDepartmentMembers(departmentId: string) {
     }
   }
 
-  const deleteMember = async (memberId: number) => {
+  const deleteMember = async (memberId: string) => {
     try {
       await memberService.deleteMember(memberId)
 
