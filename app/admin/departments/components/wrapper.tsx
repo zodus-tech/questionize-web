@@ -23,8 +23,14 @@ import { useRouter } from 'next/navigation'
 
 export default function DepartmentsPage() {
   const [searchTerm, setSearchTerm] = useState('')
-  const { departments, loading, createDepartment, deleteDepartment } =
-    useDepartments()
+  const {
+    departments,
+    loading,
+    createDepartment,
+    deleteDepartment,
+    updateDepartment,
+    refetch,
+  } = useDepartments()
   const router = useRouter()
   const { register, handleSubmit, reset } = useForm<{ name: string }>()
 
@@ -33,6 +39,11 @@ export default function DepartmentsPage() {
     if (success) {
       reset()
     }
+  }
+
+  const handleUpdateDepartment = async (id: string, newName: string) => {
+    await updateDepartment(id, newName)
+    refetch()
   }
 
   return (
@@ -103,7 +114,7 @@ export default function DepartmentsPage() {
                     onView={() =>
                       router.push(`/admin/departments/${department.id}`)
                     }
-                    onEdit={() => {}}
+                    onUpdate={handleUpdateDepartment}
                     onDelete={() =>
                       deleteDepartment(department.id, department.name)
                     }

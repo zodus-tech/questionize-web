@@ -11,7 +11,12 @@ export const departmentService = {
     return data
   },
 
-  async deleteDepartment(id: number) {
+  async deleteDepartment(id: string) {
     await api.delete(`/department/delete/${id}`)
+  },
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async updateDepartment(id: string, name: string) {
+    await api.patch(`/department/update/${id}`, { name })
   },
 }

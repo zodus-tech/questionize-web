@@ -45,7 +45,7 @@ export function useDepartments() {
     }
   }
 
-  const deleteDepartment = async (id: number, name: string) => {
+  const deleteDepartment = async (id: string, name: string) => {
     setLoading(true)
     try {
       await departmentService.deleteDepartment(id)
@@ -68,6 +68,29 @@ export function useDepartments() {
     }
   }
 
+  const updateDepartment = async (id: string, name: string) => {
+    setLoading(true)
+    try {
+      await departmentService.updateDepartment(id, name)
+      setDepartments((prev) => prev.filter((dep) => dep.id !== id))
+      toast({
+        title: 'Sucesso',
+        description: `Departamento atualizado com sucesso.`,
+      })
+      return true
+    } catch (error) {
+      console.error('Erro ao atualizar o departamento', error)
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível atualizar o departamento.',
+        variant: 'destructive',
+      })
+      return false
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
     fetchDepartments()
   }, [])
@@ -77,6 +100,7 @@ export function useDepartments() {
     loading,
     createDepartment,
     deleteDepartment,
+    updateDepartment,
     refetch: fetchDepartments,
   }
 }

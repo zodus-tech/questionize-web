@@ -13,7 +13,7 @@ export function useDepartmentMembers(departmentId: string) {
     try {
       const data = await memberService.getDepartmentMembers(departmentId)
       setDepartment({
-        id: Number(departmentId),
+        id: departmentId,
         name: data.name || 'Sem nome',
         members: data.members || [],
       })
@@ -98,6 +98,25 @@ export function useDepartmentMembers(departmentId: string) {
     }
   }
 
+  const updateMember = async (memberId: string, name: string) => {
+    try {
+      await memberService.updateMember(memberId, name)
+      toast({
+        title: 'Sucesso',
+        description: 'Membro atualizado com sucesso.',
+      })
+      return true
+    } catch (error) {
+      console.error('Erro ao atualizar o membro', error)
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível atualizar o membro.',
+        variant: 'destructive',
+      })
+      return false
+    }
+  }
+
   useEffect(() => {
     fetchDepartment()
   }, [departmentId])
@@ -107,6 +126,7 @@ export function useDepartmentMembers(departmentId: string) {
     loading,
     addMember,
     deleteMember,
+    updateMember,
     refetch: fetchDepartment,
   }
 }

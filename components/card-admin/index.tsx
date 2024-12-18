@@ -1,14 +1,16 @@
 import DeleteDialog from '@/components/deleteDialog'
 import { Button } from '@/components/ui/button'
-import { FileText, EyeIcon, ChartLineIcon, Edit } from 'lucide-react'
+import { FileText, EyeIcon, ChartLineIcon } from 'lucide-react'
 import { CardHeader, CardTitle, Card } from '../ui/card'
+import UpdateDialog from '../updateDialog'
+import { useState } from 'react'
 
 interface SimpleCardProps {
-  id: number
+  id: string
   title: string
-  onView: (id: number) => void
-  onEdit?: (id: number) => void
-  onAnalytics?: (id: number) => void
+  onView: (id: string) => void
+  onUpdate?: (id: string, newName: string) => void
+  onAnalytics?: (id: string) => void
   onDelete: () => void
   element: string
 }
@@ -17,11 +19,23 @@ const SimpleCard: React.FC<SimpleCardProps> = ({
   id,
   title,
   onView,
-  onEdit,
+  onUpdate,
   onDelete,
   onAnalytics,
   element,
 }) => {
+  const [newName, setNewName] = useState(title)
+
+  const handleInputChange = (value: string) => {
+    setNewName(value)
+  }
+
+  const handleUpdate = () => {
+    if (onUpdate) {
+      onUpdate(id, newName)
+    }
+  }
+
   return (
     <Card
       key={id}
@@ -49,12 +63,14 @@ const SimpleCard: React.FC<SimpleCardProps> = ({
               </Button>
             )}
 
-            {onEdit && (
-              <Button variant="ghost" size="icon" onClick={() => onEdit(id)}>
-                <Edit className="h-4 w-4" />
-              </Button>
+            {onUpdate && (
+              <UpdateDialog
+                handleUpdate={handleUpdate}
+                handleInputChange={handleInputChange}
+                currentValue={newName}
+                element={element}
+              />
             )}
-
             <DeleteDialog handleDelete={onDelete} element={element} />
           </div>
         </div>
