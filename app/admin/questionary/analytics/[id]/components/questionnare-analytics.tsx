@@ -109,6 +109,32 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
     }))
   }
 
+  const formatRating = (
+    answer: Answer,
+  ): string => {
+    const ratingValues = [
+      {
+        value: 'VERY_DISSATISFIED',
+        label: 'Muito Insatisfeito',
+      },
+      {
+        value: 'DISSATISFIED',
+        label: 'Insatisfeito',
+      },
+      { value: 'NEUTRAL', label: 'Neutro' },
+      {
+        value: 'SATISFACTORY',
+        label: 'Satisfeito',
+      },
+      {
+        value: 'VERY_SATISFACTORY',
+        label: 'Muito Satisfeito',
+      },
+    ]
+
+    return ratingValues.filter((e) => e.value === answer.answer)[0] ? ratingValues.filter((e) => e.value === answer.answer)[0].label : answer.answer
+  }
+
   const processTextResponses = (answers: Answer[]): TextResponseDataPoint[] => {
     const responseCount = answers.length
     const averageLength = Math.round(
@@ -344,7 +370,7 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
                                   ? 'Sim'
                                   : answer.answer === 'false'
                                     ? 'Não'
-                                    : answer.answer}
+                                    : formatRating(answer)}
                               </p>
                             </div>
                           ))}
