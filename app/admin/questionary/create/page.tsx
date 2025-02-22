@@ -246,8 +246,8 @@ export default function Component() {
 
     if (selectedMembers.length === 0) {
       toast({
-        title: 'Membros Insuficiente',
-        description: 'Selecione pelo menos um membro para continuar.',
+        title: 'Atendentes Insuficientes',
+        description: 'Selecione pelo menos um atendente para continuar.',
         variant: 'destructive',
       })
       setLoading(false)
@@ -361,7 +361,7 @@ export default function Component() {
         <div className="container mx-auto px-4 py-8">
           <div className="bg-white rounded-lg shadow-md p-6 mb-6 mt-10">
             <div className="w-full h-fit flex flex-start items-center gap-2 mb-3">
-              <h2 className="text-xl font-semibold">Membros Avaliados</h2>
+              <h2 className="text-xl font-semibold">Atendentes Avaliados</h2>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -369,8 +369,8 @@ export default function Component() {
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>
-                      Escolha os membros a serem avaliados na hora de preencher
-                      o questionário
+                      Escolha os atendentes a serem avaliados na hora de
+                      preencher o questionário
                     </p>
                   </TooltipContent>
                 </Tooltip>

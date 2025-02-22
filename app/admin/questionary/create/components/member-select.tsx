@@ -78,13 +78,13 @@ export function MemberSelect({ onMembersChange }: MemberSelectProps) {
       <DialogTrigger asChild>
         <Button variant="outline" className="w-full justify-between">
           {selectedMembers.length > 0
-            ? `${selectedMembers.length} membros selecionados`
-            : 'Selecionar membros...'}
+            ? `${selectedMembers.length} atendentes selecionados`
+            : 'Selecionar atendentes...'}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] bg-white">
         <DialogHeader>
-          <DialogTitle>Selecionar Membros</DialogTitle>
+          <DialogTitle>Selecionar Atendentes</DialogTitle>
         </DialogHeader>
         <ScrollArea className="mt-4 max-h-[60vh] pr-4">
           {departments.map((department, index) => (

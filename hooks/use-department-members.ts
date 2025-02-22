@@ -18,10 +18,10 @@ export function useDepartmentMembers(departmentId: string) {
         members: data.members || [],
       })
     } catch (error) {
-      console.error('Erro ao buscar dados do departamento', error)
+      console.error('Erro ao buscar dados do setor', error)
       toast({
         title: 'Erro',
-        description: 'Não foi possível carregar o departamento.',
+        description: 'Não foi possível carregar o setor.',
         variant: 'destructive',
       })
     } finally {
@@ -54,15 +54,15 @@ export function useDepartmentMembers(departmentId: string) {
 
       toast({
         title: 'Sucesso',
-        description: 'Membro adicionado com sucesso.',
+        description: 'Atendente adicionado com sucesso.',
       })
 
       return true
     } catch (error) {
-      console.error('Erro ao adicionar membro', error)
+      console.error('Erro ao adicionar atendente', error)
       toast({
         title: 'Erro',
-        description: 'Não foi possível adicionar o membro.',
+        description: 'Não foi possível adicionar o atendente.',
         variant: 'destructive',
       })
       return false
@@ -84,14 +84,14 @@ export function useDepartmentMembers(departmentId: string) {
 
       toast({
         title: 'Sucesso',
-        description: 'Membro excluído com sucesso.',
+        description: 'Atendente excluído com sucesso.',
       })
       return true
     } catch (error) {
-      console.error('Erro ao excluir membro', error)
+      console.error('Erro ao excluir atendente', error)
       toast({
         title: 'Erro',
-        description: 'Não foi possível excluir o membro.',
+        description: 'Não foi possível excluir o atendente.',
         variant: 'destructive',
       })
       return false
@@ -103,14 +103,14 @@ export function useDepartmentMembers(departmentId: string) {
       await memberService.updateMember(memberId, name)
       toast({
         title: 'Sucesso',
-        description: 'Membro atualizado com sucesso.',
+        description: 'Atendente atualizado com sucesso.',
       })
       return true
     } catch (error) {
-      console.error('Erro ao atualizar o membro', error)
+      console.error('Erro ao atualizar o atendente', error)
       toast({
         title: 'Erro',
-        description: 'Não foi possível atualizar o membro.',
+        description: 'Não foi possível atualizar o atendente.',
         variant: 'destructive',
       })
       return false

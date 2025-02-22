@@ -62,20 +62,20 @@ export default function DepartmentDetailsPage({
               ? 'Carregando...'
               : department
                 ? department.name
-                : 'Departamento não encontrado'}
+                : 'Setor não encontrado'}
           </h2>
           <Dialog>
             <DialogTrigger asChild>
-              <Button>Adicionar Membro</Button>
+              <Button>Adicionar Atendente</Button>
             </DialogTrigger>
             <DialogContent className="bg-white">
               <DialogHeader>
-                <DialogTitle>Adicionar Membro</DialogTitle>
+                <DialogTitle>Adicionar Atendente</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit(handleAddMember)}>
                 <Input
                   {...register('name', { required: true })}
-                  placeholder="Nome do Membro"
+                  placeholder="Nome do Atendente"
                 />
                 <Input
                   type="file"
@@ -95,7 +95,7 @@ export default function DepartmentDetailsPage({
         <div className="relative">
           <Search className="h-4 w-4 absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-400" />
           <Input
-            placeholder="Buscar membros..."
+            placeholder="Buscar atendentes..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 bg-white"
@@ -110,14 +110,14 @@ export default function DepartmentDetailsPage({
                 refetch={refetch}
                 key={member.id}
                 member={member}
-                element={'membro'}
+                element={'atendente'}
                 onUpdate={handleUpdateMember}
               />
             ))
           ) : (
             <div className="w-[100vw] h-[100vh] absolute top-0 left-0 flex justify-center items-center flex-col">
               <p className="text-center font-bold">
-                Nenhum membro foi encontrado 😔
+                Nenhum atendente foi encontrado 😔
               </p>
               <p className="text-center text-gray-400 text-sm">
                 Tente criar um novo...

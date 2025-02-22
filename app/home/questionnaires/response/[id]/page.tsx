@@ -164,7 +164,7 @@ export default function QuestionaryResponsePage({
               {members && members.length > 0 && (
                 <div className="mb-8">
                   <Label className="text-lg text-zinc-900 mb-2 block">
-                    Selecione o membro que você deseja avaliar:
+                    Selecione o atendente que você deseja avaliar:
                   </Label>
                   <MemberSelector
                     members={members}

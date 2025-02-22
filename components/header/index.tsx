@@ -56,7 +56,7 @@ export function Header({ title }: HeaderProps) {
   const navItems = [
     { href: '/admin/dashboard', label: 'Dashboard' },
     { href: '/admin/questionnaires', label: 'Questionários' },
-    { href: '/admin/departments', label: 'Departamentos' },
+    { href: '/admin/departments', label: 'Setores' },
   ]
 
   return (

@@ -41,14 +41,17 @@ export default function MemberItem(member: {
     try {
       await memberService.deleteMember(memberId)
 
-      toast({ title: 'Sucesso', description: 'Membro excluído com sucesso.' })
+      toast({
+        title: 'Sucesso',
+        description: 'Atendente excluído com sucesso.',
+      })
 
       member.refetch()
     } catch (error) {
-      console.error('Erro ao excluir membro', error)
+      console.error('Erro ao excluir o atendente', error)
       toast({
         title: 'Erro',
-        description: 'Não foi possível excluir o membro.',
+        description: 'Não foi possível excluir o atendente.',
       })
     }
   }

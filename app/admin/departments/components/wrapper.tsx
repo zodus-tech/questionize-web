@@ -52,7 +52,7 @@ export default function DepartmentsPage() {
       <div className="flex flex-col mx-4 md:mx-16 bg-slate-50">
         <main className="container sticky top-[56px] z-10 mt-4 px-4 py-4 bg-tile-pattern bg-center bg-repeat rounded-lg w-full max-w-screen-xl">
           <div className="flex justify-between items-center p-2">
-            <h2 className="text-2xl font-bold text-white">Departamentos</h2>
+            <h2 className="text-2xl font-bold text-white">Setores</h2>
             <Dialog>
               <DialogTrigger asChild>
                 <Button>
@@ -62,12 +62,12 @@ export default function DepartmentsPage() {
               </DialogTrigger>
               <DialogContent className={`bg-white`}>
                 <DialogHeader>
-                  <DialogTitle>Criar Departamento</DialogTitle>
+                  <DialogTitle>Criar Setor</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit(handleCreateDepartment)}>
                   <Input
                     {...register('name', { required: true })}
-                    placeholder="Nome do departamento"
+                    placeholder="Nome do setor"
                   />
                   <DialogFooter className="mt-4">
                     <Button type="submit">Criar</Button>
@@ -81,7 +81,7 @@ export default function DepartmentsPage() {
           <div className="relative">
             <Search className="h-4 w-4 absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-400" />
             <Input
-              placeholder="Buscar departamentos..."
+              placeholder="Buscar setores..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 bg-white"
@@ -95,7 +95,7 @@ export default function DepartmentsPage() {
             ).length === 0 ? (
               <div className="w-[100vw] h-[100vh] absolute top-0 left-0 flex justify-center items-center flex-col">
                 <p className="text-center font-bold">
-                  Nenhum departamento foi encontrado 😔
+                  Nenhum setor foi encontrado 😔
                 </p>
                 <p className="text-center text-gray-400 text-sm">
                   Tente criar um novo...
