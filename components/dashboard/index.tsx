@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import ActiveSurveysChart from '../charts/active-surveys-chart'
 import AverageResponseRateChart from '../charts/average-response-rate-chart'
 import CompletionRatePieChart from '../charts/completion-rate-pie-chart'
@@ -17,6 +17,17 @@ import {
   ResponseData,
   SatisfactionData,
 } from '@/interfaces/stats'
+import { Department } from '@/interfaces/department'
+import { departmentService } from '@/services/department-service'
+import { questionaryService } from '@/services/questionary-service'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select'
+import { Questionary } from '@/interfaces/questionary'
 
 interface DashboardProps {
   totalResponses: number
@@ -27,6 +38,11 @@ interface DashboardProps {
   satisfactionData: SatisfactionData[]
   date: DateRange | undefined
   setDate: React.Dispatch<React.SetStateAction<DateRange | undefined>>
+  questionaryId: string | undefined
+  setQuestionaryId: React.Dispatch<React.SetStateAction<string | undefined>>
+  departmentId: string | undefined
+  setDepartmentId: React.Dispatch<React.SetStateAction<string | undefined>>
+  refetch: () => void
 }
 
 const Dashboard: React.FC<DashboardProps> = ({
@@ -38,8 +54,80 @@ const Dashboard: React.FC<DashboardProps> = ({
   satisfactionData,
   date,
   setDate,
+  questionaryId,
+  setQuestionaryId,
+  departmentId,
+  setDepartmentId,
+  refetch,
 }) => {
   const dashboardRef = useRef<HTMLDivElement>(null)
+  const [questionnaires, setQuestionnaires] = useState<
+    { id: string; title: string }[]
+  >([])
+  const [departments, setDepartments] = useState<Department[]>([])
+  const [localDepartmentId, setLocalDepartmentId] = useState<
+    string | undefined
+  >(departmentId)
+  const [localQuestionaryId, setLocalQuestionaryId] = useState<
+    string | undefined
+  >(questionaryId)
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const data = await departmentService.getAllDepartments()
+        setDepartments(data)
+        refetch()
+      } catch (error) {
+        console.error('Error fetching departments:', error)
+      }
+    }
+
+    fetchDepartments()
+  }, [])
+
+  useEffect(() => {
+    const fetchQuestionnaires = async () => {
+      try {
+        const data = await questionaryService.getAllQuestionnaires(departmentId)
+        setQuestionnaires(
+          data.map((q: Questionary) => ({ id: q.id, title: q.title })),
+        )
+      } catch (error) {
+        console.error('Error fetching questionnaires:', error)
+      }
+    }
+
+    fetchQuestionnaires()
+  }, [departmentId])
+
+  useEffect(() => {
+    if (localDepartmentId !== departmentId) {
+      setDepartmentId(localDepartmentId)
+      refetch()
+    }
+  }, [localDepartmentId, departmentId, setDepartmentId, refetch])
+
+  useEffect(() => {
+    if (localQuestionaryId !== questionaryId) {
+      setQuestionaryId(localQuestionaryId)
+      refetch()
+    }
+  }, [localQuestionaryId, questionaryId, setQuestionaryId, refetch])
+
+  const handleDepartmentChange = useCallback(
+    (value: string) => {
+      setLocalDepartmentId(value === 'all' ? undefined : value)
+      if (questionaryId) {
+        setLocalQuestionaryId(undefined)
+      }
+    },
+    [questionaryId],
+  )
+
+  const handleQuestionaryChange = useCallback((value: string) => {
+    setLocalQuestionaryId(value === 'all' ? undefined : value)
+  }, [])
 
   const exportDashboardToPDF = async () => {
     if (!dashboardRef.current) return
@@ -94,6 +182,40 @@ const Dashboard: React.FC<DashboardProps> = ({
               setDate={setDate}
               className="justify-self-end w-fit"
             />
+            <Select
+              onValueChange={handleDepartmentChange}
+              value={departmentId === undefined ? 'all' : departmentId}
+              defaultValue="all"
+            >
+              <SelectTrigger className="min-w-[200px] w-fit bg-primary text-primary-foreground border-none">
+                <SelectValue placeholder="Selecione um departamento" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os departamentos</SelectItem>
+                {departments.map((dept) => (
+                  <SelectItem key={dept.id} value={dept.id}>
+                    {dept.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              onValueChange={handleQuestionaryChange}
+              value={questionaryId === undefined ? 'all' : questionaryId}
+              defaultValue="all"
+            >
+              <SelectTrigger className="min-w-[200px] w-fit bg-primary text-primary-foreground border-none">
+                <SelectValue placeholder="Selecione um questionário" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os questionários</SelectItem>
+                {questionnaires.map((q) => (
+                  <SelectItem key={q.id} value={q.id}>
+                    {q.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Button
               onClick={exportDashboardToPDF}
               className="gap-2 bg-emerald-600 hover:bg-emerald-700"
