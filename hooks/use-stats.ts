@@ -1,14 +1,20 @@
-import { useState, useEffect } from 'react'
+'use client'
+
+import { useState, useEffect, useCallback } from 'react'
 import { questionaryService } from '@/services/questionary-service'
 import { calculateMonthsBetween } from '@/utils/dates'
-import { Questionary } from '@/interfaces/questionary'
-import { DateRange } from 'react-day-picker'
+import type { Questionary } from '@/interfaces/questionary'
+import type { DateRange } from 'react-day-picker'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { ResponseData } from '@/interfaces/stats'
+import type { ResponseData } from '@/interfaces/stats'
 import { capitalizeFirst } from '@/utils/text'
 
-export function useStatistics(dateRange?: DateRange) {
+export function useStatistics(
+  dateRange?: DateRange,
+  questionaryId?: string,
+  departmentId?: string,
+) {
   const [questionnaires, setQuestionnaires] = useState<Questionary[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -30,11 +36,11 @@ export function useStatistics(dateRange?: DateRange) {
     { name: 'Very Satisfied', value: 0 },
   ])
 
-  const removeLastDigit = (str: string) => {
+  const removeLastDigit = useCallback((str: string) => {
     return str.slice(0, -1)
-  }
+  }, [])
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!dateRange?.from || !dateRange?.to) return
 
     setLoading(true)
@@ -45,8 +51,15 @@ export function useStatistics(dateRange?: DateRange) {
       const endDate = removeLastDigit(dateRange.to.toISOString())
 
       const [questionnairesData, statsData] = await Promise.all([
-        questionaryService.getAllQuestionnaires(),
-        questionaryService.getGeneralStatistics(startDate, endDate),
+        questionaryId
+          ? questionaryService.getQuestionnaireById(questionaryId)
+          : questionaryService.getAllQuestionnaires(departmentId),
+        questionaryService.getGeneralStatistics(
+          startDate,
+          endDate,
+          questionaryId,
+          departmentId,
+        ),
       ])
 
       const responseData = Object.entries(
@@ -130,11 +143,11 @@ export function useStatistics(dateRange?: DateRange) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [dateRange, questionaryId, departmentId, removeLastDigit])
 
   useEffect(() => {
     fetchData()
-  }, [dateRange?.from, dateRange?.to])
+  }, [fetchData])
 
   return {
     ...stats,

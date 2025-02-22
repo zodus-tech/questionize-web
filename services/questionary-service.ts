@@ -2,14 +2,21 @@ import { api } from './api'
 import Cookies from 'js-cookie'
 
 export const questionaryService = {
-  async getAllQuestionnaires() {
-    const { data } = await api.get('/questionary/all')
+  async getAllQuestionnaires(departmentId?: string) {
+    const { data } = await api.get(
+      `/questionary/all${departmentId ? `?departmentId=${departmentId}` : ''}`,
+    )
     return data.content
   },
 
-  async getGeneralStatistics(start: string, end: string) {
+  async getGeneralStatistics(
+    start: string,
+    end: string,
+    questionaryId?: string,
+    departmentId?: string,
+  ) {
     const { data } = await api.get(
-      `/statistics/general?period=P1M&from=${start}&to=${end}`,
+      `/statistics/general?period=P1M&from=${start}&to=${end}${questionaryId ? `&questionaryId=${questionaryId}` : ''}${departmentId ? `&departmentId=${departmentId}` : ''}`,
     )
     return data
   },

@@ -12,6 +12,13 @@ export default function DashboardPage() {
     to: addDays(new Date(), 40),
   })
 
+  const [questionaryId, setQuestionaryId] = useState<string | undefined>(
+    undefined,
+  )
+  const [departmentId, setDepartmentId] = useState<string | undefined>(
+    undefined,
+  )
+
   const {
     totalResponses,
     totalQuestionnairesActive,
@@ -21,7 +28,8 @@ export default function DashboardPage() {
     responseData,
     completionRateData,
     satisfactionData,
-  } = useStatistics(date)
+    refetch,
+  } = useStatistics(date, questionaryId, departmentId)
 
   return (
     <div className="flex flex-col">
@@ -35,6 +43,11 @@ export default function DashboardPage() {
           satisfactionData={satisfactionData}
           date={date}
           setDate={setDate}
+          questionaryId={questionaryId}
+          setQuestionaryId={setQuestionaryId}
+          departmentId={departmentId}
+          setDepartmentId={setDepartmentId}
+          refetch={refetch}
         />
         {loading && <p>Carregando dados...</p>}
         {error && (
