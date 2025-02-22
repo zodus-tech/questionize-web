@@ -30,6 +30,10 @@ export function useStatistics(dateRange?: DateRange) {
     { name: 'Very Satisfied', value: 0 },
   ])
 
+  const removeLastDigit = (str: string) => {
+    return str.slice(0, -1)
+  }
+
   const fetchData = async () => {
     if (!dateRange?.from || !dateRange?.to) return
 
@@ -37,8 +41,8 @@ export function useStatistics(dateRange?: DateRange) {
     setError(null)
 
     try {
-      const startDate = format(dateRange.from, 'yyyy-MM-dd')
-      const endDate = format(dateRange.to, 'yyyy-MM-dd')
+      const startDate = removeLastDigit(dateRange.from.toISOString())
+      const endDate = removeLastDigit(dateRange.to.toISOString())
 
       const [questionnairesData, statsData] = await Promise.all([
         questionaryService.getAllQuestionnaires(),
