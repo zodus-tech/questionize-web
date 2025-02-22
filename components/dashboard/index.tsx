@@ -188,10 +188,10 @@ const Dashboard: React.FC<DashboardProps> = ({
               defaultValue="all"
             >
               <SelectTrigger className="min-w-[200px] w-fit bg-primary text-primary-foreground border-none">
-                <SelectValue placeholder="Selecione um departamento" />
+                <SelectValue placeholder="Selecione um setor" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos os departamentos</SelectItem>
+                <SelectItem value="all">Todos os setores</SelectItem>
                 {departments.map((dept) => (
                   <SelectItem key={dept.id} value={dept.id}>
                     {dept.name}
