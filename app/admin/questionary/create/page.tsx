@@ -45,6 +45,9 @@ import {
   TooltipContent,
   Tooltip,
 } from '@/components/ui/tooltip'
+import { DatePickerWithRange } from '@/components/date-picker-with-range'
+import { DateRange } from 'react-day-picker'
+import { addDays, subDays } from 'date-fns'
 
 const initialState: HistoryState = {
   past: [],
@@ -220,7 +223,14 @@ function formReducer(state: HistoryState, action: FormAction): HistoryState {
   }
 }
 
+const formatISOWithoutZ = (date: Date | undefined) =>
+  date ? date.toISOString().slice(0, -1) : null
+
 export default function Component() {
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: subDays(new Date(), 100),
+    to: addDays(new Date(), 40),
+  })
   const [state, dispatch] = useReducer(formReducer, initialState)
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
@@ -254,6 +264,19 @@ export default function Component() {
       return
     }
 
+    const startDate = formatISOWithoutZ(dateRange?.from)
+    const endDate = formatISOWithoutZ(dateRange?.to)
+
+    if (!startDate || !endDate) {
+      toast({
+        title: 'Erro',
+        description: 'Selecione um período válido para o questionário.',
+        variant: 'destructive',
+      })
+      setLoading(false)
+      return
+    }
+
     try {
       const token = Cookies.get('token')
 
@@ -266,8 +289,8 @@ export default function Component() {
         title: state.present.title,
         createdAt: new Date().toISOString(),
         options: {
-          startDate: state.present.options.startDate,
-          endDate: state.present.options.endDate,
+          startDate,
+          endDate,
           answersLimit: state.present.options.answersLimit,
           anonymous: state.present.options.anonymous || true,
           membersIds: selectedMembers.map((member) => member.id),
@@ -287,9 +310,9 @@ export default function Component() {
           title: 'Success',
           description: 'Questionário criado com sucesso',
         })
-
         router.push('/admin/questionnaires')
       } else {
+        console.log(`REQUEST BODY: ${JSON.stringify(requestBody)}`)
         toast({
           variant: 'destructive',
           title: 'Falha',
@@ -358,28 +381,58 @@ export default function Component() {
           </div>
         </div>
 
-        <div className="container mx-auto px-4 py-8">
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6 mt-10">
-            <div className="w-full h-fit flex flex-start items-center gap-2 mb-3">
-              <h2 className="text-xl font-semibold">Atendentes Avaliados</h2>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <InfoIcon className="text-black/50 w-4 h-4" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>
-                      Escolha os atendentes a serem avaliados na hora de
-                      preencher o questionário
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+        <div className="container mx-auto px-16 py-8">
+          <div className="mt-10 w-full">
+            <div className="flex flex-col md:flex-row gap-6 md:flex-nowrap w-full">
+              <div className="flex-1 bg-white rounded-lg shadow-md px-6 pb-6 pt-5">
+                <div className="w-full h-fit flex flex-start items-center gap-2 mb-3">
+                  <h2 className="text-xl font-semibold">
+                    Atendentes Avaliados
+                  </h2>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <InfoIcon className="text-black/50 w-4 h-4" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>
+                          Escolha os atendentes a serem avaliados na hora de
+                          preencher o questionário
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <MemberSelect onMembersChange={setSelectedMembers} />
+              </div>
+              <div className="flex-1 bg-white rounded-lg shadow-md px-6 pb-6 pt-5">
+                <div className="w-full h-fit flex flex-start items-center gap-2 mb-3">
+                  <h2 className="text-xl font-semibold">
+                    Validade do Questionário
+                  </h2>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <InfoIcon className="text-black/50 w-4 h-4" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>
+                          Após o prazo de validade do questionário, ele não será
+                          contabilizado no dashboard.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <DatePickerWithRange
+                  date={dateRange}
+                  setDate={setDateRange}
+                  className="justify-self-end w-fit"
+                />
+              </div>
             </div>
-            <MemberSelect onMembersChange={setSelectedMembers} />{' '}
           </div>
-
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <div className="bg-white rounded-lg shadow-md p-6 mt-6 w-full">
             {/* Added MemberSelect component with prop */}
             {/*             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId="questions">

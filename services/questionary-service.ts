@@ -42,12 +42,25 @@ export const questionaryService = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async createQuestionnaire(requestBody: any): Promise<boolean> {
     try {
+      if (!requestBody?.options?.startDate || !requestBody?.options?.endDate) {
+        throw new Error(
+          'Datas inválidas. O questionário precisa de um período válido.',
+        )
+      }
+      const formatISOWithoutZ = (date: string) => date.slice(0, -1)
       const today = new Date()
       const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000)
       const oneYearLater = new Date(today.getTime() + 365 * 24 * 60 * 60 * 1000)
 
       const yesterdayFormatted = yesterday.toISOString()
       const oneYearLaterFormatted = oneYearLater.toISOString()
+
+      requestBody.options.startDate = formatISOWithoutZ(
+        requestBody.options.startDate,
+      )
+      requestBody.options.endDate = formatISOWithoutZ(
+        requestBody.options.endDate,
+      )
 
       if (requestBody) {
         requestBody.options.startDate = yesterdayFormatted
