@@ -91,7 +91,7 @@ export default function QuestionaryResponsePage({
           title: 'Success',
           description: 'Formulário enviado com sucesso!',
         })
-
+        setSelectedMember(undefined)
         setAnswers({})
         fetchQuestionnaire()
       } else {
