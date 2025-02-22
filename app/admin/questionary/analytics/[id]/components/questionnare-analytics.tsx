@@ -109,9 +109,7 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
     }))
   }
 
-  const formatRating = (
-    answer: Answer,
-  ): string => {
+  const formatRating = (answer: Answer): string => {
     const ratingValues = [
       {
         value: 'VERY_DISSATISFIED',
@@ -132,7 +130,9 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
       },
     ]
 
-    return ratingValues.filter((e) => e.value === answer.answer)[0] ? ratingValues.filter((e) => e.value === answer.answer)[0].label : answer.answer
+    return ratingValues.filter((e) => e.value === answer.answer)[0]
+      ? ratingValues.filter((e) => e.value === answer.answer)[0].label
+      : answer.answer
   }
 
   const processTextResponses = (answers: Answer[]): TextResponseDataPoint[] => {

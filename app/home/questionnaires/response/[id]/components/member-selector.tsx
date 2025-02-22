@@ -50,13 +50,13 @@ export function MemberSelector({
               <span>{selectedMember.name}</span>
             </div>
           ) : (
-            'Selecionar membro para avaliar'
+            'Selecionar atendente para avaliar'
           )}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] bg-white">
         <DialogHeader>
-          <DialogTitle>Selecionar Membro</DialogTitle>
+          <DialogTitle>Selecionar Atendente</DialogTitle>
         </DialogHeader>
         <ScrollArea className="mt-4 max-h-[60vh] pr-4">
           <div className="grid grid-cols-2 gap-4">

@@ -14,10 +14,10 @@ export function useDepartments() {
       const data = await departmentService.getAllDepartments()
       setDepartments(data)
     } catch (error) {
-      console.error('Ocorreu um erro ao buscar os departamentos', error)
+      console.error('Ocorreu um erro ao buscar os setores', error)
       toast({
         title: 'Erro',
-        description: 'Não foi possível carregar os departamentos.',
+        description: 'Não foi possível carregar os setores.',
         variant: 'destructive',
       })
     } finally {
@@ -31,14 +31,14 @@ export function useDepartments() {
       setDepartments((prev) => [...prev, newDepartment])
       toast({
         title: 'Sucesso',
-        description: `Departamento ${name} criado com sucesso.`,
+        description: `Setor ${name} criado com sucesso.`,
       })
       return true
     } catch (error) {
-      console.error('Erro ao criar departamento', error)
+      console.error('Erro ao criar setores', error)
       toast({
         title: 'Erro',
-        description: 'Não foi possível criar o departamento.',
+        description: 'Não foi possível criar o setor.',
         variant: 'destructive',
       })
       return false
@@ -52,14 +52,14 @@ export function useDepartments() {
       setDepartments((prev) => prev.filter((dep) => dep.id !== id))
       toast({
         title: 'Sucesso',
-        description: `Departamento ${name} deletado com sucesso.`,
+        description: `Setor ${name} deletado com sucesso.`,
       })
       return true
     } catch (error) {
-      console.error('Erro ao excluir departamento', error)
+      console.error('Erro ao excluir setor', error)
       toast({
         title: 'Erro',
-        description: 'Não foi possível excluir o departamento.',
+        description: 'Não foi possível excluir o setor.',
         variant: 'destructive',
       })
       return false
@@ -75,14 +75,14 @@ export function useDepartments() {
       setDepartments((prev) => prev.filter((dep) => dep.id !== id))
       toast({
         title: 'Sucesso',
-        description: `Departamento atualizado com sucesso.`,
+        description: `Setor atualizado com sucesso.`,
       })
       return true
     } catch (error) {
-      console.error('Erro ao atualizar o departamento', error)
+      console.error('Erro ao atualizar o setor', error)
       toast({
         title: 'Erro',
-        description: 'Não foi possível atualizar o departamento.',
+        description: 'Não foi possível atualizar o setor.',
         variant: 'destructive',
       })
       return false

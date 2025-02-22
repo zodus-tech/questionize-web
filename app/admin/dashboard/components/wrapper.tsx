@@ -36,7 +36,7 @@ export default function DashboardPage() {
           date={date}
           setDate={setDate}
         />
-        {loading && <p>Carregando Dados...</p>}
+        {loading && <p>Carregando dados...</p>}
         {error && (
           <div className="text-center py-8">
             <p className="text-xl font-semibold text-red-500">{error}</p>
