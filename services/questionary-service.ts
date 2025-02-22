@@ -16,7 +16,7 @@ export const questionaryService = {
     departmentId?: string,
   ) {
     const { data } = await api.get(
-      `/statistics/general?period=P1M&from=${start}&to=${end}${questionaryId ? `&questionaryId=${questionaryId}` : ''}${departmentId ? `&departmentId=${departmentId}` : ''}`,
+      `/statistics/general?period=P1M&from=${start}&to=${end}&onlyActive=true${questionaryId ? `&questionaryId=${questionaryId}` : ''}${departmentId ? `&departmentId=${departmentId}` : ''}`,
     )
     return data
   },
