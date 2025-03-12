@@ -47,7 +47,7 @@ import {
 } from '@/components/ui/tooltip'
 import { DatePickerWithRange } from '@/components/date-picker-with-range'
 import { DateRange } from 'react-day-picker'
-import { addDays, subDays } from 'date-fns'
+import { addDays, format } from 'date-fns'
 
 const initialState: HistoryState = {
   past: [],
@@ -223,13 +223,13 @@ function formReducer(state: HistoryState, action: FormAction): HistoryState {
   }
 }
 
-const formatISOWithoutZ = (date: Date | undefined) =>
-  date ? date.toISOString().slice(0, -1) : null
+const formatDate = (date: Date | undefined) =>
+  date ? format(date, "yyyy-MM-dd'T'HH:mm:ss") : null
 
 export default function Component() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: subDays(new Date(), 100),
-    to: addDays(new Date(), 40),
+    from: new Date(),
+    to: addDays(new Date(), 7),
   })
   const [state, dispatch] = useReducer(formReducer, initialState)
   const { toast } = useToast()
@@ -264,9 +264,10 @@ export default function Component() {
       return
     }
 
-    const startDate = formatISOWithoutZ(dateRange?.from)
-    const endDate = formatISOWithoutZ(dateRange?.to)
-
+    const startDate = formatDate(dateRange?.from)
+    const endDate = formatDate(dateRange?.to)
+    console.log('Start Date:', startDate)
+    console.log('End Date:', endDate)
     if (!startDate || !endDate) {
       toast({
         title: 'Erro',
@@ -287,7 +288,7 @@ export default function Component() {
       const requestBody = {
         id: state.present.id,
         title: state.present.title,
-        createdAt: new Date().toISOString(),
+        createdAt: formatDate(new Date()),
         options: {
           startDate,
           endDate,
@@ -303,7 +304,7 @@ export default function Component() {
           options: q.options || null,
         })),
       }
-
+      console.log('BODY:', JSON.stringify(requestBody, null, 2))
       const success = await questionaryService.createQuestionnaire(requestBody)
       if (success) {
         toast({
