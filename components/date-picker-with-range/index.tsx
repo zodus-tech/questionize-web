@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { format } from 'date-fns'
+import { addDays, format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { CalendarIcon } from 'lucide-react'
 import { DateRange } from 'react-day-picker'
@@ -58,9 +58,20 @@ export function DatePickerWithRange({
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            onSelect={(newRange) => {
+              if (newRange?.from) {
+                const today = new Date()
+                const correctedFrom =
+                  newRange.from < today ? today : newRange.from
+                setDate({
+                  from: correctedFrom,
+                  to: newRange.to ?? addDays(correctedFrom, 7),
+                })
+              }
+            }}
             numberOfMonths={2}
             locale={ptBR}
+            disabled={{ before: new Date() }}
           />
         </PopoverContent>
       </Popover>

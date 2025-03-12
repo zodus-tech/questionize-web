@@ -131,6 +131,7 @@ export default function QuestionaryResponsePage({
 
   const handleClearAnswers = () => {
     setAnswers({})
+    setSelectedMember(undefined)
     setCurrentQuestionary((prev) => (prev ? { ...prev } : null))
   }
 
