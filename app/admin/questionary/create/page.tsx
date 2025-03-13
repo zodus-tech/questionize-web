@@ -291,7 +291,7 @@ export default function Component() {
       }
 
       const requestBody = {
-        id: state.present.id,
+        departmentId: state.present.id,
         title: state.present.title,
         createdAt: formatDate(new Date()),
         options: {
