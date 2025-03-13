@@ -1,7 +1,7 @@
 /* eslint-disable no-case-declarations */
 'use client'
 
-import { useReducer, /* useCallback */ useState } from 'react'
+import { useReducer, /* useCallback */ useState, useEffect } from 'react'
 import {} from /* DragDropContext,
   Droppable,
   Draggable,
@@ -52,8 +52,7 @@ import { addDays, format } from 'date-fns'
 const initialState: HistoryState = {
   past: [],
   present: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    id: Date.now() as any,
+    id: '',
     title: 'Questionário sem nome',
     options: {
       startDate: new Date(),
@@ -63,8 +62,7 @@ const initialState: HistoryState = {
     },
     questions: [
       {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        id: 1 as any,
+        id: '1',
         text: 'Questão',
         type: QuestionType.MULTIPLE_CHOICE,
         statistics: {},
@@ -112,9 +110,10 @@ function formReducer(state: HistoryState, action: FormAction): HistoryState {
         questions: state.present.questions.map((q) => {
           if (q.id === action.payload.id) {
             let updatedOptions: string[] | undefined
-            if (action.payload.questionType === QuestionType.MULTIPLE_CHOICE) {
+            const questionType = action.payload.questionType as QuestionType
+            if (questionType === QuestionType.MULTIPLE_CHOICE) {
               updatedOptions = []
-            } else if (action.payload.questionType === QuestionType.RATING) {
+            } else if (questionType === QuestionType.RATING) {
               updatedOptions = [
                 'VERY_DISSATISFIED',
                 'DISSATISFIED',
@@ -128,7 +127,7 @@ function formReducer(state: HistoryState, action: FormAction): HistoryState {
 
             return {
               ...q,
-              type: action.payload.questionType,
+              type: questionType,
               statistics: {},
               options: updatedOptions,
             }
@@ -218,6 +217,11 @@ function formReducer(state: HistoryState, action: FormAction): HistoryState {
         present: next,
         future: newFuture,
       }
+    case 'SET_DEPARTMENT_ID':
+      return updateHistory({
+        ...state.present,
+        id: action.payload,
+      })
     default:
       return state
   }
@@ -235,6 +239,7 @@ export default function Component() {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
   const [selectedMembers, setSelectedMembers] = useState<Member[]>([])
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState<string>('')
 
   const router = useRouter()
 
@@ -342,6 +347,58 @@ export default function Component() {
     }
   }
 
+  const handleMembersChange = (members: Member[]) => {
+    if (members.length > 0) {
+      const departmentId = members[0].departmentId.toString()
+
+      if (departmentId !== selectedDepartmentId) {
+        const membersFromSameDepartment = members.filter(
+          (member) => member.departmentId.toString() === departmentId,
+        )
+        setSelectedMembers(membersFromSameDepartment)
+        setSelectedDepartmentId(departmentId)
+
+        dispatch({
+          type: 'SET_DEPARTMENT_ID',
+          payload: departmentId,
+        })
+      } else {
+        const validMembers = members.filter(
+          (member) => member.departmentId.toString() === selectedDepartmentId,
+        )
+        setSelectedMembers(validMembers)
+
+        if (validMembers.length === 0) {
+          setSelectedDepartmentId('')
+          dispatch({
+            type: 'SET_DEPARTMENT_ID',
+            payload: '',
+          })
+        }
+      }
+    } else {
+      setSelectedMembers([])
+      setSelectedDepartmentId('')
+      dispatch({
+        type: 'SET_DEPARTMENT_ID',
+        payload: '',
+      })
+    }
+  }
+
+  // Add useEffect to ensure state consistency
+  useEffect(() => {
+    if (selectedMembers.length > 0) {
+      const departmentId = selectedMembers[0].departmentId.toString()
+      if (departmentId !== state.present.id) {
+        dispatch({
+          type: 'SET_DEPARTMENT_ID',
+          payload: departmentId,
+        })
+      }
+    }
+  }, [selectedMembers, state.present.id])
+
   return (
     <>
       <LoadingSpinner isLoading={loading} />
@@ -404,7 +461,10 @@ export default function Component() {
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-                <MemberSelect onMembersChange={setSelectedMembers} />
+                <MemberSelect
+                  onMembersChange={handleMembersChange}
+                  selectedDepartmentId={selectedDepartmentId}
+                />
               </div>
               <div className="flex-1 bg-white rounded-lg shadow-md px-6 pb-6 pt-5">
                 <div className="w-full h-fit flex flex-start items-center gap-2 mb-3">
@@ -469,7 +529,7 @@ export default function Component() {
                     />
                     <Select
                       defaultValue={question.type}
-                      onValueChange={(value) => {
+                      onValueChange={(value: keyof typeof QuestionType) => {
                         dispatch({
                           type: 'UPDATE_QUESTION_TYPE',
                           payload: {
@@ -483,12 +543,16 @@ export default function Component() {
                         <SelectValue placeholder="Tipo Pergunta" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="MULTIPLE_CHOICE">
+                        <SelectItem value={QuestionType.MULTIPLE_CHOICE}>
                           Múltipla Escolha
                         </SelectItem>
-                        <SelectItem value="TEXT">Texto</SelectItem>
-                        <SelectItem value="BOOLEAN">Sim e Não</SelectItem>
-                        <SelectItem value="RATING">Avaliação</SelectItem>
+                        <SelectItem value={QuestionType.TEXT}>Texto</SelectItem>
+                        <SelectItem value={QuestionType.BOOLEAN}>
+                          Sim e Não
+                        </SelectItem>
+                        <SelectItem value={QuestionType.RATING}>
+                          Avaliação
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <Button

@@ -15,9 +15,13 @@ import { Department } from '@/interfaces/department'
 
 interface MemberSelectProps {
   onMembersChange: (members: Member[]) => void
+  selectedDepartmentId: string
 }
 
-export function MemberSelect({ onMembersChange }: MemberSelectProps) {
+export const MemberSelect: React.FC<MemberSelectProps> = ({
+  onMembersChange,
+  selectedDepartmentId,
+}) => {
   const [departments, setDepartments] = useState<Department[]>([])
   const [selectedMembers, setSelectedMembers] = useState<Member[]>([])
   const [open, setOpen] = useState(false)
@@ -35,35 +39,55 @@ export function MemberSelect({ onMembersChange }: MemberSelectProps) {
     fetchDepartments()
   }, [])
 
+  const handleMemberToggle = (member: Member) => {
+    setSelectedMembers((prevSelected) => {
+      if (
+        prevSelected.length > 0 &&
+        member.departmentId.toString() !==
+          prevSelected[0].departmentId.toString()
+      ) {
+        const newSelection = [member]
+        onMembersChange(newSelection)
+        return newSelection
+      }
+
+      if (prevSelected.some((selected) => selected.id === member.id)) {
+        const newSelection = prevSelected.filter(
+          (selected) => selected.id !== member.id,
+        )
+        if (newSelection.length === 0) {
+          onMembersChange(newSelection)
+        }
+        return newSelection
+      } else {
+        return [...prevSelected, member]
+      }
+    })
+  }
+
   const handleDepartmentToggle = (department: Department) => {
     setSelectedMembers((prevSelected) => {
+      if (selectedDepartmentId && department.id !== selectedDepartmentId) {
+        const newSelection = [...department.members]
+        onMembersChange(newSelection)
+        return newSelection
+      }
+
       const departmentMemberIds = department.members.map((member) => member.id)
       const isFullySelected = department.members.every((member) =>
         prevSelected.some((selected) => selected.id === member.id),
       )
 
       if (isFullySelected) {
-        // Unselect all members of this department
-        return prevSelected.filter(
+        const newSelection = prevSelected.filter(
           (member) => !departmentMemberIds.includes(member.id),
         )
+        if (newSelection.length === 0) {
+          onMembersChange(newSelection)
+        }
+        return newSelection
       } else {
-        // Select all members of this department
-        const newMembers = department.members.filter(
-          (member) =>
-            !prevSelected.some((selected) => selected.id === member.id),
-        )
-        return [...prevSelected, ...newMembers]
-      }
-    })
-  }
-
-  const handleMemberToggle = (member: Member) => {
-    setSelectedMembers((prevSelected) => {
-      if (prevSelected.some((selected) => selected.id === member.id)) {
-        return prevSelected.filter((selected) => selected.id !== member.id)
-      } else {
-        return [...prevSelected, member]
+        return [...prevSelected, ...department.members]
       }
     })
   }
@@ -72,6 +96,16 @@ export function MemberSelect({ onMembersChange }: MemberSelectProps) {
     onMembersChange(selectedMembers)
     setOpen(false)
   }
+
+  useEffect(() => {
+    if (selectedDepartmentId) {
+      setSelectedMembers((prev) =>
+        prev.filter(
+          (member) => member.departmentId.toString() === selectedDepartmentId,
+        ),
+      )
+    }
+  }, [selectedDepartmentId])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

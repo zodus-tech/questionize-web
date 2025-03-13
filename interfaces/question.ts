@@ -17,6 +17,7 @@ export interface Action {
     | 'SET_ANSWERS_LIMIT'
     | 'SET_END_DATE'
     | 'SET_START_DATE'
+    | 'SET_DEPARTMENT_ID'
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload?: any
 }
@@ -57,14 +58,24 @@ export interface ReorderQuestionsAction extends Action {
 }
 
 export type FormAction =
-  | Action
-  | UpdateQuestionTitleAction
-  | UpdateQuestionTypeAction
-  | AddOptionAction
-  | UpdateOptionAction
-  | CloneQuestionAction
-  | RemoveQuestionAction
-  | ReorderQuestionsAction
+  | { type: 'SET_TITLE'; payload: string }
+  | { type: 'ADD_QUESTION' }
+  | { type: 'UPDATE_QUESTION_TITLE'; payload: { id: string; title: string } }
+  | {
+      type: 'UPDATE_QUESTION_TYPE'
+      payload: { id: string; questionType: keyof typeof QuestionType }
+    }
+  | { type: 'ADD_OPTION'; payload: string }
+  | {
+      type: 'UPDATE_OPTION'
+      payload: { id: string; optionIndex: number; value: string }
+    }
+  | { type: 'REMOVE_QUESTION'; payload: string }
+  | { type: 'CLONE_QUESTION'; payload: string }
+  | { type: 'REORDER_QUESTIONS'; payload: Question[] }
+  | { type: 'UNDO' }
+  | { type: 'REDO' }
+  | { type: 'SET_DEPARTMENT_ID'; payload: string }
 
 export interface HistoryState {
   past: Questionary[]
