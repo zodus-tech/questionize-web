@@ -36,6 +36,8 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from '@/components/ui/accordion'
+import { AnalyticsFilters } from './analytics-filters'
+import { DateRange } from 'react-day-picker'
 
 const COLORS = ['#4299E1', '#48BB78', '#ECC94B', '#ED64A6', '#9F7AEA']
 
@@ -45,25 +47,59 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
   const [questionnaireData, setQuestionnaireData] =
     useState<Questionnaire | null>(null)
   const [submissions, setSubmissions] = useState<Submission[] | null>(null)
+  const [filteredSubmissions, setFilteredSubmissions] = useState<
+    Submission[] | null
+  >(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchData = useCallback(async () => {
-    setLoading(true)
-    try {
-      const [questionnaire, submissionsData] = await Promise.all([
-        questionaryService.getQuestionnaireById(params.id),
-        questionaryService.getQuestionnaireSubmissions(params.id),
-      ])
-      setQuestionnaireData(questionnaire)
-      setSubmissions(submissionsData.content)
-    } catch (error) {
-      console.error('Erro ao buscar dados:', error)
-      setError('Falha ao carregar dados do questionário')
-    } finally {
-      setLoading(false)
-    }
-  }, [params.id])
+  const fetchData = useCallback(
+    async (filters?: { memberId?: string; from?: Date; to?: Date }) => {
+      setLoading(true)
+      try {
+        const [questionnaire, submissionsData] = await Promise.all([
+          questionaryService.getQuestionnaireById(params.id),
+          questionaryService.getQuestionnaireSubmissions(params.id, filters),
+        ])
+        setQuestionnaireData(questionnaire)
+        setSubmissions(submissionsData.content)
+        setFilteredSubmissions(submissionsData.content)
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error)
+        setError('Falha ao carregar dados do questionário')
+      } finally {
+        setLoading(false)
+      }
+    },
+    [params.id],
+  )
+
+  const handleFiltersChange = useCallback(
+    ({
+      dateRange,
+      memberId,
+    }: {
+      dateRange: DateRange | undefined
+      memberId: string | undefined
+    }) => {
+      const filters: { memberId?: string; from?: Date; to?: Date } = {}
+
+      if (memberId) {
+        filters.memberId = memberId
+      }
+
+      if (dateRange?.from) {
+        filters.from = dateRange.from
+      }
+
+      if (dateRange?.to) {
+        filters.to = dateRange.to
+      }
+
+      fetchData(filters)
+    },
+    [fetchData],
+  )
 
   useEffect(() => {
     fetchData()
@@ -183,6 +219,11 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        <AnalyticsFilters
+          departmentId={questionnaireData.departmentId}
+          onFiltersChange={handleFiltersChange}
+        />
+
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="mb-4">
             <TabsTrigger value="overview">Visão Geral</TabsTrigger>
@@ -199,7 +240,7 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="bg-blue-100 p-4 rounded-lg text-center">
                     <p className="text-2xl font-bold text-blue-800">
-                      {submissions.length}
+                      {filteredSubmissions?.length || 0}
                     </p>
                     <p className="text-sm text-blue-600">Total de Respostas</p>
                   </div>
@@ -213,14 +254,20 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
                   </div>
                   <div className="bg-purple-100 p-4 rounded-lg text-center">
                     <p className="text-2xl font-bold text-purple-800">
-                      {submissions.length > 0
-                        ? Math.round(
-                            submissions.reduce(
-                              (acc, sub) => acc + sub.answers.length,
-                              0,
-                            ) / submissions.length,
-                          )
-                        : 0}
+                      {(() => {
+                        if (
+                          !filteredSubmissions ||
+                          filteredSubmissions.length === 0
+                        )
+                          return 0
+                        const totalAnswers = filteredSubmissions.reduce(
+                          (acc, sub) => acc + sub.answers.length,
+                          0,
+                        )
+                        return Math.round(
+                          totalAnswers / filteredSubmissions.length,
+                        )
+                      })()}
                     </p>
                     <p className="text-sm text-purple-600">
                       Média de Respostas por Submissão
@@ -234,9 +281,10 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
           <TabsContent value="details">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {questionnaireData.questions.map((question) => {
-                const questionAnswers = submissions.flatMap((s) =>
-                  s.answers.filter((a) => a.question === question.text),
-                )
+                const questionAnswers =
+                  filteredSubmissions?.flatMap((s) =>
+                    s.answers.filter((a) => a.question === question.text),
+                  ) || []
 
                 return (
                   <Card key={question.id} className="w-full">
@@ -348,7 +396,7 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
               </CardHeader>
               <CardContent>
                 <Accordion type="single" collapsible className="w-full">
-                  {submissions.map((submission, index) => (
+                  {(filteredSubmissions || []).map((submission, index) => (
                     <AccordionItem value={`item-${index}`} key={submission.id}>
                       <AccordionTrigger className="text-left">
                         <div className="flex justify-between items-center w-full">

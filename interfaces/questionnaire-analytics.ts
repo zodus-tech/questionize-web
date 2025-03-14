@@ -19,7 +19,7 @@ export interface Question {
 }
 
 export interface Questionnaire {
-  id: string
+  departmentId: string
   title: string
   createdAt: string
   options: QuestionnaireOptions
@@ -37,6 +37,7 @@ export interface Submission {
   id: string
   title: string
   submittedAt: string
+  memberId: string
   answers: Answer[]
 }
 

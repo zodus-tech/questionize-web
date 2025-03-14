@@ -94,8 +94,30 @@ export const questionaryService = {
     }
   },
 
-  async getQuestionnaireSubmissions(id: string | number) {
-    const { data } = await api.get(`/questionary/${id}/submissions`)
+  async getQuestionnaireSubmissions(
+    id: string | number,
+    filters?: { memberId?: string; from?: Date; to?: Date },
+  ) {
+    const formatISOWithoutZ = (date: Date) => date.toISOString().slice(0, -1)
+    let url = `/questionary/${id}/submissions`
+    const params = new URLSearchParams()
+
+    if (filters?.memberId) {
+      params.append('memberId', filters.memberId)
+    }
+    if (filters?.from) {
+      params.append('from', formatISOWithoutZ(filters.from))
+    }
+    if (filters?.to) {
+      params.append('to', formatISOWithoutZ(filters.to))
+    }
+
+    const queryString = params.toString()
+    if (queryString) {
+      url += `?${queryString}`
+    }
+
+    const { data } = await api.get(url)
     return data
   },
 }
