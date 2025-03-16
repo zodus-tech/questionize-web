@@ -118,7 +118,9 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
     question: Question,
     answers: Answer[],
   ): MultipleChoiceDataPoint[] => {
-    const optionCounts = _.countBy(answers.map((a) => a.answer))
+    const allAnswers = answers.flatMap((a) => a.answer.split(' :z:o:d:u:s: '))
+
+    const optionCounts = _.countBy(allAnswers)
     return (question.options || []).map((option) => ({
       name: option,
       count: optionCounts[option] || 0,
