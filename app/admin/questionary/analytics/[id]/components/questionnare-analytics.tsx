@@ -118,12 +118,19 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
     question: Question,
     answers: Answer[],
   ): MultipleChoiceDataPoint[] => {
+    // Split answers that contain multiple choices and flatten the array
     const allAnswers = answers.flatMap((a) => a.answer.split(' :z:o:d:u:s: '))
 
     const optionCounts = _.countBy(allAnswers)
+    const totalResponses = answers.length // Total number of submissions
+
     return (question.options || []).map((option) => ({
       name: option,
       count: optionCounts[option] || 0,
+      percentage:
+        totalResponses > 0
+          ? (((optionCounts[option] || 0) / totalResponses) * 100).toFixed(1)
+          : '0',
     }))
   }
 
@@ -157,6 +164,11 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
   }
 
   const formatRating = (answer: Answer): string => {
+    // If it's a multiple choice answer with multiple selections
+    if (answer.answer.includes(' :z:o:d:u:s: ')) {
+      return answer.answer.split(' :z:o:d:u:s: ').join(', ')
+    }
+
     const ratingValues = [
       {
         value: 'VERY_DISSATISFIED',
@@ -177,9 +189,10 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
       },
     ]
 
-    return ratingValues.filter((e) => e.value === answer.answer)[0]
-      ? ratingValues.filter((e) => e.value === answer.answer)[0].label
-      : answer.answer
+    return (
+      ratingValues.find((e) => e.value === answer.answer)?.label ||
+      answer.answer
+    )
   }
 
   const processTextResponses = (answers: Answer[]): TextResponseDataPoint[] => {
@@ -327,13 +340,19 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
                             <XAxis dataKey="name" />
                             <YAxis />
                             <Tooltip
-                              formatter={(value: number) => [
-                                `${value}`,
+                              formatter={(
+                                value: number,
+                                name: string,
+                                props: { payload: { percentage: string } },
+                              ) => [
+                                `${value} (${props.payload.percentage}%)`,
                                 'Contagem',
                               ]}
                               labelFormatter={(label) => `Opção: ${label}`}
                             />
-                            <Legend formatter={() => `Contagem`} />
+                            <Legend
+                              formatter={() => `Contagem (% das respostas)`}
+                            />
                             <Bar dataKey="count" fill="#4299E1" />
                           </BarChart>
                         ) : question.type === QuestionType.RATING ? (
