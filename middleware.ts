@@ -35,8 +35,8 @@ const redirectToQuestionnaires = (url: string) => {
 }
 
 const redirectDictionary: Record<string, string> = {
-  '/home': '/home/questionnaire',
-  '': '/home/questionnaire',
+  '/home': '/home/questionnaires',
+  '': '/home/questionnaires',
   '/admin': '/admin/auth/login',
 }
 

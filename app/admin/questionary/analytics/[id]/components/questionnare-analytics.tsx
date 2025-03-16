@@ -53,6 +53,11 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
+  const [currentDateRange, setCurrentDateRange] = useState<
+    DateRange | undefined
+  >()
+  const [currentMemberId, setCurrentMemberId] = useState<string | undefined>()
+
   const fetchData = useCallback(
     async (filters?: { memberId?: string; from?: Date; to?: Date }) => {
       setLoading(true)
@@ -82,6 +87,10 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
       dateRange: DateRange | undefined
       memberId: string | undefined
     }) => {
+      // Update the current filter state
+      setCurrentDateRange(dateRange)
+      setCurrentMemberId(memberId)
+
       const filters: { memberId?: string; from?: Date; to?: Date } = {}
 
       if (memberId) {
@@ -222,6 +231,8 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
         <AnalyticsFilters
           departmentId={questionnaireData.departmentId}
           onFiltersChange={handleFiltersChange}
+          initialDateRange={currentDateRange}
+          initialMemberId={currentMemberId}
         />
 
         <Tabs defaultValue="overview" className="w-full">

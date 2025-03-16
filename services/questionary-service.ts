@@ -2,10 +2,21 @@ import { api } from './api'
 import Cookies from 'js-cookie'
 
 export const questionaryService = {
-  async getAllQuestionnaires(departmentId?: string) {
-    const { data } = await api.get(
-      `/questionary/all${departmentId ? `?departmentId=${departmentId}` : ''}`,
-    )
+  async getAllQuestionnaires(departmentId?: string, onlyActive?: boolean) {
+    const params = new URLSearchParams()
+
+    if (departmentId) {
+      params.append('departmentId', departmentId)
+    }
+
+    if (onlyActive) {
+      params.append('active', 'true')
+    }
+
+    const queryString = params.toString()
+    const url = `/questionary/all${queryString ? `?${queryString}` : ''}`
+
+    const { data } = await api.get(url)
     return data.content
   },
 

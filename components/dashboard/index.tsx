@@ -181,6 +181,8 @@ const Dashboard: React.FC<DashboardProps> = ({
               date={date}
               setDate={setDate}
               className="justify-self-end w-fit"
+              variant={'dark'}
+              allowPastDates={true}
             />
             <Select
               onValueChange={handleDepartmentChange}

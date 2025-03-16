@@ -14,13 +14,19 @@ interface AnalyticsFiltersProps {
     dateRange: DateRange | undefined
     memberId: string | undefined
   }) => void
+  initialDateRange?: DateRange
+  initialMemberId?: string
 }
 
 export function AnalyticsFilters({
   departmentId,
   onFiltersChange,
+  initialDateRange,
+  initialMemberId,
 }: AnalyticsFiltersProps) {
-  const [dateRange, setDateRange] = useState<DateRange | undefined>()
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(
+    initialDateRange,
+  )
   const [selectedMember, setSelectedMember] = useState<Member>()
   const [members, setMembers] = useState<Member[]>([])
 
@@ -30,6 +36,14 @@ export function AnalyticsFilters({
         const { members } =
           await memberService.getDepartmentMembers(departmentId)
         setMembers(members)
+
+        // If we have an initialMemberId, find and set the selected member
+        if (initialMemberId && members.length > 0) {
+          const member = members.find((m: Member) => m.id === initialMemberId)
+          if (member) {
+            setSelectedMember(member)
+          }
+        }
       } catch (error) {
         console.error('Error fetching members:', error)
       }
@@ -38,7 +52,14 @@ export function AnalyticsFilters({
     if (departmentId) {
       fetchMembers()
     }
-  }, [departmentId])
+  }, [departmentId, initialMemberId])
+
+  // Update dateRange if initialDateRange changes
+  useEffect(() => {
+    if (initialDateRange) {
+      setDateRange(initialDateRange)
+    }
+  }, [initialDateRange])
 
   const handleDateRangeChange = (newDateRange: DateRange | undefined) => {
     setDateRange(newDateRange)
@@ -70,6 +91,7 @@ export function AnalyticsFilters({
                 handleDateRangeChange(value)
               }
             }}
+            allowPastDates={true}
           />
         </div>
         <div className="w-full md:w-[300px]">

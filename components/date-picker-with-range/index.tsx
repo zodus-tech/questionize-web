@@ -19,12 +19,16 @@ interface DatePickerWithRangeProps
   extends React.HTMLAttributes<HTMLDivElement> {
   date: DateRange | undefined
   setDate: React.Dispatch<React.SetStateAction<DateRange | undefined>>
+  variant?: 'light' | 'dark'
+  allowPastDates?: boolean
 }
 
 export function DatePickerWithRange({
   className,
   date,
   setDate,
+  variant = 'light',
+  allowPastDates = false,
 }: DatePickerWithRangeProps) {
   return (
     <div className={cn('grid gap-2 w-full', className)}>
@@ -32,12 +36,17 @@ export function DatePickerWithRange({
         <PopoverTrigger asChild>
           <Button
             id="date"
+            variant={variant === 'dark' ? 'default' : 'outline'}
             className={cn(
               'w-full justify-start text-left font-normal gap-3',
               !date && 'text-muted-foreground',
+              variant === 'dark' &&
+                'bg-primary text-primary-foreground hover:bg-primary/90',
             )}
           >
-            <CalendarIcon />
+            <CalendarIcon
+              className={variant === 'dark' ? 'text-primary-foreground' : ''}
+            />
             {date?.from ? (
               date.to ? (
                 <p className="font-medium">
@@ -52,7 +61,13 @@ export function DatePickerWithRange({
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="end">
+        <PopoverContent
+          className={cn(
+            'w-auto p-0',
+            variant === 'dark' && 'bg-card border-border',
+          )}
+          align="end"
+        >
           <Calendar
             initialFocus
             mode="range"
@@ -61,8 +76,12 @@ export function DatePickerWithRange({
             onSelect={(newRange) => {
               if (newRange?.from) {
                 const today = new Date()
+                // Only correct dates if past dates are not allowed
                 const correctedFrom =
-                  newRange.from < today ? today : newRange.from
+                  !allowPastDates && newRange.from < today
+                    ? today
+                    : newRange.from
+
                 setDate({
                   from: correctedFrom,
                   to: newRange.to ?? addDays(correctedFrom, 7),
@@ -71,7 +90,8 @@ export function DatePickerWithRange({
             }}
             numberOfMonths={2}
             locale={ptBR}
-            disabled={{ before: new Date() }}
+            disabled={!allowPastDates ? { before: new Date() } : undefined}
+            className={variant === 'dark' ? 'bg-card text-card-foreground' : ''}
           />
         </PopoverContent>
       </Popover>

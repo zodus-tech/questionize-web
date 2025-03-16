@@ -25,7 +25,10 @@ export default function QuestionnairesPage() {
       setError(null)
 
       try {
-        const data = await questionaryService.getAllQuestionnaires()
+        const data = await questionaryService.getAllQuestionnaires(
+          undefined,
+          true,
+        )
         setQuestionnaires(data)
       } catch (err) {
         console.error('Ocorreu um erro ao encontrar os questionários', err)

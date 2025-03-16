@@ -47,7 +47,7 @@ import {
 } from '@/components/ui/tooltip'
 import { DatePickerWithRange } from '@/components/date-picker-with-range'
 import { DateRange } from 'react-day-picker'
-import { addDays, format } from 'date-fns'
+import { addDays } from 'date-fns'
 
 const initialState: HistoryState = {
   past: [],
@@ -227,8 +227,14 @@ function formReducer(state: HistoryState, action: FormAction): HistoryState {
   }
 }
 
-const formatDate = (date: Date | undefined) =>
-  date ? format(date, "yyyy-MM-dd'T'HH:mm:ss") : null
+const formatDate = (date: Date | undefined) => {
+  if (!date) return null
+
+  const offset = date.getTimezoneOffset()
+  const localDate = new Date(date.getTime() - offset * 60 * 1000)
+
+  return localDate.toISOString().slice(0, -1)
+}
 
 export default function Component() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
@@ -488,7 +494,7 @@ export default function Component() {
                 <DatePickerWithRange
                   date={dateRange}
                   setDate={setDateRange}
-                  className="justify-self-end w-fit"
+                  className="justify-self-end w-full"
                 />
               </div>
             </div>
