@@ -76,7 +76,7 @@ export default function QuestionaryResponsePage({
       const requestBody = {
         answers: Object.entries(answers).map(([questionId, answer]) => ({
           questionId,
-          answer: Array.isArray(answer) ? answer.join(', ') : answer,
+          answer: Array.isArray(answer) ? answer.join(' :z:o:d:u:s: ') : answer,
         })),
         memberId: selectedMember?.id,
       }
