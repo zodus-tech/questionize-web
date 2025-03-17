@@ -131,4 +131,23 @@ export const questionaryService = {
     const { data } = await api.get(url)
     return data
   },
+
+  async renameQuestionary(
+    id: string | number,
+    name: string
+  ) {
+    try {
+      await api.patch(
+        `/questionary/rename/${id}`,
+        { name },
+      )
+      return true
+    } catch (error) {
+      console.error(
+        '[QuestionaryService] Error renaming questionnaire:',
+        error,
+      )
+      return false
+    }
+  }
 }
