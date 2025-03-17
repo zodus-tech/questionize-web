@@ -65,19 +65,13 @@ const Dashboard: React.FC<DashboardProps> = ({
     { id: string; title: string }[]
   >([])
   const [departments, setDepartments] = useState<Department[]>([])
-  const [localDepartmentId, setLocalDepartmentId] = useState<
-    string | undefined
-  >(departmentId)
-  const [localQuestionaryId, setLocalQuestionaryId] = useState<
-    string | undefined
-  >(questionaryId)
+  const [isChangingFilters, setIsChangingFilters] = useState(false)
 
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
         const data = await departmentService.getAllDepartments()
         setDepartments(data)
-        refetch()
       } catch (error) {
         console.error('Error fetching departments:', error)
       }
@@ -95,39 +89,40 @@ const Dashboard: React.FC<DashboardProps> = ({
         )
       } catch (error) {
         console.error('Error fetching questionnaires:', error)
+      } finally {
+        setIsChangingFilters(false)
       }
     }
 
     fetchQuestionnaires()
   }, [departmentId])
 
-  useEffect(() => {
-    if (localDepartmentId !== departmentId) {
-      setDepartmentId(localDepartmentId)
-      refetch()
-    }
-  }, [localDepartmentId, departmentId, setDepartmentId, refetch])
-
-  useEffect(() => {
-    if (localQuestionaryId !== questionaryId) {
-      setQuestionaryId(localQuestionaryId)
-      refetch()
-    }
-  }, [localQuestionaryId, questionaryId, setQuestionaryId, refetch])
-
   const handleDepartmentChange = useCallback(
     (value: string) => {
-      setLocalDepartmentId(value === 'all' ? undefined : value)
+      setIsChangingFilters(true)
+      const newDepartmentId = value === 'all' ? undefined : value
+      setDepartmentId(newDepartmentId)
       if (questionaryId) {
-        setLocalQuestionaryId(undefined)
+        setQuestionaryId(undefined)
       }
+      setTimeout(() => {
+        refetch()
+      }, 50)
     },
-    [questionaryId],
+    [questionaryId, setDepartmentId, setQuestionaryId, refetch],
   )
 
-  const handleQuestionaryChange = useCallback((value: string) => {
-    setLocalQuestionaryId(value === 'all' ? undefined : value)
-  }, [])
+  const handleQuestionaryChange = useCallback(
+    (value: string) => {
+      setIsChangingFilters(true)
+      const newQuestionaryId = value === 'all' ? undefined : value
+      setQuestionaryId(newQuestionaryId)
+      setTimeout(() => {
+        refetch()
+      }, 50)
+    },
+    [setQuestionaryId, refetch],
+  )
 
   const exportDashboardToPDF = async () => {
     if (!dashboardRef.current) return
@@ -179,7 +174,10 @@ const Dashboard: React.FC<DashboardProps> = ({
           <div className="w-fit h-full gap-2 flex justify-center flex-col md:flex-row">
             <DatePickerWithRange
               date={date}
-              setDate={setDate}
+              setDate={(newDate) => {
+                setDate(newDate)
+                setTimeout(() => refetch(), 50)
+              }}
               className="justify-self-end w-fit"
               variant={'dark'}
               allowPastDates={true}
@@ -188,6 +186,7 @@ const Dashboard: React.FC<DashboardProps> = ({
               onValueChange={handleDepartmentChange}
               value={departmentId === undefined ? 'all' : departmentId}
               defaultValue="all"
+              disabled={isChangingFilters}
             >
               <SelectTrigger className="min-w-[200px] w-fit bg-primary text-primary-foreground border-none">
                 <SelectValue placeholder="Selecione um setor" />
@@ -205,6 +204,7 @@ const Dashboard: React.FC<DashboardProps> = ({
               onValueChange={handleQuestionaryChange}
               value={questionaryId === undefined ? 'all' : questionaryId}
               defaultValue="all"
+              disabled={isChangingFilters}
             >
               <SelectTrigger className="min-w-[200px] w-fit bg-primary text-primary-foreground border-none">
                 <SelectValue placeholder="Selecione um questionário" />
