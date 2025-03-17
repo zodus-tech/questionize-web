@@ -55,7 +55,7 @@ export const questionaryService = {
     newTitle: string,
   ): Promise<boolean> {
     try {
-      await api.patch(`/questionary/update/${id}`, { title: newTitle })
+      await api.patch(`/questionary/rename/${id}`, newTitle)
       return true
     } catch (error) {
       console.error('[QuestionaryService] Error renaming questionnaire:', error)
