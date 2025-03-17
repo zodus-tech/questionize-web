@@ -16,6 +16,7 @@ interface AnalyticsFiltersProps {
   }) => void
   initialDateRange?: DateRange
   initialMemberId?: string
+  members: Member[]
 }
 
 export function AnalyticsFilters({
@@ -23,19 +24,16 @@ export function AnalyticsFilters({
   onFiltersChange,
   initialDateRange,
   initialMemberId,
+  members
 }: AnalyticsFiltersProps) {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
     initialDateRange,
   )
   const [selectedMember, setSelectedMember] = useState<Member>()
-  const [members, setMembers] = useState<Member[]>([])
 
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const { members } =
-          await memberService.getDepartmentMembers(departmentId)
-        setMembers(members)
 
         // If we have an initialMemberId, find and set the selected member
         if (initialMemberId && members.length > 0) {

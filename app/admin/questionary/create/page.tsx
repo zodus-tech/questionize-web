@@ -652,7 +652,7 @@ export default function Component() {
                   )}
 
                   {question.type === QuestionType.BOOLEAN && (
-                    <RadioGroup className="mt-2">
+                    <RadioGroup className="mt-2" disabled={true}>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="yes" id={`${question.id}-yes`} />
                         <Label htmlFor={`${question.id}-yes`}>Sim</Label>

@@ -248,6 +248,7 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
           onFiltersChange={handleFiltersChange}
           initialDateRange={currentDateRange}
           initialMemberId={currentMemberId}
+          members={questionnaireData.options.members}
         />
 
         <Tabs defaultValue="overview" className="w-full">
