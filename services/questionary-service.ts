@@ -1,6 +1,13 @@
 import { api } from './api'
 import Cookies from 'js-cookie'
 
+// Define interface for banner upload response
+interface BannerUploadResponse {
+  id: string
+  url?: string
+  success: boolean
+}
+
 export const questionaryService = {
   async getAllQuestionnaires(departmentId?: string, onlyActive?: boolean) {
     const params = new URLSearchParams()
@@ -143,5 +150,29 @@ export const questionaryService = {
 
     const { data } = await api.get(url)
     return data
+  },
+
+  async uploadBanner(
+    file: File,
+    questionaryId: string,
+  ): Promise<BannerUploadResponse> {
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const { data } = await api.post(
+        `/questionary/${questionaryId}/upload-banner`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      )
+      return data
+    } catch (error) {
+      console.error('[QuestionaryService] Error uploading banner:', error)
+      throw error
+    }
   },
 }
