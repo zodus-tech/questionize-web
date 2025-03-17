@@ -68,6 +68,7 @@ const initialState: HistoryState = {
         text: 'Questão',
         type: QuestionType.MULTIPLE_CHOICE,
         statistics: {},
+        options: [],
       },
     ],
   },
@@ -91,7 +92,7 @@ function formReducer(state: HistoryState, action: FormAction): HistoryState {
           ...state.present.questions,
           {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            id: (state.present.questions.length + 1) as any,
+            id: String(state.present.questions.length + 1),
             text: 'Nova Questão',
             type: QuestionType.MULTIPLE_CHOICE,
             statistics: {},
@@ -186,7 +187,7 @@ function formReducer(state: HistoryState, action: FormAction): HistoryState {
             const newQuestion: Question = {
               ...q,
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              id: (state.present.questions.length + 1) as any,
+              id: String(state.present.questions.length + 1),
               text: `Cópia de ${q.text}`,
               options: q.options ? [...q.options] : undefined,
             }
@@ -429,7 +430,13 @@ export default function Component() {
       const [reorderedItem] = items.splice(result.source.index, 1)
       items.splice(result.destination.index, 0, reorderedItem)
 
-      dispatch({ type: 'REORDER_QUESTIONS', payload: items })
+      // Ensure all questions have string IDs
+      const formattedItems = items.map((item) => ({
+        ...item,
+        id: String(item.id),
+      }))
+
+      dispatch({ type: 'REORDER_QUESTIONS', payload: formattedItems })
     },
     [state.present.questions],
   )
@@ -524,6 +531,7 @@ export default function Component() {
                   date={dateRange}
                   setDate={setDateRange}
                   className="justify-self-end w-full"
+                  allowPastDates={true}
                 />
               </div>
               <div className="flex-1 bg-white rounded-lg shadow-md px-6 pb-6 pt-5">
@@ -559,7 +567,7 @@ export default function Component() {
                     state.present.questions.length > 0 ? (
                       state.present.questions.map((question, index) => (
                         <Draggable
-                          key={question.id}
+                          key={String(question.id)}
                           draggableId={String(question.id)}
                           index={index}
                         >
