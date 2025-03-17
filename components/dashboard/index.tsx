@@ -99,15 +99,12 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   const handleDepartmentChange = useCallback(
     (value: string) => {
-      setIsChangingFilters(true)
+      setIsChangingFilters(false)
       const newDepartmentId = value === 'all' ? undefined : value
       setDepartmentId(newDepartmentId)
       if (questionaryId) {
         setQuestionaryId(undefined)
       }
-      setTimeout(() => {
-        refetch()
-      }, 50)
     },
     [questionaryId, setDepartmentId, setQuestionaryId, refetch],
   )
@@ -117,9 +114,7 @@ const Dashboard: React.FC<DashboardProps> = ({
       setIsChangingFilters(true)
       const newQuestionaryId = value === 'all' ? undefined : value
       setQuestionaryId(newQuestionaryId)
-      setTimeout(() => {
-        refetch()
-      }, 50)
+      setIsChangingFilters(false)
     },
     [setQuestionaryId, refetch],
   )
