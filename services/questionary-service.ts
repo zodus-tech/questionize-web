@@ -50,6 +50,19 @@ export const questionaryService = {
     }
   },
 
+  async renameQuestionnaire(
+    id: string | number,
+    newTitle: string,
+  ): Promise<boolean> {
+    try {
+      await api.patch(`/questionary/update/${id}`, { title: newTitle })
+      return true
+    } catch (error) {
+      console.error('[QuestionaryService] Error renaming questionnaire:', error)
+      return false
+    }
+  },
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async createQuestionnaire(requestBody: any): Promise<boolean> {
     try {
@@ -131,23 +144,4 @@ export const questionaryService = {
     const { data } = await api.get(url)
     return data
   },
-
-  async renameQuestionary(
-    id: string | number,
-    name: string
-  ) {
-    try {
-      await api.patch(
-        `/questionary/rename/${id}`,
-        { name },
-      )
-      return true
-    } catch (error) {
-      console.error(
-        '[QuestionaryService] Error renaming questionnaire:',
-        error,
-      )
-      return false
-    }
-  }
 }

@@ -41,6 +41,12 @@ import { DateRange } from 'react-day-picker'
 
 const COLORS = ['#4299E1', '#48BB78', '#ECC94B', '#ED64A6', '#9F7AEA']
 
+interface TooltipPayload {
+  payload?: {
+    percentage?: string
+  }
+}
+
 const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
   params,
 }) => {
@@ -248,7 +254,6 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
           onFiltersChange={handleFiltersChange}
           initialDateRange={currentDateRange}
           initialMemberId={currentMemberId}
-          members={questionnaireData.options.members}
         />
 
         <Tabs defaultValue="overview" className="w-full">
@@ -344,11 +349,12 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
                               formatter={(
                                 value: number,
                                 name: string,
-                                props: { payload: { percentage: string } },
-                              ) => [
-                                `${value} (${props.payload.percentage}%)`,
-                                'Contagem',
-                              ]}
+                                props: TooltipPayload,
+                              ) => {
+                                const percentage =
+                                  props?.payload?.percentage || '0'
+                                return [`${value} (${percentage}%)`, 'Contagem']
+                              }}
                               labelFormatter={(label) => `Opção: ${label}`}
                             />
                             <Legend

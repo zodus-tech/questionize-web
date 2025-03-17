@@ -90,6 +90,65 @@ export default function QuestionnairesPage() {
     }
   }
 
+  const handleRenameForm = async (id: string, newTitle: string) => {
+    if (!newTitle.trim()) {
+      toast({
+        title: 'Erro de Validação',
+        description: 'O título do questionário não pode estar vazio.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    setLoading(true)
+
+    try {
+      const success = await questionaryService.renameQuestionnaire(id, newTitle)
+      if (success) {
+        toast({
+          title: 'Renomeado',
+          description: `Questionário renomeado com sucesso`,
+        })
+
+        setQuestionnaires((prevQuestionnaires: Questionary[]) =>
+          prevQuestionnaires.map((questionary) =>
+            questionary.id === id.toString()
+              ? { ...questionary, title: newTitle }
+              : questionary,
+          ),
+        )
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Falha',
+          description: `Não foi possível renomear o questionário, tente novamente mais tarde`,
+          action: (
+            <ToastAction
+              altText="Tentar novamente"
+              onClick={() => {
+                handleRenameForm(id, newTitle)
+              }}
+            >
+              Tentar novamente
+            </ToastAction>
+          ),
+        })
+      }
+    } catch (error) {
+      console.error(
+        'Ocorreu um erro inesperado ao renomear o questionário',
+        error,
+      )
+      toast({
+        title: 'Erro',
+        description: 'Ocorreu um erro inesperado ao renomear o questionário',
+        variant: 'destructive',
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <>
       <LoadingSpinner isLoading={loading} />
@@ -140,6 +199,7 @@ export default function QuestionnairesPage() {
                   onDelete={() =>
                     handleDeleteForm(questionary.id, questionary.title)
                   }
+                  onUpdate={handleRenameForm}
                   element={questionary.title}
                 />
               ))}
