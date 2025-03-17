@@ -13,6 +13,7 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [fileError, setFileError] = useState<string | null>(null)
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
@@ -34,18 +35,37 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
     }
   }
 
-  const handleFileChange = (file: File) => {
-    // Check if file is an image
+  const validateFile = (file: File): boolean => {
     if (!file.type.startsWith('image/')) {
-      alert('Por favor, selecione apenas arquivos de imagem.')
+      setFileError('Por favor, selecione apenas arquivos de imagem.')
+      return false
+    }
+
+    const maxSize = 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      setFileError('A imagem deve ter menos de 5MB.')
+      return false
+    }
+
+    setFileError(null)
+    return true
+  }
+
+  const handleFileChange = (file: File) => {
+    if (!validateFile(file)) {
       return
     }
 
-    // Create preview URL
     const url = URL.createObjectURL(file)
     setPreviewUrl(url)
 
-    // Call the callback
+    console.log('File selected for banner upload:', {
+      name: file.name,
+      type: file.type,
+      size: `${(file.size / 1024 / 1024).toFixed(2)}MB`,
+      lastModified: new Date(file.lastModified).toISOString(),
+    })
+
     onBannerChange(file)
   }
 
@@ -64,6 +84,7 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
       URL.revokeObjectURL(previewUrl)
     }
     setPreviewUrl(null)
+    setFileError(null)
     onBannerChange(null)
 
     if (fileInputRef.current) {
@@ -74,34 +95,39 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
   return (
     <div className="w-full">
       {!previewUrl ? (
-        <div
-          className={cn(
-            'border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors',
-            isDragging
-              ? 'border-primary bg-primary/10'
-              : 'border-gray-200 hover:border-primary/50',
-          )}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          onClick={handleBrowseClick}
-        >
-          <div className="flex flex-col items-center">
-            <Upload className="h-10 w-10 text-gray-400 mb-2" />
-            <p className="text-sm font-medium mb-1">
-              Arraste e solte ou clique para selecionar
-            </p>
-            <p className="text-xs text-gray-500">
-              Formatos suportados: JPG, PNG, GIF (máx. 5MB)
-            </p>
+        <div className="flex flex-col">
+          <div
+            className={cn(
+              'border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors',
+              isDragging
+                ? 'border-primary bg-primary/10'
+                : 'border-gray-200 hover:border-primary/50',
+            )}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={handleBrowseClick}
+          >
+            <div className="flex flex-col items-center">
+              <Upload className="h-10 w-10 text-gray-400 mb-2" />
+              <p className="text-sm font-medium mb-1">
+                Arraste e solte ou clique para selecionar
+              </p>
+              <p className="text-xs text-gray-500">
+                Formatos suportados: JPG, PNG, GIF (máx. 5MB)
+              </p>
+            </div>
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept="image/*"
+              onChange={handleFileInputChange}
+            />
           </div>
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            accept="image/*"
-            onChange={handleFileInputChange}
-          />
+          {fileError && (
+            <p className="text-red-500 text-sm mt-2">{fileError}</p>
+          )}
         </div>
       ) : (
         <div className="relative">

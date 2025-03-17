@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Question, Questionary, QuestionType } from '@/interfaces/questionary'
 import LoadingSpinner from '@/components/loadingSpinner'
 import { questionaryService } from '@/services/questionary-service'
+import BannerImage from '@/components/banner-image'
 
 export default function QuestionaryResponsePage({
   params,
@@ -68,6 +69,9 @@ export default function QuestionaryResponsePage({
 
         <div className="container mx-auto px-4 py-8">
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            {currentQuestionary.bannerId && (
+              <BannerImage bannerId={currentQuestionary.bannerId} />
+            )}
             {currentQuestionary.questions.map((question: Question) => (
               <div key={question.id} className="mb-8">
                 <Label
