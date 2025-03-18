@@ -1,18 +1,23 @@
 import DeleteDialog from '@/components/deleteDialog'
 import { Button } from '@/components/ui/button'
 import { FileText, EyeIcon, ChartLineIcon } from 'lucide-react'
-import { CardHeader, CardTitle, Card } from '../ui/card'
-import UpdateDialog from '../updateDialog'
+import { CardHeader, CardTitle, Card, CardFooter } from '../ui/card'
+import UpdateDialog, { UpdateQuestionaryDialog } from '../updateDialog'
 import { useState } from 'react'
+import { Questionary } from '@/interfaces/questionary'
+import { DateRange } from 'react-day-picker'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 
 interface SimpleCardProps {
   id: string
   title: string
   onView: (id: string) => void
-  onUpdate?: (id: string, newName: string) => void
+  onUpdate?: (id: string, updatedContent: any) => void
   onAnalytics?: (id: string) => void
   onDelete: () => void
   element: string
+  questionary?: Questionary
 }
 
 const SimpleCard: React.FC<SimpleCardProps> = ({
@@ -23,16 +28,42 @@ const SimpleCard: React.FC<SimpleCardProps> = ({
   onDelete,
   onAnalytics,
   element,
+  questionary,
 }) => {
-  const [newName, setNewName] = useState(title)
+  const [updatedContent, setUpdatedContent] = useState<any>(questionary ? 
+    {title: questionary.title, startDate: questionary.options.startDate, endDate: questionary.options.endDate} : title)
+  const [startDate, setStartDate] = useState((updatedContent.startDate ? format(updatedContent.startDate, 'dd/MM/yyyy', { locale: ptBR }) : undefined))
+  const [endDate, setEndDate] = useState((updatedContent.endDate ? format(updatedContent.endDate, 'dd/MM/yyyy', { locale: ptBR }) : undefined))
 
-  const handleInputChange = (value: string) => {
-    setNewName(value)
+
+  const handleInputChange = (value: any) => {
+    setUpdatedContent(value)
+  }
+
+  const handleQuestionaryTitleChange = (title: string) => {
+    const value = {...updatedContent};
+    if (title.trim()) {
+      value.title = title
+    }
+    setUpdatedContent(value)
+  }
+  const handleQuestionaryDatesChange = (dateRange: DateRange | undefined) => {
+    const value = {...updatedContent};
+    
+    if (dateRange && dateRange.from) {
+      value.startDate = dateRange.from
+    }
+    if (dateRange && dateRange.to) {
+      value.endDate = dateRange.to
+    }
+    setUpdatedContent(value)
   }
 
   const handleUpdate = () => {
+    setStartDate((updatedContent.startDate ? format(updatedContent.startDate, 'dd/MM/yyyy', { locale: ptBR }) : undefined))
+    setEndDate((updatedContent.endDate ? format(updatedContent.endDate, 'dd/MM/yyyy', { locale: ptBR }) : undefined))
     if (onUpdate) {
-      onUpdate(id, newName)
+      onUpdate(id, updatedContent)
     }
   }
 
@@ -64,10 +95,19 @@ const SimpleCard: React.FC<SimpleCardProps> = ({
             )}
 
             {onUpdate && (
+              questionary ?
+              <UpdateQuestionaryDialog
+                handleUpdate={handleUpdate}
+                handleTitleInputChange={handleQuestionaryTitleChange}
+                handleDateInputChange={handleQuestionaryDatesChange}
+                currentValue={updatedContent}
+                element={questionary}
+              />
+              :
               <UpdateDialog
                 handleUpdate={handleUpdate}
                 handleInputChange={handleInputChange}
-                currentValue={newName}
+                currentValue={updatedContent}
                 element={element}
               />
             )}
@@ -75,6 +115,14 @@ const SimpleCard: React.FC<SimpleCardProps> = ({
           </div>
         </div>
       </CardHeader>
+      {
+        questionary && 
+        <CardFooter>
+          <p className='text-red-500 font-semibold'>
+          {startDate} -{' '}{endDate}  
+          </p>
+        </CardFooter>
+      }
     </Card>
   )
 }

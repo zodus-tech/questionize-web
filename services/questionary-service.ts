@@ -78,15 +78,38 @@ export const questionaryService = {
     }
   },
 
-  async renameQuestionnaire(
+  async updateQuestionnaire(
     id: string | number,
-    newTitle: string,
+    requestBody: { title?: string, startDate?: any, endDate?: any },
   ): Promise<boolean> {
     try {
-      await api.patch(`/questionary/rename/${id}`, newTitle)
+      if (!requestBody?.startDate || !requestBody?.endDate) {
+        throw new Error(
+          'Datas inválidas. O questionário precisa de um período válido.',
+        )
+      }
+      const formatDate = (date: Date | undefined) => {
+        if (!date) return null
+        date = new Date(date)
+        const offset = date.getTimezoneOffset()
+        const localDate = new Date(date.getTime() - offset * 60 * 1000)
+
+        return localDate.toISOString().slice(0, -1)
+      }
+
+      requestBody.startDate = formatDate(
+        requestBody.startDate,
+      )
+      requestBody.endDate = formatDate(
+        requestBody.endDate,
+      )
+
+      //console.log(requestBody.endDate)
+
+      await api.patch(`/questionary/update/${id}`, requestBody)
       return true
     } catch (error) {
-      console.error('[QuestionaryService] Error renaming questionnaire:', error)
+      console.error('[QuestionaryService] Error updating questionnaire:', error)
       return false
     }
   },
@@ -100,12 +123,6 @@ export const questionaryService = {
         )
       }
       const formatISOWithoutZ = (date: string) => date.slice(0, -1)
-      const today = new Date()
-      const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000)
-      const oneYearLater = new Date(today.getTime() + 365 * 24 * 60 * 60 * 1000)
-
-      const yesterdayFormatted = yesterday.toISOString()
-      const oneYearLaterFormatted = oneYearLater.toISOString()
 
       requestBody.options.startDate = formatISOWithoutZ(
         requestBody.options.startDate,
@@ -114,10 +131,6 @@ export const questionaryService = {
         requestBody.options.endDate,
       )
 
-      if (requestBody) {
-        requestBody.options.startDate = yesterdayFormatted
-        requestBody.options.endDate = oneYearLaterFormatted
-      }
       await api.post(`/questionary/create`, requestBody)
       return true
     } catch (error) {
