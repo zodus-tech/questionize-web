@@ -242,24 +242,19 @@ export function DraggableQuestions({
                         {question.type === QuestionType.TEXT && (
                           <Textarea
                             placeholder="Campo de texto"
-                            className="w-full mt-2 resize-none"
+                            className="w-full mt-2 resize-none !cursor-default"
+                            disabled
                           />
                         )}
 
                         {question.type === QuestionType.BOOLEAN && (
                           <RadioGroup className="mt-2">
                             <div className="flex items-center space-x-2">
-                              <RadioGroupItem
-                                value="yes"
-                                id={`${question.id}-yes`}
-                              />
+                            <div className="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
                               <Label htmlFor={`${question.id}-yes`}>Sim</Label>
                             </div>
                             <div className="flex items-center space-x-2">
-                              <RadioGroupItem
-                                value="no"
-                                id={`${question.id}-no`}
-                              />
+                            <div className="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
                               <Label htmlFor={`${question.id}-no`}>Não</Label>
                             </div>
                           </RadioGroup>
