@@ -235,8 +235,8 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
     if (!ctx) return
 
     // Set fixed dimensions for the output banner
-    const canvasWidth = 1200 // Higher resolution for better quality
-    const canvasHeight = 400 // 3:1 aspect ratio
+    const canvasWidth = 3600 // Higher resolution for better quality
+    const canvasHeight = canvasWidth/3 // 3:1 aspect ratio
     canvas.width = canvasWidth
     canvas.height = canvasHeight
 
@@ -248,8 +248,8 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
     const scale = (naturalDimensions.width / imgRect.width) * (1 / zoom)
 
     // Calculate the position of the crop area relative to the image
-    const relativeLeft = (imgRect.left + position.x - cropRect.left) * -1
-    const relativeTop = (imgRect.top + position.y - cropRect.top) * -1
+    const relativeLeft = (position.x * (-1)) + ((imgRect.width - cropRect.width) / 2)
+    const relativeTop = (position.y * (-1)) + ((imgRect.height - cropRect.height) / 2)
 
     // Convert to original image coordinates (accounting for zoom)
     const sourceX = relativeLeft * scale
