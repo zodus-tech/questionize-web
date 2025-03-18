@@ -114,10 +114,10 @@ export const questionaryService = {
         requestBody.options.endDate,
       )
 
-      if (requestBody) {
-        requestBody.options.startDate = yesterdayFormatted
-        requestBody.options.endDate = oneYearLaterFormatted
-      }
+      // if (requestBody) {
+      //   requestBody.options.startDate = yesterdayFormatted
+      //   requestBody.options.endDate = oneYearLaterFormatted
+      // }
       await api.post(`/questionary/create`, requestBody)
       return true
     } catch (error) {
