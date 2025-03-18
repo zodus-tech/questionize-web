@@ -245,7 +245,7 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
     const imgRect = img.getBoundingClientRect()
 
     // Calculate the visible portion of the image (accounting for zoom and position)
-    const scale = (naturalDimensions.width / imgRect.width) * (1 / zoom)
+    const scale = ((naturalDimensions.width * (1 / zoom)) / naturalDimensions.width)
 
     // Calculate the position of the crop area relative to the image
     const relativeLeft = (position.x * (-1)) + ((imgRect.width - cropRect.width) / 2)
