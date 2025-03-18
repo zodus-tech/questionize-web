@@ -78,15 +78,38 @@ export const questionaryService = {
     }
   },
 
-  async renameQuestionnaire(
+  async updateQuestionnaire(
     id: string | number,
-    newTitle: string,
+    requestBody: { title?: string, startDate?: any, endDate?: any },
   ): Promise<boolean> {
     try {
-      await api.patch(`/questionary/rename/${id}`, newTitle)
+      if (!requestBody?.startDate || !requestBody?.endDate) {
+        throw new Error(
+          'Datas inválidas. O questionário precisa de um período válido.',
+        )
+      }
+      const formatDate = (date: Date | undefined) => {
+        if (!date) return null
+        date = new Date(date)
+        const offset = date.getTimezoneOffset()
+        const localDate = new Date(date.getTime() - offset * 60 * 1000)
+
+        return localDate.toISOString().slice(0, -1)
+      }
+
+      requestBody.startDate = formatDate(
+        requestBody.startDate,
+      )
+      requestBody.endDate = formatDate(
+        requestBody.endDate,
+      )
+
+      //console.log(requestBody.endDate)
+
+      await api.patch(`/questionary/update/${id}`, requestBody)
       return true
     } catch (error) {
-      console.error('[QuestionaryService] Error renaming questionnaire:', error)
+      console.error('[QuestionaryService] Error updating questionnaire:', error)
       return false
     }
   },

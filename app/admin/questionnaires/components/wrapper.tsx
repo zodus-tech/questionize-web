@@ -90,8 +90,8 @@ export default function QuestionnairesPage() {
     }
   }
 
-  const handleRenameForm = async (id: string, newTitle: string) => {
-    if (!newTitle.trim()) {
+  const handleUpdateForm = async (id: string, updatedContent: {title: string, startDate: Date, endDate: Date}) => {
+    if (updatedContent.title && !updatedContent.title.trim()) {
       toast({
         title: 'Erro de Validação',
         description: 'O título do questionário não pode estar vazio.',
@@ -103,17 +103,17 @@ export default function QuestionnairesPage() {
     setLoading(true)
 
     try {
-      const success = await questionaryService.renameQuestionnaire(id, newTitle)
+      const success = await questionaryService.updateQuestionnaire(id, updatedContent)
       if (success) {
         toast({
-          title: 'Renomeado',
-          description: `Questionário renomeado com sucesso`,
+          title: 'Atualizado',
+          description: `Questionário atualizado com sucesso`,
         })
 
         setQuestionnaires((prevQuestionnaires: Questionary[]) =>
           prevQuestionnaires.map((questionary) =>
             questionary.id === id.toString()
-              ? { ...questionary, title: newTitle }
+              ? { ...questionary, title: updatedContent.title }
               : questionary,
           ),
         )
@@ -126,7 +126,7 @@ export default function QuestionnairesPage() {
             <ToastAction
               altText="Tentar novamente"
               onClick={() => {
-                handleRenameForm(id, newTitle)
+                handleUpdateForm(id, updatedContent)
               }}
             >
               Tentar novamente
@@ -185,6 +185,7 @@ export default function QuestionnairesPage() {
               )
               .map((questionary) => (
                 <Card
+                  questionary={questionary}
                   key={questionary.id}
                   id={questionary.id}
                   title={questionary.title}
@@ -199,7 +200,7 @@ export default function QuestionnairesPage() {
                   onDelete={() =>
                     handleDeleteForm(questionary.id, questionary.title)
                   }
-                  onUpdate={handleRenameForm}
+                  onUpdate={handleUpdateForm}
                   element={questionary.title}
                 />
               ))}
