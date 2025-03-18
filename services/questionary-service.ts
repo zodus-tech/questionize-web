@@ -100,12 +100,6 @@ export const questionaryService = {
         )
       }
       const formatISOWithoutZ = (date: string) => date.slice(0, -1)
-      const today = new Date()
-      const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000)
-      const oneYearLater = new Date(today.getTime() + 365 * 24 * 60 * 60 * 1000)
-
-      const yesterdayFormatted = yesterday.toISOString()
-      const oneYearLaterFormatted = oneYearLater.toISOString()
 
       requestBody.options.startDate = formatISOWithoutZ(
         requestBody.options.startDate,
@@ -114,10 +108,6 @@ export const questionaryService = {
         requestBody.options.endDate,
       )
 
-      // if (requestBody) {
-      //   requestBody.options.startDate = yesterdayFormatted
-      //   requestBody.options.endDate = oneYearLaterFormatted
-      // }
       await api.post(`/questionary/create`, requestBody)
       return true
     } catch (error) {
