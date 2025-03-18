@@ -33,6 +33,14 @@ function canvasToFile(
   })
 }
 
+function preventDefault (e: any) {
+  e = e || window.event
+  if (e.preventDefault) {
+    e.preventDefault()
+  }
+  e.returnValue = false
+}
+
 export function BannerUpload({ onBannerChange }: BannerUploadProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
@@ -235,8 +243,8 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
     if (!ctx) return
 
     // Set fixed dimensions for the output banner
-    const canvasWidth = 1200 // Higher resolution for better quality
-    const canvasHeight = 400 // 3:1 aspect ratio
+    const canvasWidth = 3600 // Higher resolution for better quality
+    const canvasHeight = canvasWidth/3 // 3:1 aspect ratio
     canvas.width = canvasWidth
     canvas.height = canvasHeight
 
@@ -245,11 +253,11 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
     const imgRect = img.getBoundingClientRect()
 
     // Calculate the visible portion of the image (accounting for zoom and position)
-    const scale = (naturalDimensions.width / imgRect.width) * (1 / zoom)
+    const scale = ((naturalDimensions.width * (1 / zoom)) / naturalDimensions.width)
 
     // Calculate the position of the crop area relative to the image
-    const relativeLeft = (imgRect.left + position.x - cropRect.left) * -1
-    const relativeTop = (imgRect.top + position.y - cropRect.top) * -1
+    const relativeLeft = (position.x * (-1)) + ((imgRect.width - cropRect.width) / 2)
+    const relativeTop = (position.y * (-1)) + ((imgRect.height - cropRect.height) / 2)
 
     // Convert to original image coordinates (accounting for zoom)
     const sourceX = relativeLeft * scale
@@ -270,6 +278,7 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
       imgRectHeight: imgRect.height,
       cropRectWidth: cropRect.width,
       cropRectHeight: cropRect.height,
+      scale: scale,
     })
 
     // Draw the image to the canvas using the calculated coordinates
@@ -279,8 +288,8 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
 
       ctx.drawImage(
         img,
-        Math.max(0, sourceX),
-        Math.max(0, sourceY),
+        sourceX,
+        sourceY,
         sourceWidth,
         sourceHeight,
         0,
@@ -342,6 +351,24 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
       URL.revokeObjectURL(previewUrl)
       setPreviewUrl(null)
     }
+  }
+
+  const handleCanvasWheel = (event: any) => {
+    const currentZoom = zoom
+    const wheelDelta = (event.deltaY / 100) * -1 // 1 = in; -1 = out
+    const zoomChangeValue = 0.1
+
+    setZoom(currentZoom + (zoomChangeValue * wheelDelta))
+  }
+
+  const enableScroll = () => {
+    document.removeEventListener('wheel', preventDefault, false)
+  }
+
+  const disableScroll = () => {
+    document.addEventListener('wheel', preventDefault, {
+      passive: false,
+    })
   }
 
   return (
@@ -407,7 +434,7 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
                 onMouseDown={handleMouseDown}
               >
                 {imgSrc && (
-                  <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+                  <div className="absolute inset-0 flex items-center justify-center overflow-hidden" onWheel={handleCanvasWheel} onMouseEnter={disableScroll} onMouseLeave={enableScroll}>
                     <img
                       ref={imgRef}
                       src={imgSrc}
@@ -472,14 +499,14 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
           <canvas ref={previewCanvasRef} style={{ display: 'none' as const }} />
         </div>
       ) : (
-        <div className="relative h-48 w-full">
+        <div className="relative w-full aspect-[3/1]">
           {previewUrl && (
             <Image
               src={previewUrl}
               alt="Banner preview"
               fill
-              className="object-cover rounded-lg"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+              className=" rounded-lg"
+              sizes="100vw"
             />
           )}
           <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity bg-black/50 rounded-lg">

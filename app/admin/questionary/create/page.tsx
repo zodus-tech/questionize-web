@@ -42,7 +42,7 @@ const initialState: HistoryState = {
       {
         id: '1',
         text: 'Questão',
-        type: QuestionType.MULTIPLE_CHOICE,
+        type: QuestionType.TEXT,
         statistics: {},
         options: [],
       },
