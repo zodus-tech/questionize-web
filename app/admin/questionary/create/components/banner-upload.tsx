@@ -33,6 +33,14 @@ function canvasToFile(
   })
 }
 
+function preventDefault (e: any) {
+  e = e || window.event
+  if (e.preventDefault) {
+    e.preventDefault()
+  }
+  e.returnValue = false
+}
+
 export function BannerUpload({ onBannerChange }: BannerUploadProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
@@ -351,14 +359,6 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
     const zoomChangeValue = 0.1
 
     setZoom(currentZoom + (zoomChangeValue * wheelDelta))
-  }
-
-  const preventDefault = (e: any) => {
-    e = e || window.event
-    if (e.preventDefault) {
-      e.preventDefault()
-    }
-    e.returnValue = false
   }
 
   const enableScroll = () => {
