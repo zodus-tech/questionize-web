@@ -32,8 +32,9 @@ const SimpleCard: React.FC<SimpleCardProps> = ({
 }) => {
   const [updatedContent, setUpdatedContent] = useState<any>(questionary ? 
     {title: questionary.title, startDate: questionary.options.startDate, endDate: questionary.options.endDate} : title)
-  const [startDate, setStartDate] = useState(format(updatedContent.startDate, 'dd/MM/yyyy', { locale: ptBR }))
-  const [endDate, setEndDate] = useState(format(updatedContent.endDate, 'dd/MM/yyyy', { locale: ptBR }))
+  const [startDate, setStartDate] = useState((updatedContent.startDate ? format(updatedContent.startDate, 'dd/MM/yyyy', { locale: ptBR }) : undefined))
+  const [endDate, setEndDate] = useState((updatedContent.endDate ? format(updatedContent.endDate, 'dd/MM/yyyy', { locale: ptBR }) : undefined))
+
 
   const handleInputChange = (value: any) => {
     setUpdatedContent(value)
@@ -59,8 +60,8 @@ const SimpleCard: React.FC<SimpleCardProps> = ({
   }
 
   const handleUpdate = () => {
-    setStartDate(format(updatedContent.startDate, 'dd/MM/yyyy', { locale: ptBR }))
-    setEndDate(format(updatedContent.endDate, 'dd/MM/yyyy', { locale: ptBR }))
+    setStartDate((updatedContent.startDate ? format(updatedContent.startDate, 'dd/MM/yyyy', { locale: ptBR }) : undefined))
+    setEndDate((updatedContent.endDate ? format(updatedContent.endDate, 'dd/MM/yyyy', { locale: ptBR }) : undefined))
     if (onUpdate) {
       onUpdate(id, updatedContent)
     }
