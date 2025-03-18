@@ -270,6 +270,7 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
       imgRectHeight: imgRect.height,
       cropRectWidth: cropRect.width,
       cropRectHeight: cropRect.height,
+      scale: scale,
     })
 
     // Draw the image to the canvas using the calculated coordinates
@@ -279,8 +280,8 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
 
       ctx.drawImage(
         img,
-        Math.max(0, sourceX),
-        Math.max(0, sourceY),
+        sourceX,
+        sourceY,
         sourceWidth,
         sourceHeight,
         0,
@@ -472,14 +473,14 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
           <canvas ref={previewCanvasRef} style={{ display: 'none' as const }} />
         </div>
       ) : (
-        <div className="relative h-48 w-full">
+        <div className="relative w-full aspect-[3/1]">
           {previewUrl && (
             <Image
               src={previewUrl}
               alt="Banner preview"
               fill
-              className="object-cover rounded-lg"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+              className=" rounded-lg"
+              sizes="100vw"
             />
           )}
           <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity bg-black/50 rounded-lg">
