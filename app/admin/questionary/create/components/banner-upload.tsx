@@ -345,6 +345,32 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
     }
   }
 
+  const handleCanvasWheel = (event: any) => {
+    const currentZoom = zoom
+    const wheelDelta = (event.deltaY / 100) * -1 // 1 = in; -1 = out
+    const zoomChangeValue = 0.1
+
+    setZoom(currentZoom + (zoomChangeValue * wheelDelta))
+  }
+
+  const preventDefault = (e: any) => {
+    e = e || window.event
+    if (e.preventDefault) {
+      e.preventDefault()
+    }
+    e.returnValue = false
+  }
+
+  const enableScroll = () => {
+    document.removeEventListener('wheel', preventDefault, false)
+  }
+
+  const disableScroll = () => {
+    document.addEventListener('wheel', preventDefault, {
+      passive: false,
+    })
+  }
+
   return (
     <div className="w-full">
       {!isCropping && !previewUrl ? (
@@ -408,7 +434,7 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
                 onMouseDown={handleMouseDown}
               >
                 {imgSrc && (
-                  <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+                  <div className="absolute inset-0 flex items-center justify-center overflow-hidden" onWheel={handleCanvasWheel} onMouseEnter={disableScroll} onMouseLeave={enableScroll}>
                     <img
                       ref={imgRef}
                       src={imgSrc}
