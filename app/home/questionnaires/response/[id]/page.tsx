@@ -338,22 +338,26 @@ export default function QuestionaryResponsePage({
                         </div>
                       )}
                       {question.type === QuestionType.ALTERNATIVE && (
-                        <RadioGroup
-                          onValueChange={(value) =>
-                            handleInputChange(question.id.toString(), value)
-                          }
-                          value={
-                            (answers[question.id.toString()] as string) || ''
-                          }
-                        >
+                        <div>
                           {question.options?.map((option) => (
                             <div
                               key={option}
                               className="flex items-center space-x-2 mt-3"
                             >
-                              <RadioGroupItem
-                                value={option}
+                              <input
+                                type="radio"
                                 id={`question-${question.id}-${option}`}
+                                checked={
+                                  (answers[
+                                    question.id.toString()
+                                  ] as string) === option
+                                }
+                                onChange={() =>
+                                  handleInputChange(
+                                    question.id.toString(),
+                                    option,
+                                  )
+                                }
                               />
                               <Label
                                 htmlFor={`question-${question.id}-${option}`}
@@ -363,7 +367,7 @@ export default function QuestionaryResponsePage({
                               </Label>
                             </div>
                           ))}
-                        </RadioGroup>
+                        </div>
                       )}
                     </div>
                   ))}
