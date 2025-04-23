@@ -190,8 +190,12 @@ export const questionaryService = {
   ): Promise<BannerUploadResponse> {
     try {
       const formData = new FormData()
-      formData.append('file', file)
-      formData.append('questionaryId', questionaryId)
+      formData.append('imageFile', file)
+      const request = { questionaryId }
+      formData.append('request', new Blob([JSON.stringify(request)], { type: "application/json" }))
+
+      console.log(JSON.stringify(request))
+
 
       // Log the file details for debugging
       console.log('Uploading file:', {
@@ -201,69 +205,7 @@ export const questionaryService = {
         questionaryId,
       })
 
-      // Check if we're in development environment (localhost)
-      const isLocalDev =
-        typeof window !== 'undefined' &&
-        window.location.hostname === 'localhost'
-
       const url = `/images/save`
-
-      // If in local development, use a relative URL instead of the full URL to avoid CORS
-      if (isLocalDev) {
-        // Store the banner file in localStorage temporarily as base64
-        const reader = new FileReader()
-        return new Promise((resolve) => {
-          reader.onload = async () => {
-            try {
-              const base64String = reader.result as string
-              const bannerId = `banner-${questionaryId}`
-              localStorage.setItem(bannerId, base64String)
-
-              console.log('Banner saved locally with ID:', bannerId)
-
-              // In development mode, directly update the questionnaire with the banner ID
-              try {
-                // This is a hack for development - normally the server would handle this
-                const data = await this.getQuestionnaireById(questionaryId)
-
-                // Log what we're doing
-                console.log('Updating questionnaire with banner ID:', bannerId)
-                console.log('Current questionnaire data:', data)
-
-                // Mock a successful update - this doesn't actually change the server data
-                // but for development, we'll store that this questionnaire has a banner
-                localStorage.setItem(
-                  `questionnaire-${questionaryId}-bannerId`,
-                  bannerId,
-                )
-
-                resolve({
-                  id: bannerId,
-                  success: true,
-                })
-              } catch (updateError) {
-                console.error(
-                  'Failed to update questionnaire with banner ID:',
-                  updateError,
-                )
-                resolve({
-                  id: bannerId,
-                  success: true, // Still return success since we saved the banner
-                  error: 'Saved banner but failed to update questionnaire',
-                })
-              }
-            } catch (err) {
-              console.error('Error storing banner locally:', err)
-              resolve({
-                id: '',
-                success: false,
-                error: 'Error storing banner locally',
-              })
-            }
-          }
-          reader.readAsDataURL(file)
-        })
-      }
 
       // Production code path
       const { data } = await api.post(url, formData, {
@@ -276,6 +218,7 @@ export const questionaryService = {
         maxBodyLength: Infinity, // Allow large files
         maxContentLength: Infinity,
       })
+      console.log("teste 9444444: ", data)
       return data
     } catch (error) {
       console.error('[QuestionaryService] Error uploading banner:', error)

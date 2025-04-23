@@ -69,8 +69,8 @@ export default function QuestionaryResponsePage({
 
         <div className="container mx-auto px-4 py-8">
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            {currentQuestionary.bannerId && (
-              <BannerImage bannerId={currentQuestionary.bannerId} />
+            {currentQuestionary.imageId && (
+              <BannerImage imageId={currentQuestionary.imageId} />
             )}
             {currentQuestionary.questions.map((question: Question) => (
               <div key={question.id} className="mb-8">

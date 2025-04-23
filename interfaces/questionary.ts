@@ -29,7 +29,7 @@ export interface Questionary {
   options: Options
   questions: Question[]
   submissionToken?: string
-  bannerId?: string
+  imageId?: string
 }
 
 export interface QuestionnairesProps {

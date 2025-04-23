@@ -169,8 +169,8 @@ export default function QuestionaryResponsePage({
           </div>
           <div className="container mx-auto px-4 py-8">
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-              {currentQuestionary.bannerId && (
-                <BannerImage bannerId={currentQuestionary.bannerId} />
+              {currentQuestionary.imageId && (
+                <BannerImage imageId={currentQuestionary.imageId} />
               )}
               {members && members.length > 0 && (
                 <div className="mb-8">
