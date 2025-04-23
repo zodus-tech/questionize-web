@@ -1,16 +1,17 @@
-import { Member } from "./member"
+import { Member } from './member'
 
 export enum QuestionType {
   TEXT = 'TEXT',
   MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
   BOOLEAN = 'BOOLEAN',
   RATING = 'RATING',
+  ALTERNATIVE = 'ALTERNATIVE',
 }
 
 export interface QuestionnaireOptions {
   startDate: string
   endDate: string
-  answersLimit: number,
+  answersLimit: number
   members: Member[]
 }
 

@@ -336,7 +336,8 @@ const QuestionnaireAnalytics: React.FC<QuestionnaireAnalyticsProps> = ({
                     </CardHeader>
                     <CardContent className="h-80">
                       <ResponsiveContainer width="100%" height="100%">
-                        {question.type === QuestionType.MULTIPLE_CHOICE ? (
+                        {question.type === QuestionType.MULTIPLE_CHOICE ||
+                        question.type === QuestionType.ALTERNATIVE ? (
                           <BarChart
                             data={processMultipleChoiceData(
                               question,

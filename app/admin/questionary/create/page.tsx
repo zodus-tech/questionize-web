@@ -90,7 +90,10 @@ function formReducer(state: HistoryState, action: FormAction): HistoryState {
           if (q.id === action.payload.id) {
             let updatedOptions: string[] | undefined
             const questionType = action.payload.questionType as QuestionType
-            if (questionType === QuestionType.MULTIPLE_CHOICE) {
+            if (
+              questionType === QuestionType.MULTIPLE_CHOICE ||
+              questionType === QuestionType.ALTERNATIVE
+            ) {
               updatedOptions = []
             } else if (questionType === QuestionType.RATING) {
               updatedOptions = [
@@ -120,7 +123,8 @@ function formReducer(state: HistoryState, action: FormAction): HistoryState {
         questions: state.present.questions.map((q) => {
           if (
             q.id === action.payload &&
-            q.type === QuestionType.MULTIPLE_CHOICE
+            (q.type === QuestionType.MULTIPLE_CHOICE ||
+              q.type === QuestionType.ALTERNATIVE)
           ) {
             return {
               ...q,

@@ -149,6 +149,9 @@ export function DraggableQuestions({
                               <SelectItem value={QuestionType.MULTIPLE_CHOICE}>
                                 Múltipla Escolha
                               </SelectItem>
+                              <SelectItem value={QuestionType.ALTERNATIVE}>
+                                Alternativa
+                              </SelectItem>
                               <SelectItem value={QuestionType.TEXT}>
                                 Texto
                               </SelectItem>
@@ -179,7 +182,8 @@ export function DraggableQuestions({
                           </div>
                         </div>
 
-                        {question.type === QuestionType.MULTIPLE_CHOICE &&
+                        {(question.type === QuestionType.MULTIPLE_CHOICE ||
+                          question.type === QuestionType.ALTERNATIVE) &&
                           (question.options || []).map(
                             (option, optionIndex) => (
                               <div
@@ -250,17 +254,18 @@ export function DraggableQuestions({
                         {question.type === QuestionType.BOOLEAN && (
                           <RadioGroup className="mt-2">
                             <div className="flex items-center space-x-2">
-                            <div className="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
+                              <div className="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
                               <Label htmlFor={`${question.id}-yes`}>Sim</Label>
                             </div>
                             <div className="flex items-center space-x-2">
-                            <div className="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
+                              <div className="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
                               <Label htmlFor={`${question.id}-no`}>Não</Label>
                             </div>
                           </RadioGroup>
                         )}
 
-                        {question.type === QuestionType.MULTIPLE_CHOICE && (
+                        {(question.type === QuestionType.MULTIPLE_CHOICE ||
+                          question.type === QuestionType.ALTERNATIVE) && (
                           <Button
                             onClick={() => onAddOption(question.id)}
                             variant="outline"

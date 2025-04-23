@@ -3,6 +3,7 @@ export enum QuestionType {
   BOOLEAN = 'BOOLEAN',
   TEXT = 'TEXT',
   RATING = 'RATING',
+  ALTERNATIVE = 'ALTERNATIVE',
 }
 
 export interface Question {

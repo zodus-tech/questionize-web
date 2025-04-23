@@ -209,6 +209,32 @@ export default function QuestionaryResponsePage({
                     </div>
                   </RadioGroup>
                 )}
+                {question.type === QuestionType.ALTERNATIVE && (
+                  <RadioGroup
+                    onValueChange={(value) =>
+                      handleInputChange(question.id.toString(), value)
+                    }
+                    value={(answers[question.id.toString()] as string) || ''}
+                  >
+                    {question.options?.map((option) => (
+                      <div
+                        key={option}
+                        className="flex items-center space-x-2 mt-3"
+                      >
+                        <RadioGroupItem
+                          value={option}
+                          id={`question-${question.id}-${option}`}
+                        />
+                        <Label
+                          htmlFor={`question-${question.id}-${option}`}
+                          className="text-zinc-700"
+                        >
+                          {option}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                )}
               </div>
             ))}
           </div>
