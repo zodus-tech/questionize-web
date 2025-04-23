@@ -33,7 +33,8 @@ function canvasToFile(
   })
 }
 
-function preventDefault (e: any) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function preventDefault(e: any) {
   e = e || window.event
   if (e.preventDefault) {
     e.preventDefault()
@@ -244,7 +245,7 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
 
     // Set fixed dimensions for the output banner
     const canvasWidth = 3600 // Higher resolution for better quality
-    const canvasHeight = canvasWidth/3 // 3:1 aspect ratio
+    const canvasHeight = canvasWidth / 3 // 3:1 aspect ratio
     canvas.width = canvasWidth
     canvas.height = canvasHeight
 
@@ -253,11 +254,12 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
     const imgRect = img.getBoundingClientRect()
 
     // Calculate the visible portion of the image (accounting for zoom and position)
-    const scale = ((naturalDimensions.width * (1 / zoom)) / naturalDimensions.width)
+    const scale =
+      (naturalDimensions.width * (1 / zoom)) / naturalDimensions.width
 
     // Calculate the position of the crop area relative to the image
-    const relativeLeft = (position.x * (-1)) + ((imgRect.width - cropRect.width) / 2)
-    const relativeTop = (position.y * (-1)) + ((imgRect.height - cropRect.height) / 2)
+    const relativeLeft = position.x * -1 + (imgRect.width - cropRect.width) / 2
+    const relativeTop = position.y * -1 + (imgRect.height - cropRect.height) / 2
 
     // Convert to original image coordinates (accounting for zoom)
     const sourceX = relativeLeft * scale
@@ -353,12 +355,13 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleCanvasWheel = (event: any) => {
     const currentZoom = zoom
     const wheelDelta = (event.deltaY / 100) * -1 // 1 = in; -1 = out
     const zoomChangeValue = 0.1
 
-    setZoom(currentZoom + (zoomChangeValue * wheelDelta))
+    setZoom(currentZoom + zoomChangeValue * wheelDelta)
   }
 
   const enableScroll = () => {
@@ -434,7 +437,12 @@ export function BannerUpload({ onBannerChange }: BannerUploadProps) {
                 onMouseDown={handleMouseDown}
               >
                 {imgSrc && (
-                  <div className="absolute inset-0 flex items-center justify-center overflow-hidden" onWheel={handleCanvasWheel} onMouseEnter={disableScroll} onMouseLeave={enableScroll}>
+                  <div
+                    className="absolute inset-0 flex items-center justify-center overflow-hidden"
+                    onWheel={handleCanvasWheel}
+                    onMouseEnter={disableScroll}
+                    onMouseLeave={enableScroll}
+                  >
                     <img
                       ref={imgRef}
                       src={imgSrc}

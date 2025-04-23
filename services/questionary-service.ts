@@ -186,11 +186,13 @@ export const questionaryService = {
   async uploadBanner(
     file: File,
     questionaryId: string,
+    token: string,
   ): Promise<BannerUploadResponse> {
     try {
       const formData = new FormData()
       formData.append('file', file)
       formData.append('questionaryId', questionaryId)
+      formData.append('token', token)
 
       // Log the file details for debugging
       console.log('Uploading file:', {

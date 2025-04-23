@@ -346,6 +346,7 @@ export default function Component() {
               const bannerResult = await questionaryService.uploadBanner(
                 bannerFile,
                 createdQuestionnaire.id,
+                token,
               )
 
               console.log('Banner upload result:', bannerResult)
