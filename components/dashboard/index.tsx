@@ -85,12 +85,11 @@ const Dashboard: React.FC<DashboardProps> = ({
       try {
         const response =
           await questionaryService.getAllQuestionnaires(departmentId)
-        setQuestionnaires(
-          response.content.map((q: Questionary) => ({
-            id: q.id,
-            title: q.title,
-          })),
-        )
+        const questionnairesData = response.content.map((q: Questionary) => ({
+          id: q.id,
+          title: q.title,
+        }))
+        setQuestionnaires(questionnairesData)
       } catch (error) {
         console.error('Error fetching questionnaires:', error)
       } finally {
@@ -103,14 +102,14 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   const handleDepartmentChange = useCallback(
     (value: string) => {
-      setIsChangingFilters(false)
+      setIsChangingFilters(true)
       const newDepartmentId = value === 'all' ? undefined : value
       setDepartmentId(newDepartmentId)
       if (questionaryId) {
         setQuestionaryId(undefined)
       }
     },
-    [questionaryId, setDepartmentId, setQuestionaryId, refetch],
+    [questionaryId, setDepartmentId, setQuestionaryId],
   )
 
   const handleQuestionaryChange = useCallback(
@@ -118,7 +117,10 @@ const Dashboard: React.FC<DashboardProps> = ({
       setIsChangingFilters(true)
       const newQuestionaryId = value === 'all' ? undefined : value
       setQuestionaryId(newQuestionaryId)
-      setIsChangingFilters(false)
+      setTimeout(() => {
+        setIsChangingFilters(false)
+        refetch()
+      }, 100)
     },
     [setQuestionaryId, refetch],
   )
