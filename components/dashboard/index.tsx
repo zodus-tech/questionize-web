@@ -83,9 +83,13 @@ const Dashboard: React.FC<DashboardProps> = ({
   useEffect(() => {
     const fetchQuestionnaires = async () => {
       try {
-        const data = await questionaryService.getAllQuestionnaires(departmentId)
+        const response =
+          await questionaryService.getAllQuestionnaires(departmentId)
         setQuestionnaires(
-          data.map((q: Questionary) => ({ id: q.id, title: q.title })),
+          response.content.map((q: Questionary) => ({
+            id: q.id,
+            title: q.title,
+          })),
         )
       } catch (error) {
         console.error('Error fetching questionnaires:', error)

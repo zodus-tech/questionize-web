@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { PlusCircle, Search } from 'lucide-react'
+import { PlusCircle, Search, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useToast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
@@ -17,6 +17,10 @@ export default function QuestionnairesPage() {
   const [questionnaires, setQuestionnaires] = useState<Questionary[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [loading, setLoading] = useState(false)
+  const [page, setPage] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
+  const [, setTotalElements] = useState(0)
+  const [size] = useState(10)
   const { toast } = useToast()
   const router = useRouter()
 
@@ -25,8 +29,15 @@ export default function QuestionnairesPage() {
       setLoading(true)
 
       try {
-        const data = await questionaryService.getAllQuestionnaires()
-        setQuestionnaires(data)
+        const response = await questionaryService.getAllQuestionnaires(
+          undefined,
+          undefined,
+          page,
+          size,
+        )
+        setQuestionnaires(response.content)
+        setTotalPages(response.page.totalPages)
+        setTotalElements(response.page.totalElements)
       } catch (err) {
         console.error('Ocorreu um erro ao encontrar os questionários', err)
         toast({
@@ -40,7 +51,7 @@ export default function QuestionnairesPage() {
     }
 
     fetchQuestionnaires()
-  }, [toast])
+  }, [toast, page, size])
 
   const handleDeleteForm = async (id: string, title: string) => {
     setLoading(true)
@@ -90,7 +101,10 @@ export default function QuestionnairesPage() {
     }
   }
 
-  const handleUpdateForm = async (id: string, updatedContent: {title: string, startDate: Date, endDate: Date}) => {
+  const handleUpdateForm = async (
+    id: string,
+    updatedContent: { title: string; startDate: Date; endDate: Date },
+  ) => {
     if (updatedContent.title && !updatedContent.title.trim()) {
       toast({
         title: 'Erro de Validação',
@@ -103,7 +117,10 @@ export default function QuestionnairesPage() {
     setLoading(true)
 
     try {
-      const success = await questionaryService.updateQuestionnaire(id, updatedContent)
+      const success = await questionaryService.updateQuestionnaire(
+        id,
+        updatedContent,
+      )
       if (success) {
         toast({
           title: 'Atualizado',
@@ -149,6 +166,20 @@ export default function QuestionnairesPage() {
     }
   }
 
+  // Filter questionnaires based on search term
+  const filteredQuestionnaires = questionnaires.filter((questionary) =>
+    questionary.title.toLowerCase().includes(searchTerm.toLowerCase()),
+  )
+
+  // Pagination handlers
+  const handlePreviousPage = () => {
+    if (page > 0) setPage(page - 1)
+  }
+
+  const handleNextPage = () => {
+    if (page < totalPages - 1) setPage(page + 1)
+  }
+
   return (
     <>
       <LoadingSpinner isLoading={loading} />
@@ -177,13 +208,8 @@ export default function QuestionnairesPage() {
         </div>
         <div className="flex-1 overflow-auto mt-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 w-full max-w-screen-xl mx-auto">
-            {questionnaires
-              .filter((questionary) =>
-                questionary.title
-                  .toLowerCase()
-                  .includes(searchTerm.toLowerCase()),
-              )
-              .map((questionary) => (
+            {filteredQuestionnaires.length > 0 ? (
+              filteredQuestionnaires.map((questionary) => (
                 <Card
                   questionary={questionary}
                   key={questionary.id}
@@ -203,12 +229,8 @@ export default function QuestionnairesPage() {
                   onUpdate={handleUpdateForm}
                   element={questionary.title}
                 />
-              ))}
-            {questionnaires.filter((questionary) =>
-              questionary.title
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase()),
-            ).length === 0 && (
+              ))
+            ) : (
               <div className="w-[100vw] h-[100vh] absolute top-0 left-0 flex justify-center items-center flex-col">
                 <p className="text-center font-bold">
                   Nenhum questionário foi encontrado 😔
@@ -219,6 +241,31 @@ export default function QuestionnairesPage() {
               </div>
             )}
           </div>
+
+          {/* Pagination Controls */}
+          {filteredQuestionnaires.length > 0 && (
+            <div className="flex justify-center items-center mt-6 mb-4 space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handlePreviousPage}
+                disabled={page === 0}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="text-sm">
+                Página {page + 1} de {Math.max(1, totalPages)}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleNextPage}
+                disabled={page >= totalPages - 1}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </>

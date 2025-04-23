@@ -1,5 +1,6 @@
 import { api } from './api'
 import Cookies from 'js-cookie'
+import { Questionary } from '@/interfaces/questionary'
 
 // Define interface for banner upload response
 interface BannerUploadResponse {
@@ -9,8 +10,24 @@ interface BannerUploadResponse {
   error?: string
 }
 
+// Define pagination response interface
+interface PaginatedResponse<T> {
+  content: T[]
+  page: {
+    size: number
+    number: number
+    totalElements: number
+    totalPages: number
+  }
+}
+
 export const questionaryService = {
-  async getAllQuestionnaires(departmentId?: string, onlyActive?: boolean) {
+  async getAllQuestionnaires(
+    departmentId?: string,
+    onlyActive?: boolean,
+    page?: number,
+    size?: number,
+  ): Promise<PaginatedResponse<Questionary>> {
     const params = new URLSearchParams()
 
     if (departmentId) {
@@ -21,11 +38,21 @@ export const questionaryService = {
       params.append('active', 'true')
     }
 
+    if (page !== undefined) {
+      params.append('page', page.toString())
+    }
+
+    if (size !== undefined) {
+      params.append('size', size.toString())
+    }
+
     const queryString = params.toString()
     const url = `/questionary/all${queryString ? `?${queryString}` : ''}`
 
     const { data } = await api.get(url)
-    return data.content
+
+    // Return the response directly - it already has the correct structure
+    return data
   },
 
   async getGeneralStatistics(
@@ -192,10 +219,12 @@ export const questionaryService = {
       const formData = new FormData()
       formData.append('imageFile', file)
       const request = { questionaryId }
-      formData.append('request', new Blob([JSON.stringify(request)], { type: "application/json" }))
+      formData.append(
+        'request',
+        new Blob([JSON.stringify(request)], { type: 'application/json' }),
+      )
 
       console.log(JSON.stringify(request))
-
 
       // Log the file details for debugging
       console.log('Uploading file:', {
@@ -218,7 +247,7 @@ export const questionaryService = {
         maxBodyLength: Infinity, // Allow large files
         maxContentLength: Infinity,
       })
-      console.log("teste 9444444: ", data)
+      console.log('teste 9444444: ', data)
       return data
     } catch (error) {
       console.error('[QuestionaryService] Error uploading banner:', error)

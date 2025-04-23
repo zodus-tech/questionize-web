@@ -9,6 +9,8 @@ import { baseUrl } from '@/utils/endpoints'
 import Card from '@/components/card-anonymous'
 import Watermark from '@/components/footer-watermark'
 import { questionaryService } from '@/services/questionary-service'
+import { Button } from '@/components/ui/button'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 axios.defaults.baseURL = baseUrl
 
@@ -16,6 +18,10 @@ export default function QuestionnairesPage() {
   const [questionnaires, setQuestionnaires] = useState<Questionary[]>([])
   const [loading, setLoading] = useState(false)
   const [, setError] = useState<string | null>(null)
+  const [page, setPage] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
+  const [, setTotalElements] = useState(0)
+  const [size] = useState(12)
 
   const router = useRouter()
 
@@ -25,11 +31,15 @@ export default function QuestionnairesPage() {
       setError(null)
 
       try {
-        const data = await questionaryService.getAllQuestionnaires(
+        const response = await questionaryService.getAllQuestionnaires(
           undefined,
           true,
+          page,
+          size,
         )
-        setQuestionnaires(data)
+        setQuestionnaires(response.content)
+        setTotalPages(response.page.totalPages)
+        setTotalElements(response.page.totalElements)
       } catch (err) {
         console.error('Ocorreu um erro ao encontrar os questionários', err)
         setError('Ocorreu um erro ao encontrar os questionários')
@@ -39,7 +49,16 @@ export default function QuestionnairesPage() {
     }
 
     fetchQuestionnaires()
-  }, [])
+  }, [page, size])
+
+  // Pagination handlers
+  const handlePreviousPage = () => {
+    if (page > 0) setPage(page - 1)
+  }
+
+  const handleNextPage = () => {
+    if (page < totalPages - 1) setPage(page + 1)
+  }
 
   return (
     <>
@@ -76,6 +95,31 @@ export default function QuestionnairesPage() {
               ))
             )}
           </div>
+
+          {/* Pagination Controls */}
+          {questionnaires.length > 0 && (
+            <div className="flex justify-center items-center mt-6 mb-4 space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handlePreviousPage}
+                disabled={page === 0}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="text-sm">
+                Página {page + 1} de {Math.max(1, totalPages)}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleNextPage}
+                disabled={page >= totalPages - 1}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
         </div>
         <Watermark />
       </div>
