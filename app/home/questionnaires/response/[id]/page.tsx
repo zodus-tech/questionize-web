@@ -75,10 +75,16 @@ export default function QuestionaryResponsePage({
 
     try {
       const requestBody = {
-        answers: Object.entries(answers).map(([questionId, answer]) => ({
-          questionId,
-          answer: Array.isArray(answer) ? answer.join(' :z:o:d:u:s: ') : answer,
-        })),
+        answers: Object.entries(answers).map(([questionId, answer]) => {
+          const question = currentQuestionary?.questions.find(q => q.id.toString() === questionId);
+          
+          return {
+            questionId,
+            answer: Array.isArray(answer) && question?.type === QuestionType.MULTIPLE_CHOICE
+              ? answer.join(' :z:o:d:u:s: ')
+              : answer,
+          };
+        }),
         memberId: selectedMember?.id,
       }
 
