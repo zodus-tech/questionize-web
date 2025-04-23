@@ -80,7 +80,8 @@ export const questionaryService = {
 
   async updateQuestionnaire(
     id: string | number,
-    requestBody: { title?: string, startDate?: any, endDate?: any },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    requestBody: { title?: string; startDate?: any; endDate?: any },
   ): Promise<boolean> {
     try {
       if (!requestBody?.startDate || !requestBody?.endDate) {
@@ -97,14 +98,10 @@ export const questionaryService = {
         return localDate.toISOString().slice(0, -1)
       }
 
-      requestBody.startDate = formatDate(
-        requestBody.startDate,
-      )
-      requestBody.endDate = formatDate(
-        requestBody.endDate,
-      )
+      requestBody.startDate = formatDate(requestBody.startDate)
+      requestBody.endDate = formatDate(requestBody.endDate)
 
-      //console.log(requestBody.endDate)
+      // console.log(requestBody.endDate)
 
       await api.patch(`/questionary/update/${id}`, requestBody)
       return true
@@ -193,6 +190,7 @@ export const questionaryService = {
     try {
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('questionaryId', questionaryId)
 
       // Log the file details for debugging
       console.log('Uploading file:', {
@@ -207,7 +205,7 @@ export const questionaryService = {
         typeof window !== 'undefined' &&
         window.location.hostname === 'localhost'
 
-      const url = `/questionary/${questionaryId}/upload-banner`
+      const url = `/images/save`
 
       // If in local development, use a relative URL instead of the full URL to avoid CORS
       if (isLocalDev) {
