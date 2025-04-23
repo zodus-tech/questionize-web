@@ -20,7 +20,7 @@ export default function QuestionnairesPage() {
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [, setTotalElements] = useState(0)
-  const [size] = useState(10)
+  const [size] = useState(12)
   const { toast } = useToast()
   const router = useRouter()
 
