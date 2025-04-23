@@ -17,47 +17,41 @@ export default function QuestionnairesPage() {
   const [questionnaires, setQuestionnaires] = useState<Questionary[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [loading, setLoading] = useState(false)
-  const [isPaginating, setIsPaginating] = useState(false)
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [, setTotalElements] = useState(0)
-  const [size] = useState(12)
+  const [size] = useState(10)
   const { toast } = useToast()
   const router = useRouter()
 
-  const fetchQuestionnaires = async (isPageChange = false) => {
-    if (isPageChange) {
-      setIsPaginating(true)
-    } else {
-      setLoading(true)
-    }
-
-    try {
-      const response = await questionaryService.getAllQuestionnaires(
-        undefined,
-        undefined,
-        page,
-        size,
-      )
-      setQuestionnaires(response.content)
-      setTotalPages(response.page.totalPages)
-      setTotalElements(response.page.totalElements)
-    } catch (err) {
-      console.error('Ocorreu um erro ao encontrar os questionários', err)
-      toast({
-        title: 'Erro',
-        description: 'Não foi possível carregar os questionários.',
-        variant: 'destructive',
-      })
-    } finally {
-      setLoading(false)
-      setIsPaginating(false)
-    }
-  }
-
   useEffect(() => {
-    fetchQuestionnaires(page > 0)
-  }, [page, size])
+    const fetchQuestionnaires = async () => {
+      setLoading(true)
+
+      try {
+        const response = await questionaryService.getAllQuestionnaires(
+          undefined,
+          undefined,
+          page,
+          size,
+        )
+        setQuestionnaires(response.content)
+        setTotalPages(response.page.totalPages)
+        setTotalElements(response.page.totalElements)
+      } catch (err) {
+        console.error('Ocorreu um erro ao encontrar os questionários', err)
+        toast({
+          title: 'Erro',
+          description: 'Não foi possível carregar os questionários.',
+          variant: 'destructive',
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchQuestionnaires()
+  }, [toast, page, size])
 
   const handleDeleteForm = async (id: string, title: string) => {
     setLoading(true)
@@ -188,7 +182,7 @@ export default function QuestionnairesPage() {
 
   return (
     <>
-      <LoadingSpinner isLoading={loading && !isPaginating} />
+      <LoadingSpinner isLoading={loading} />
       <div className="flex flex-col mx-4 md:mx-16 bg-slate-50">
         <main className="container sticky top-[56px] z-10 mt-4 px-4 py-4 bg-tile-pattern bg-center bg-repeat rounded-lg w-full max-w-screen-xl">
           <div className="flex justify-between items-center p-2">
@@ -255,20 +249,18 @@ export default function QuestionnairesPage() {
                 variant="outline"
                 size="sm"
                 onClick={handlePreviousPage}
-                disabled={page === 0 || isPaginating}
+                disabled={page === 0}
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <span className="text-sm">
-                {isPaginating
-                  ? 'Carregando...'
-                  : `Página ${page + 1} de ${Math.max(1, totalPages)}`}
+                Página {page + 1} de {Math.max(1, totalPages)}
               </span>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleNextPage}
-                disabled={page >= totalPages - 1 || isPaginating}
+                disabled={page >= totalPages - 1}
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
