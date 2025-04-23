@@ -330,9 +330,9 @@ export default function Component() {
             const questionnairesData =
               await questionaryService.getAllQuestionnaires(state.present.id)
 
-            console.log('Retrieved questionnaires:', questionnairesData.length)
+            console.log('Retrieved questionnaires:', questionnairesData.content.length)
 
-            const createdQuestionnaire = questionnairesData.find(
+            const createdQuestionnaire = questionnairesData.content.find(
               (q: { id: string; title: string }) =>
                 q.title === state.present.title,
             )
