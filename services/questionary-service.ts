@@ -192,7 +192,6 @@ export const questionaryService = {
       const formData = new FormData()
       formData.append('file', file)
       formData.append('questionaryId', questionaryId)
-      formData.append('token', token)
 
       // Log the file details for debugging
       console.log('Uploading file:', {
@@ -269,6 +268,7 @@ export const questionaryService = {
       // Production code path
       const { data } = await api.post(url, formData, {
         headers: {
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
           'Access-Control-Allow-Origin': '*',
         },
