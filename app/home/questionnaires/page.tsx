@@ -17,38 +17,44 @@ axios.defaults.baseURL = baseUrl
 export default function QuestionnairesPage() {
   const [questionnaires, setQuestionnaires] = useState<Questionary[]>([])
   const [loading, setLoading] = useState(false)
+  const [isPaginating, setIsPaginating] = useState(false)
   const [, setError] = useState<string | null>(null)
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [, setTotalElements] = useState(0)
-  const [size] = useState(12)
+  const [size] = useState(24)
 
   const router = useRouter()
 
-  useEffect(() => {
-    const fetchQuestionnaires = async () => {
+  const fetchQuestionnaires = async (isPageChange = false) => {
+    if (isPageChange) {
+      setIsPaginating(true)
+    } else {
       setLoading(true)
-      setError(null)
-
-      try {
-        const response = await questionaryService.getAllQuestionnaires(
-          undefined,
-          true,
-          page,
-          size,
-        )
-        setQuestionnaires(response.content)
-        setTotalPages(response.page.totalPages)
-        setTotalElements(response.page.totalElements)
-      } catch (err) {
-        console.error('Ocorreu um erro ao encontrar os questionários', err)
-        setError('Ocorreu um erro ao encontrar os questionários')
-      } finally {
-        setLoading(false)
-      }
     }
+    setError(null)
 
-    fetchQuestionnaires()
+    try {
+      const response = await questionaryService.getAllQuestionnaires(
+        undefined,
+        true,
+        page,
+        size,
+      )
+      setQuestionnaires(response.content)
+      setTotalPages(response.page.totalPages)
+      setTotalElements(response.page.totalElements)
+    } catch (err) {
+      console.error('Ocorreu um erro ao encontrar os questionários', err)
+      setError('Ocorreu um erro ao encontrar os questionários')
+    } finally {
+      setLoading(false)
+      setIsPaginating(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchQuestionnaires(page > 0)
   }, [page, size])
 
   // Pagination handlers
@@ -62,7 +68,7 @@ export default function QuestionnairesPage() {
 
   return (
     <>
-      <LoadingSpinner isLoading={loading} />
+      <LoadingSpinner isLoading={loading && !isPaginating} />
       <div className="relative flex flex-col mx-4 md:mx-16 bg-slate-50 min-h-screen">
         <main className="container sticky top-[56px] z-10 mt-16 px-4 py-4 bg-tile-pattern bg-center bg-repeat rounded-lg w-full max-w-screen-xl">
           <div className="flex justify-between items-center p-2">
@@ -103,18 +109,20 @@ export default function QuestionnairesPage() {
                 variant="outline"
                 size="sm"
                 onClick={handlePreviousPage}
-                disabled={page === 0}
+                disabled={page === 0 || isPaginating}
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <span className="text-sm">
-                Página {page + 1} de {Math.max(1, totalPages)}
+                {isPaginating
+                  ? 'Carregando...'
+                  : `Página ${page + 1} de ${Math.max(1, totalPages)}`}
               </span>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleNextPage}
-                disabled={page >= totalPages - 1}
+                disabled={page >= totalPages - 1 || isPaginating}
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
