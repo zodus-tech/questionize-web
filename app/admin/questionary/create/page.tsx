@@ -301,7 +301,8 @@ export default function Component() {
           return {
             id: q.id,
             text: q.text,
-            type: q.type,
+            // Explicitly cast the type to a string to ensure it's preserved correctly
+            type: String(q.type),
             statistics: q.statistics || null,
             options: q.options || null,
           }
