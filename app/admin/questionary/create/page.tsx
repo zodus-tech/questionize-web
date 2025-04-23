@@ -279,6 +279,12 @@ export default function Component() {
         throw new Error('Token não encontrado')
       }
 
+      // Log the questions before creating the request body to debug
+      console.log(
+        'Questions before submission:',
+        JSON.stringify(state.present.questions),
+      )
+
       const requestBody = {
         departmentId: state.present.id,
         title: state.present.title,
@@ -290,13 +296,16 @@ export default function Component() {
           anonymous: state.present.options.anonymous || true,
           membersIds: selectedMembers.map((member) => member.id),
         },
-        questions: state.present.questions.map((q) => ({
-          id: q.id,
-          text: q.text,
-          type: q.type,
-          statistics: q.statistics || null,
-          options: q.options || null,
-        })),
+        questions: state.present.questions.map((q) => {
+          // Ensure the question type is preserved as is
+          return {
+            id: q.id,
+            text: q.text,
+            type: q.type,
+            statistics: q.statistics || null,
+            options: q.options || null,
+          }
+        }),
       }
 
       // Log the full request body
