@@ -5,10 +5,9 @@ import { questionaryService } from '@/services/questionary-service'
 import { calculateMonthsBetween } from '@/utils/dates'
 import type { Questionary } from '@/interfaces/questionary'
 import type { DateRange } from 'react-day-picker'
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import type { ResponseData } from '@/interfaces/stats'
-import { capitalizeFirst } from '@/utils/text'
 
 export function useStatistics(
   dateRange?: DateRange,
@@ -65,13 +64,31 @@ export function useStatistics(
       const responseData = Object.entries(
         statsData.totalSubmissionsPerPeriod,
       ).map(([period, count]) => {
-        const [startStr] = period.split(' - ')
-        const monthDate = new Date(startStr)
-        const formattedName = format(monthDate, 'MMMM', { locale: ptBR })
+        const [startStr, endStr] = period.split(' - ')
+
+        let formattedRange
+        try {
+          const startDate = parseISO(startStr)
+          const endDate = parseISO(endStr)
+
+          const startFormatted = format(startDate, 'dd/MM', { locale: ptBR })
+          const endFormatted = format(endDate, 'dd/MM', { locale: ptBR })
+          formattedRange = `${startFormatted} - ${endFormatted}`
+        } catch (e) {
+          formattedRange = period
+        }
+
         return {
-          name: capitalizeFirst(formattedName.toUpperCase()),
+          name: formattedRange,
+          period,
           responses: count,
         }
+      })
+
+      responseData.sort((a, b) => {
+        const [aStartStr] = a.period.split(' - ')
+        const [bStartStr] = b.period.split(' - ')
+        return new Date(aStartStr).getTime() - new Date(bStartStr).getTime()
       })
 
       const completedResponses = statsData.totalSubmissions || 0
