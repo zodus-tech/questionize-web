@@ -19,21 +19,8 @@ interface SurveyTrendChartProps {
 }
 
 const SurveyTrendChart: React.FC<SurveyTrendChartProps> = ({ data }) => {
-  // Prepare a more vibrant color scheme
   const barColor = styleDefinition.graphColor
-  const lineColor = '#ff6b6b' // A contrasting color for the trend line
-
-  // Calculate cumulative responses for trend line
-  const dataWithCumulative = data.map((item, index, array) => {
-    const cumulative = array
-      .slice(0, index + 1)
-      .reduce((sum, current) => sum + current.responses, 0)
-
-    return {
-      ...item,
-      cumulative,
-    }
-  })
+  const lineColor = '#ff6b6b'
 
   return (
     <Card>
@@ -42,8 +29,8 @@ const SurveyTrendChart: React.FC<SurveyTrendChartProps> = ({ data }) => {
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={330}>
-          <ComposedChart data={dataWithCumulative}>
-            <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+          <ComposedChart data={data}>
+            <CartesianGrid strokeDasharray="3 3" opacity={1} />
             <XAxis
               dataKey="name"
               label={{
@@ -57,51 +44,36 @@ const SurveyTrendChart: React.FC<SurveyTrendChartProps> = ({ data }) => {
               height={70}
             />
             <YAxis
-              yAxisId="left"
               label={{
                 value: 'Respostas',
                 angle: -90,
                 position: 'insideLeft',
-                offset: -5,
-              }}
-              allowDecimals={false}
-            />
-            <YAxis
-              yAxisId="right"
-              orientation="right"
-              label={{
-                value: 'Total Acumulado',
-                angle: 90,
-                position: 'insideRight',
-                offset: 5,
+                offset: 1,
               }}
               allowDecimals={false}
             />
             <Tooltip
               formatter={(value: number, name: string) => {
-                if (name === 'Respostas') return [`${value}`, 'No período']
-                if (name === 'Total') return [`${value}`, 'Acumulado']
+                if (name === 'Respostas') {
+                  return [`${value}`, 'Respostas']
+                } else if (name === 'Tendência') {
+                  return [`${value}`, 'Tendência']
+                }
                 return [value, name]
               }}
               labelFormatter={(label: string) => `Período: ${label}`}
               cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
             />
-            <Legend verticalAlign="top" height={36} />
-            <Bar
-              yAxisId="left"
-              dataKey="responses"
-              name="Respostas"
-              radius={[4, 4, 0, 0]}
-            >
-              {dataWithCumulative.map((entry, index) => (
+            <Legend verticalAlign="bottom" height={36} />
+            <Bar dataKey="responses" name="Respostas" radius={[4, 4, 0, 0]}>
+              {data.map((_, index) => (
                 <Cell key={`cell-${index}`} fill={barColor} />
               ))}
             </Bar>
             <Line
-              yAxisId="right"
               type="monotone"
-              dataKey="cumulative"
-              name="Total"
+              dataKey="responses"
+              name="Tendência"
               stroke={lineColor}
               strokeWidth={2}
               dot={{ r: 4, strokeWidth: 2 }}
