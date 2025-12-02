@@ -23,7 +23,7 @@ export default function DeleteDialog({
 }: DeleteDialogProps) {
   return (
     <AlertDialog>
-      <AlertDialogTrigger>
+      <AlertDialogTrigger asChild>
         <Button variant="ghost" size="icon">
           <Trash2 className="h-4 w-4" />
         </Button>

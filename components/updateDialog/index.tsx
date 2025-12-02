@@ -33,7 +33,7 @@ export default function UpdateDialog({
 }: DeleteDialogProps) {
   return (
     <AlertDialog>
-      <AlertDialogTrigger>
+      <AlertDialogTrigger asChild>
         <Button variant="ghost" size="icon">
           <Edit2 className="h-4 w-4" />
         </Button>
@@ -90,7 +90,7 @@ export function UpdateQuestionaryDialog({
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger>
+      <AlertDialogTrigger asChild>
         <Button variant="ghost" size="icon">
           <Edit2 className="h-4 w-4" />
         </Button>
